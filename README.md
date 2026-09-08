@@ -68,6 +68,10 @@ If the generator was useful — you can [donate via Tribute](https://web.tribute
 - BTC: `bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6` — [QR](https://qr.crypt.bot/?url=bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6)
 - ETH: `0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4` — [QR](https://qr.crypt.bot/?url=0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4)
 
+## Development
+
+The whole app is a single `index.html` — but it has a map. See **[DEVELOPMENT.md](DEVELOPMENT.md)** for the code layout, a "where do I change …" cheat table, known gotchas and the release flow. The project idea and roadmap are shown on the site itself (the 💡 and 🛣 blocks in the sidebar).
+
 ## License
 
 MIT. Not affiliated with Xteink, inkMOD or CrossPoint. Weather data — Open-Meteo (non-commercial use).
