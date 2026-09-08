@@ -108,9 +108,16 @@
     #preview { width:100%; }
     canvas { height:auto; max-height:none; width:100%; }
   }
+  #compatPop { position:fixed; top:-140px; left:0; right:0; z-index:60; background:var(--warnBg); color:var(--warnText); border-bottom:1px solid var(--warnBorder); padding:14px 52px 14px 20px; font-size:13.5px; line-height:1.55; text-align:center; transition:top .4s ease; }
+  #compatPop.show { top:0; }
+  #compatPop .ok { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:var(--acc); color:var(--btnText); border:none; border-radius:6px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
 </style>
 </head>
 <body>
+<div id="compatPop" style="display:none">
+  <span data-i18n="bnFw"></span> — <span data-i18n="rmTested"></span>
+  <button class="ok" id="compatOk" data-i18n="okBtn"></button>
+</div>
 <header class="nav">
   <div class="navIn">
     <a class="brand" href="#">Xteink <span>Meteo</span> Sleep</a>
@@ -126,10 +133,6 @@
 <p style="text-align:center;color:var(--dim);margin:14px 0 0;font-size:14px" data-i18n="subtitle"></p>
 <main>
   <div id="controls">
-    <div class="group">
-      <div class="hint warn" style="margin:0 0 4px" data-i18n="bnFw"></div>
-      <div class="hint" data-i18n="rmTested"></div>
-    </div>
     <div class="group">
       <label data-i18n="city"></label>
       <div class="inline">
@@ -318,7 +321,8 @@ ru: {
   mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
   home: "На главную", widgets: "Виджеты карточки",
   bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
-  crypto: "Крипта", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
+  crypto: "Крипта",
+  okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
   wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
   moon: ["Новолуние","Растущий серп","Первая четверть","Растущая луна","Полнолуние","Убывающая луна","Последняя четверть","Убывающий серп"]
 },
@@ -373,7 +377,9 @@ en: {
   mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
   home: "Home", widgets: "Card widgets",
   bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
-  crypto: "Crypto", cmTitle: "Donate in crypto", copied: "Copied ✓",
+  crypto: "Crypto",
+  okBtn: "Đã hiểu",
+  okBtn: "Got it", cmTitle: "Donate in crypto", copied: "Copied ✓",
   wmo: {0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",56:"Drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Rain shower",85:"Snowfall",95:"Thunderstorm",96:"Thunderstorm with hail"},
   moon: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
 },
@@ -428,7 +434,8 @@ zh: {
   mGen: "生成器", mAbout: "关于项目", mInst: "安装", bnPlace: "文件放哪取决于固件：inkMOD 为 Sleep 文件夹。", ideaNext: "计划：让卡片在几天不同步的情况下仍然有用。",
   home: "返回首页", widgets: "卡片组件",
   bnFw: "适用于任何固件 — 普通BMP文件", navIdea2: "理念", navRoad2: "路线图", wDate: "日期", wCur: "当前天气", wDn: "白天/夜间", wSm: "日出日落", wMoon: "月相", wFc: "预报", wCity: "城市和时间",
-  crypto: "加密货币", cmTitle: "用加密货币支持", copied: "已复制 ✓",
+  crypto: "加密货币",
+  okBtn: "知道了", cmTitle: "用加密货币支持", copied: "已复制 ✓",
   wmo: {0:"晴",1:"大致晴朗",2:"局部多云",3:"阴",45:"雾",56:"毛毛雨",61:"小雨",63:"中雨",65:"大雨",66:"冻雨",71:"小雪",73:"雪",75:"大雪",77:"雪粒",80:"阵雨",85:"降雪",95:"雷暴",96:"雷暴伴冰雹"},
   moon: ["新月","蛾眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"]
 },
@@ -483,7 +490,8 @@ es: {
   mGen: "Generador", mAbout: "Sobre el proyecto", mInst: "Instalación", bnPlace: "Dónde poner el archivo depende del firmware: en inkMOD es la carpeta Sleep.", ideaNext: "Previsto: que la tarjeta siga siendo útil varios días sin sincronizar.",
   home: "Inicio", widgets: "Widgets de la tarjeta",
   bnFw: "Vale para cualquier firmware — es un archivo BMP normal", navIdea2: "Idea", navRoad2: "Hoja de ruta", wDate: "Fecha", wCur: "Tiempo ahora", wDn: "Día/noche", wSm: "Amanecer/atardecer", wMoon: "Fase lunar", wFc: "Pronóstico", wCity: "Ciudad y hora",
-  crypto: "Cripto", cmTitle: "Apoya con cripto", copied: "¡Copiado ✓",
+  crypto: "Cripto",
+  okBtn: "Entendido", cmTitle: "Apoya con cripto", copied: "¡Copiado ✓",
   wmo: {0:"Despejado",1:"Poco nublado",2:"Parcialmente nublado",3:"Cubierto",45:"Niebla",56:"Llovizna",61:"Lluvia débil",63:"Lluvia",65:"Lluvia fuerte",66:"Lluvia helada",71:"Nieve débil",73:"Nieve",75:"Nieve fuerte",77:"Granos de nieve",80:"Chubascos",85:"Nevada",95:"Tormenta",96:"Tormenta con granizo"},
   moon: ["Luna nueva","Creciente iluminante","Cuarto creciente","Gibosa creciente","Luna llena","Gibosa menguante","Cuarto menguante","Luna menguante"]
 },
@@ -538,7 +546,8 @@ de: {
   mGen: "Generator", mAbout: "Über", mInst: "Installation", bnPlace: "Wo die Datei hingehört, hängt von der Firmware ab: bei inkMOD der Ordner Sleep.", ideaNext: "Geplant: Die Karte soll auch mehrere Tage ohne Sync nützlich bleiben.",
   home: "Startseite", widgets: "Karten-Widgets",
   bnFw: "Funktioniert mit jeder Firmware — eine normale BMP-Datei", navIdea2: "Idee", navRoad2: "Roadmap", wDate: "Datum", wCur: "Wetter jetzt", wDn: "Tags/nachts", wSm: "Sonnenauf-/untergang", wMoon: "Mondphase", wFc: "Vorhersage", wCity: "Stadt & Zeit",
-  crypto: "Krypto", cmTitle: "Mit Krypto unterstützen", copied: "Kopiert ✓",
+  crypto: "Krypto",
+  okBtn: "Verstanden", cmTitle: "Mit Krypto unterstützen", copied: "Kopiert ✓",
   wmo: {0:"Klar",1:"Überwiegend klar",2:"Teilweise bewölkt",3:"Bedeckt",45:"Nebel",56:"Nieselregen",61:"Leichter Regen",63:"Regen",65:"Starker Regen",66:"Eisregen",71:"Leichter Schneefall",73:"Schneefall",75:"Starker Schneefall",77:"Schneegriesel",80:"Regenschauer",85:"Schneeverbau",95:"Gewitter",96:"Gewitter mit Hagel"},
   moon: ["Neumond","Zunehmende Sichel","Erstes Viertel","Zunehmender Mond","Vollmond","Abnehmender Mond","Letztes Viertel","Abnehmende Sichel"]
 },
@@ -593,7 +602,9 @@ vi: {
   mGen: "Trình tạo", mAbout: "Về dự án", mInst: "Cài đặt", bnPlace: "Nơi đặt tệp phụ thuộc firmware: trên inkMOD là thư mục Sleep.", ideaNext: "Kế hoạch: giúp thẻ hữu ích vài ngày không đồng bộ.",
   home: "Trang chủ", widgets: "Widget trên thẻ",
   bnFw: "Phù hợp với mọi firmware — chỉ là tệp BMP", navIdea2: "Ý tưởng", navRoad2: "Lộ trình", wDate: "Ngày", wCur: "Thời tiết", wDn: "Ngày/đêm", wSm: "Mặt trời mọc/lặn", wMoon: "Pha trăng", wFc: "Dự báo", wCity: "Thành phố & giờ",
-  crypto: "Crypto", cmTitle: "Ủng hộ bằng tiền mã hóa", copied: "Đã sao chép ✓",
+  crypto: "Crypto",
+  okBtn: "Đã hiểu",
+  okBtn: "Got it", cmTitle: "Ủng hộ bằng tiền mã hóa", copied: "Đã sao chép ✓",
   wmo: {0:"Trời quang",1:"Ít mây",2:"Có mây một phần",3:"Nhiều mây",45:"Sương mù",56:"Mưa phùn",61:"Mưa nhỏ",63:"Mưa",65:"Mưa to",66:"Mưa băng giá",71:"Tuyết nhỏ",73:"Tuyết",75:"Tuyết dày",77:"Hạt tuyết",80:"Mưa rào",85:"Có tuyết rơi",95:"Dông",96:"Dông kèm mưa đá"},
   moon: ["Trăng non","Lưỡi liềm đầu tháng","Thượng huyền","Trăng khuyết đầu tháng","Trăng tròn","Trăng khuyết cuối tháng","Hạ huyền","Lưỡi liềm cuối tháng"]
 }
@@ -1316,6 +1327,16 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   applyDaysActive();
   applyWidgets();
   if (place) loadWeather();
+  if (!localStorage.getItem("lsx.compatSeen")){
+    const cp = document.getElementById("compatPop");
+    cp.style.display = "block";
+    requestAnimationFrame(() => requestAnimationFrame(() => cp.classList.add("show")));
+    document.getElementById("compatOk").onclick = () => {
+      cp.classList.remove("show");
+      localStorage.setItem("lsx.compatSeen", "1");
+      setTimeout(() => { cp.style.display = "none"; }, 450);
+    };
+  }
 })();
 </script>
 </body>
