@@ -1,70 +1,77 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Xteink Meteo Sleep — погода, луна, восход на локскрине</title>
+<meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f2227" media="(prefers-color-scheme: dark)">
+<title>Xteink Meteo Sleep</title>
 <style>
-  :root { --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e; }
+  :root {
+    --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e;
+    --btnText:#ffffff; --inputBg:#fbfaf8; --codeBg:#f0ede6; --warnBg:#fdf3d8; --warnBorder:#ecd9a0; --warnText:#7a5200;
+    --badgeBg:#181b20;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#1f2227; --panel:#262b32; --line:#363c45; --fg:#e6e8ec; --dim:#9aa2ad; --acc:#7cc98b;
+      --btnText:#12210f; --inputBg:#2b3037; --codeBg:#31373f; --warnBg:#3b3320; --warnBorder:#57503a; --warnText:#e8d491;
+      --badgeBg:#0d0f12;
+    }
+  }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 "Segoe UI", Arial, sans-serif; }
   header.site { padding:14px 26px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
-  .hdrRow { max-width:1180px; margin:0 auto; display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; }
+  .hdrRow { max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
   header.site h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:.2px; }
-  header.site p { margin:3px 0 10px; color:var(--dim); font-size:13.5px; max-width:1180px; }
-  .hdrLinks { margin-left:auto; display:flex; align-items:center; gap:14px; }
-  .hdrLinks a { color:var(--acc); font-weight:600; font-size:14px; text-decoration:none; }
-  .hdrLinks a:hover { text-decoration:underline; }
-  .langSeg { display:flex; gap:4px; }
-  .langSeg button { background:none; border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:12.5px; font-weight:600; color:var(--dim); cursor:pointer; }
-  .langSeg button.active { background:var(--fg); color:#fff; border-color:var(--fg); }
+  header.site p { margin:6px 0 10px; color:var(--dim); font-size:13.5px; max-width:1180px; }
+  .hdrLinks { margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .badge { display:inline-flex; align-items:center; gap:5px; background:var(--badgeBg); color:#fff; border:none; border-radius:4px; padding:7px 11px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
+  .badge:hover { filter:brightness(1.3); }
+  .badge.lang.active { background:var(--acc); color:var(--btnText); }
+  .badge.donate { color:#f0c14b; }
+  .iconLink { display:inline-flex; align-items:center; justify-content:center; width:30px; height:25px; border-radius:4px; color:var(--fg); text-decoration:none; background:var(--badgeBg); }
+  .iconLink:hover { filter:brightness(1.3); }
   main { display:flex; gap:26px; padding:24px; align-items:flex-start; flex-wrap:wrap; max-width:1180px; margin:0 auto; }
   #controls { width:340px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
   .group { margin-bottom:20px; }
   .group > label { display:block; font-size:12px; color:var(--dim); margin-bottom:7px; text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
-  input[type=text] { width:100%; background:#fbfaf8; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
+  input[type=text] { width:100%; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
   input[type=text]:focus { outline:2px solid var(--acc); outline-offset:-1px; }
   .inline { display:flex; gap:8px; }
   .inline input { flex:1; }
   button { cursor:pointer; font-family:inherit; }
-  .btn { background:var(--acc); color:#fff; border:none; border-radius:8px; padding:10px 16px; font-size:14.5px; font-weight:600; }
-  .btn.secondary { background:#eeebe4; color:var(--fg); border:1px solid var(--line); }
+  .btn { background:var(--acc); color:var(--btnText); border:none; border-radius:8px; padding:10px 16px; font-size:14.5px; font-weight:600; }
+  .btn.secondary { background:var(--inputBg); color:var(--fg); border:1px solid var(--line); }
   .btn:disabled { opacity:.4; cursor:default; }
   .btn.wide { width:100%; margin-bottom:9px; }
-  .btn.donate { background:#c95d2c; }
   .seg { display:flex; gap:7px; }
-  .seg button { flex:1; background:#fbfaf8; border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
-  .seg button.active { background:var(--fg); color:#fff; border-color:var(--fg); }
+  .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
+  .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
   #customSizeRow { display:none; gap:8px; align-items:center; margin-top:8px; color:var(--dim); }
-  #customSizeRow input[type=number] { width:76px; background:#fbfaf8; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
+  #customSizeRow input[type=number] { width:76px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
   .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
   .chk input { width:17px; height:17px; accent-color:var(--acc); }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
-  .warn { color:#7a5200; background:#fdf3d8; border:1px solid #ecd9a0; border-radius:8px; padding:9px 11px; }
+  .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
   #geoResults { border:1px solid var(--line); border-radius:8px; margin-top:7px; overflow:hidden; }
   #geoResults:empty { display:none; }
-  .geoItem { padding:9px 11px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--line); background:#fff; }
-  .geoItem:hover { background:#f2efe9; }
+  .geoItem { padding:9px 11px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--line); background:var(--panel); }
+  .geoItem:hover { background:var(--inputBg); }
   .geoItem small { color:var(--dim); display:block; font-size:12px; }
   #preview { flex:1; min-width:330px; display:flex; justify-content:center; }
-  #frame { background:#fff; padding:12px; border-radius:16px; border:1px solid var(--line); box-shadow:0 2px 14px rgba(0,0,0,.06); }
-  canvas { display:block; image-rendering:pixelated; height:82vh; max-height:840px; border:1px solid #d8d4cc; }
+  #frame { background:var(--panel); padding:12px; border-radius:16px; border:1px solid var(--line); box-shadow:0 2px 14px rgba(0,0,0,.08); }
+  canvas { display:block; image-rendering:pixelated; height:82vh; max-height:840px; border:1px solid var(--line); }
   #status { font-size:13.5px; color:var(--dim); min-height:20px; margin-top:2px; }
   #status.ok { color:var(--acc); font-weight:600; }
-  #status.err { color:#b3402a; }
-  #sources { border-top:1px solid var(--line); margin-top:6px; padding-top:13px; font-size:12.5px; color:var(--dim); }
-  #sources > b { display:block; color:var(--fg); font-size:12px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
-  #sources li b { color:var(--fg); }
-  #sources ul { margin:0; padding:0; list-style:none; }
-  #sources li { margin-bottom:4px; padding-left:20px; position:relative; }
-  #sources li::before { content:"i"; position:absolute; left:0; top:1.5px; width:13px; height:13px; border:1.4px solid var(--dim); border-radius:50%; font-size:9.5px; font-weight:700; text-align:center; line-height:12px; font-style:italic; font-family:Georgia, serif; }
-  #howto { margin-top:14px; font-size:13px; color:var(--dim); }
-  #howto summary { cursor:pointer; color:var(--fg); font-weight:600; }
-  #howto ol { margin:8px 0 0; padding-left:20px; }
-  #howto li { margin-bottom:5px; }
-  code { background:#f0ede6; padding:1px 5px; border-radius:4px; font-size:12px; }
+  #status.err { color:#e07a5f; }
+  details { margin-top:12px; font-size:13px; color:var(--dim); }
+  details summary { cursor:pointer; color:var(--fg); font-weight:600; }
+  details ol, details ul { margin:8px 0 0; padding-left:20px; }
+  details li { margin-bottom:5px; }
+  code { background:var(--codeBg); padding:1px 5px; border-radius:4px; font-size:12px; }
 </style>
 </head>
 <body>
@@ -72,16 +79,15 @@
   <div class="hdrRow">
     <h1>Xteink Meteo Sleep</h1>
     <div class="hdrLinks">
-      <div class="langSeg" id="langSeg">
-        <button data-lang="ru">RU</button>
-        <button data-lang="en">EN</button>
-        <button data-lang="zh">中文</button>
-        <button data-lang="es">ES</button>
-        <button data-lang="de">DE</button>
-        <button data-lang="vi">VI</button>
-      </div>
-      <a href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener">GitHub ⭐</a>
-      <a href="#" id="donateLink" target="_blank" rel="noopener" style="display:none" data-i18n="donate"></a>
+      <button class="badge lang" data-lang="ru" title="Русский">Русский</button>
+      <button class="badge lang" data-lang="en" title="English">English</button>
+      <a id="donateLink" class="badge donate" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener" title="Tribute">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span data-i18n="donate"></span>
+      </a>
+      <a class="iconLink" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+        <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
     </div>
   </div>
   <p data-i18n="subtitle"></p>
@@ -122,22 +128,38 @@
     </div>
 
     <div class="group">
+      <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
+      <button class="btn wide" id="install" disabled data-i18n="install"></button>
+      <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
+      <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
+      <div id="status"></div>
+    </div>
+
+    <div class="group">
       <label data-i18n="reader"></label>
       <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <input type="text" id="readerAddr" placeholder="http://192.168.137.189">
       <span class="hint" data-i18n="readerHint"></span>
     </div>
 
-    <div class="group">
-      <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
-      <button class="btn wide" id="refresh" data-i18n="refresh"></button>
-      <button class="btn wide" id="install" disabled data-i18n="install"></button>
-      <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
-      <div id="status"></div>
-    </div>
-
-    <div id="sources">
-      <b data-i18n="src"></b>
+    <details>
+      <summary data-i18n="det"></summary>
+      <ol>
+        <li data-i18n="df1"></li>
+        <li data-i18n="df2"></li>
+        <li data-i18n="df3"></li>
+      </ol>
+    </details>
+    <details>
+      <summary data-i18n="howto"></summary>
+      <ol>
+        <li data-i18n="howto1"></li>
+        <li data-i18n="howto2"></li>
+        <li data-i18n="howto3"></li>
+      </ol>
+    </details>
+    <details>
+      <summary data-i18n="src"></summary>
       <ul>
         <li data-i18n="s1"></li>
         <li data-i18n="s2"></li>
@@ -145,16 +167,6 @@
         <li data-i18n="s4"></li>
         <li data-i18n="s5"></li>
       </ul>
-    </div>
-
-    <details id="howto">
-      <summary data-i18n="howto"></summary>
-      <ol>
-        <li data-i18n="howto1"></li>
-        <li data-i18n="howto2"></li>
-        <li data-i18n="howto3"></li>
-        <li data-i18n="howto4"></li>
-      </ol>
     </details>
   </div>
   <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
@@ -164,9 +176,9 @@
 const $ = id => document.getElementById(id);
 const canvas = $("card"), ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-// ---------- ссылки и донаты ----------
+// ---------- ссылки ----------
 const REPO_URL = "https://github.com/aktogde1/xteink-meteo-sleep";
-const DONATE_URL = "https://web.tribute.tg/d/Q5J"; // впиши сюда ссылку (Boosty / CloudTips / Ko-fi) — кнопка «Поддержать» появится сама
+const DONATE_URL = "https://web.tribute.tg/d/Q5J";
 
 // ---------- состояние ----------
 let weather = null;
@@ -190,35 +202,38 @@ ru: {
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
   device: "Устройство", custom: "Свой…",
   days: "Дней прогноза (не считая сегодня)",
-  reader: "Ридер (inkMOD)",
-  readerHint: 'Адрес — тот, что ридер показывает в режиме передачи файлов. Если вдруг не отвечает: удержание кнопки → ридер в File Transfer, ноут в ту же сеть; либо точка доступа <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>.',
-  httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети (защита mixed content). Генератор и скачивание BMP работают полностью. Чтобы ставить карточку одной кнопкой — <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой его на компьютере.',
   invert: "Тёмная карточка (чёрный фон)",
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
-  download: "Скачать sleep.bmp (картридер)",
+  download: "Скачать sleep.bmp",
+  reader: "Ридер (inkMOD)",
+  readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
+  httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
+  det: "Установка на ридер: подробности",
+  df1: 'Нажми «Обновить и установить на ридер»: ридер — в режиме передачи файлов (в inkMOD — удержание кнопки питания, сервер встаёт за ~20 сек), ноут — в ту же Wi-Fi сеть.',
+  df2: 'Адрес ридера — тот, что он показывает на экране; в режиме точки доступа InkMOD-Reader — http://192.168.4.1. Картинка ложится в папку Sleep на microSD, режим «Своя картинка» включается сам — заблокируй ридер и любуйся.',
+  df3: 'Нет кнопки под рукой (открыл сайт онлайн) — скачай sleep.bmp и закинь в папку Sleep на microSD вручную, режим выбери на ридере.',
+  howto: "Как поставить вручную (картридер)",
+  howto1: 'Скачай <code>sleep.bmp</code> кнопкой выше.',
+  howto2: 'Закинь файл в папку <b>Sleep</b> на microSD — перезапиши тот, что там лежит.',
+  howto3: 'Режим экрана сна — <b>«Своя картинка»</b>. Заблокировал ридер — карточка на экране.',
   src: "Источники данных и обозначения",
   s1: "Погода, восход и закат — Open-Meteo.com, открытый API без регистрации",
   s2: "Город — геокодер Open-Meteo",
   s3: "Фаза Луны — астрорасчёт по дате (цикл 29,5 сут)",
   s4: "В прогнозе: <b>д</b> — днём, <b>н</b> — ночью, °C",
   s5: "Карточка обновляется, когда ты генерируешь и закидываешь новый sleep.bmp",
-  howto: "Как поставить на устройство",
-  howto1: 'Скачай <code>sleep.bmp</code> кнопкой выше.',
-  howto2: 'Закинь файл в папку <b>Sleep</b> на microSD — перезапиши тот, что там лежит (у inkMOD заставка берётся оттуда).',
-  howto3: 'Режим экрана сна — <b>«Своя картинка»</b> (если ставил через кнопку сайта, он уже выставлен сам).',
-  howto4: 'Заблокировал — карточка на экране. Нужна свежая — сгенерируй и закинь заново.',
   stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
   stLoading: "Грузим погоду для {city}…", stReady: "Готово: {w}×{h}. Можно скачивать BMP.",
-  stWeatherFail: "Не удалось получить погоду. Проверь интернет и нажми «Обновить».",
-  stSendErr: "Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети (или в точке доступа InkMOD-Reader), адрес верный.",
+  stWeatherFail: "Не удалось получить погоду. Проверь интернет и нажми «Обновить погоду».",
+  stSendErr: "Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети, адрес верный.",
   stApplying: "Картинка загружена. Применяю режим «Своя картинка»…",
   stDone: "Готово: sleep.bmp на ридере, режим «Своя картинка» выставлен. Заблокируй ридер — увидишь карточку.",
   stApplyFail: "Картинка загружена, но режим применить не удалось — выбери «Своя картинка» на ридере вручную.",
   stHttps: "Страница по HTTPS — браузер не пустит запросы к ридеру в домашней сети. Скачай файл (жёлтая плашка выше) и открой его на компе.",
   stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
-  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "♥ Поддержать",
+  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать ♥",
   wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
   moon: ["Новолуние","Растущий серп","Первая четверть","Растущая луна","Полнолуние","Убывающая луна","Последняя четверть","Убывающий серп"]
 },
@@ -228,27 +243,30 @@ en: {
   city: "City", cityPh: "e.g. Berlin", find: "Search",
   device: "Device", custom: "Custom…",
   days: "Forecast days (excluding today)",
-  reader: "Reader (inkMOD)",
-  readerHint: 'Use the address the reader shows in File Transfer mode. If it doesn\u2019t respond: hold the power button → reader in File Transfer, laptop on the same network; or the <b>InkMOD-Reader</b> hotspot → <code>http://192.168.4.1</code>.',
-  httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network (mixed content). The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
   invert: "Dark card (black background)",
   refresh: "Refresh weather",
   install: "Update & install to reader",
-  download: "Download sleep.bmp (card reader)",
+  download: "Download sleep.bmp",
+  reader: "Reader (inkMOD)",
+  readerHint: "Use the address the reader shows in File Transfer mode.",
+  httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
+  det: "Installing to the reader: details",
+  df1: 'Press “Update & install to reader”: the reader must be in File Transfer mode (on inkMOD — hold the power button, the server is up in ~20 s), laptop on the same Wi-Fi.',
+  df2: 'The reader address is what it shows on its screen; on the InkMOD-Reader hotspot it\u2019s http://192.168.4.1. The image lands in the Sleep folder on the microSD and the “Custom image” mode is set automatically — lock the reader and enjoy.',
+  df3: 'No button available (you\u2019re on the online version)? Download sleep.bmp and put it into the Sleep folder on the microSD manually, then pick the mode on the reader.',
+  howto: "Manual install (card reader)",
+  howto1: 'Download <code>sleep.bmp</code> with the button above.',
+  howto2: 'Put the file into the <b>Sleep</b> folder on the microSD — overwrite the one already there.',
+  howto3: 'Sleep screen mode — <b>“Custom image”</b>. Lock the reader — the card is on screen.',
   src: "Data sources & legend",
   s1: "Weather, sunrise & sunset — Open-Meteo.com, open API, no sign-up",
   s2: "City — Open-Meteo geocoder",
   s3: "Moon phase — astronomical calculation from the date (29.5-day cycle)",
   s4: "Forecast: <b>d</b> — daytime, <b>n</b> — night, °C",
   s5: "The card updates when you generate and upload a new sleep.bmp",
-  howto: "How to put it on the device",
-  howto1: 'Download <code>sleep.bmp</code> with the button above.',
-  howto2: 'Put the file into the <b>Sleep</b> folder on the microSD — overwrite the one already there (that\u2019s where inkMOD takes the lock screen from).',
-  howto3: 'Sleep screen mode — <b>“Custom image”</b> (set automatically if you used the site button).',
-  howto4: 'Lock the reader — the card is on screen. Want a fresh one — generate and copy again.',
   stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
   stLoading: "Loading weather for {city}…", stReady: "Done: {w}×{h}. You can download the BMP.",
-  stWeatherFail: "Couldn’t load the weather. Check the internet and press “Refresh weather”.",
+  stWeatherFail: "Couldn\u2019t load the weather. Check the internet and press \u201cRefresh weather\u201d.",
   stSendErr: "Reader is not responding. Check: it\u2019s in File Transfer mode, laptop on the same network, address correct.",
   stApplying: "Image uploaded. Applying the custom sleep screen…",
   stDone: "Done: sleep.bmp is on the reader, sleep screen set to Custom. Lock the reader to see the card.",
@@ -256,7 +274,7 @@ en: {
   stHttps: "Page is on HTTPS — the browser won\u2019t let it reach the reader on your network. Download the file (yellow note above) and open it locally.",
   stNoWeather: "Load the weather first — press “Refresh weather”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
-  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "♥ Donate",
+  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate ♥",
   wmo: {0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",56:"Drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Rain shower",85:"Snowfall",95:"Thunderstorm",96:"Thunderstorm with hail"},
   moon: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
 },
@@ -266,24 +284,27 @@ zh: {
   city: "城市", cityPh: "例如：上海", find: "搜索",
   device: "设备", custom: "自定义…",
   days: "预报天数（不含今天）",
-  reader: "阅读器 (inkMOD)",
-  readerHint: '地址填阅读器在文件传输模式下显示的那个。若无响应：长按电源键 → 阅读器进入文件传输模式，电脑连同一网络；或连接热点 <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>。',
-  httpsNote: '本页面通过 HTTPS 提供 — 浏览器会阻止其访问家庭网络中的阅读器（混合内容限制）。生成和下载 BMP 完全可用。要一键安装，请<a href="index.html" download="xteink-meteo-sleep.html">下载此文件</a>并在电脑上打开。',
   invert: "深色卡片（黑色背景）",
   refresh: "更新天气",
   install: "更新并安装到阅读器",
-  download: "下载 sleep.bmp（读卡器）",
+  download: "下载 sleep.bmp",
+  reader: "阅读器 (inkMOD)",
+  readerHint: "地址填阅读器在文件传输模式下显示的那个。",
+  httpsNote: '本页面通过 HTTPS 提供 — 浏览器会阻止其访问家庭网络中的阅读器。生成和下载 BMP 完全可用。要一键安装，请<a href="index.html" download="xteink-meteo-sleep.html">下载此文件</a>并在电脑上打开。',
+  det: "安装到阅读器：详细步骤",
+  df1: '点击“更新并安装到阅读器”：阅读器需处于文件传输模式（inkMOD 长按电源键，约 20 秒服务启动），电脑连同一 Wi-Fi。',
+  df2: '地址填阅读器屏幕上显示的那个；热点 InkMOD-Reader 模式下为 http://192.168.4.1。图片会放入 microSD 的 Sleep 文件夹，并自动设为“自定义图片”锁屏 — 锁定阅读器即可查看。',
+  df3: '没有安装按钮（在线版）？下载 sleep.bmp，手动放进 microSD 的 Sleep 文件夹，再在阅读器上选择模式。',
+  howto: "手动安装（读卡器）",
+  howto1: '用上方按钮下载 <code>sleep.bmp</code>。',
+  howto2: '把文件放进 microSD 的 <b>Sleep</b> 文件夹，覆盖原有文件。',
+  howto3: '睡眠屏幕模式 — “自定义图片”。锁定阅读器即可看到卡片。',
   src: "数据来源与说明",
   s1: "天气、日出和日落 — Open-Meteo.com 开放 API，无需注册",
   s2: "城市 — Open-Meteo 地理编码",
   s3: "月相 — 根据日期的天文计算（29.5 天周期）",
   s4: "预报中：<b>昼</b> — 白天，<b>夜</b> — 夜间，摄氏度",
   s5: "卡片在你生成并上传新的 sleep.bmp 时更新",
-  howto: "如何安装到设备",
-  howto1: '用上方按钮下载 <code>sleep.bmp</code>。',
-  howto2: '把文件放进 microSD 的 <b>Sleep</b> 文件夹，覆盖原有文件（inkMOD 从这里读取锁屏）。',
-  howto3: '睡眠屏幕模式 — “自定义图片”（用网站按钮安装时会自动设置）。',
-  howto4: '锁定阅读器即可看到卡片。要更新，重新生成并复制。',
   stSearching: "搜索城市…", stFound: "找到 {n} 个 — 请选择", stNotFound: "未找到城市", stSearchErr: "搜索时网络错误",
   stLoading: "正在加载 {city} 的天气…", stReady: "完成：{w}×{h}。可以下载 BMP。",
   stWeatherFail: "无法获取天气。请检查网络后点击“更新天气”。",
@@ -294,7 +315,7 @@ zh: {
   stHttps: "页面为 HTTPS — 浏览器不允许访问你网络中的阅读器。请下载文件（上方黄色提示）并在本地打开。",
   stNoWeather: "请先加载天气 — 点击“更新天气”。",
   noData: "暂无天气数据", dayLbl: "白天", nightLbl: "夜间", sunrise: "日出", sunset: "日落",
-  illum: "照亮 {v}%", updated: "更新于", dS: "昼", nS: "夜", donate: "♥ 支持",
+  illum: "照亮 {v}%", updated: "更新于", dS: "昼", nS: "夜", donate: "支持 ♥",
   wmo: {0:"晴",1:"大致晴朗",2:"局部多云",3:"阴",45:"雾",56:"毛毛雨",61:"小雨",63:"中雨",65:"大雨",66:"冻雨",71:"小雪",73:"雪",75:"大雪",77:"雪粒",80:"阵雨",85:"降雪",95:"雷暴",96:"雷暴伴冰雹"},
   moon: ["新月","蛾眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"]
 },
@@ -304,24 +325,27 @@ es: {
   city: "Ciudad", cityPh: "p. ej. Madrid", find: "Buscar",
   device: "Dispositivo", custom: "Personalizado…",
   days: "Días de pronóstico (sin hoy)",
-  reader: "Lector (inkMOD)",
-  readerHint: 'Usa la dirección que muestra el lector en modo de transferencia de archivos. Si no responde: mantén pulsado el botón de encendido → lector en File Transfer, portátil en la misma red; o el hotspot <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>.',
-  httpsNote: 'Esta página se sirve por HTTPS — el navegador bloquea las peticiones al lector de tu red doméstica (mixed content). El generador y la descarga del BMP funcionan completamente. Para la instalación de un clic, <a href="index.html" download="xteink-meteo-sleep.html">descarga este archivo</a> y ábrelo en tu ordenador.',
   invert: "Tarjeta oscura (fondo negro)",
   refresh: "Actualizar el tiempo",
   install: "Actualizar e instalar en el lector",
-  download: "Descargar sleep.bmp (lector de tarjetas)",
+  download: "Descargar sleep.bmp",
+  reader: "Lector (inkMOD)",
+  readerHint: "Usa la dirección que muestra el lector en modo de transferencia de archivos.",
+  httpsNote: 'Esta página se sirve por HTTPS — el navegador bloquea las peticiones al lector de tu red doméstica. El generador y la descarga del BMP funcionan completamente. Para la instalación de un clic, <a href="index.html" download="xteink-meteo-sleep.html">descarga este archivo</a> y ábrelo en tu ordenador.',
+  det: "Instalación en el lector: detalles",
+  df1: 'Pulsa «Actualizar e instalar en el lector»: el lector debe estar en modo de transferencia de archivos (en inkMOD — mantén pulsado el botón de encendido, el servidor arranca en ~20 s), portátil en la misma red Wi-Fi.',
+  df2: 'La dirección del lector es la que muestra en su pantalla; en el hotspot InkMOD-Reader es http://192.168.4.1. La imagen se guarda en la carpeta Sleep de la microSD y el modo «Imagen personalizada» se activa solo — bloquea el lector y listo.',
+  df3: '¿Sin botón (versión online)? Descarga sleep.bmp y mete en la carpeta Sleep de la microSD a mano, luego elige el modo en el lector.',
+  howto: "Instalación manual (lector de tarjetas)",
+  howto1: 'Descarga <code>sleep.bmp</code> con el botón de arriba.',
+  howto2: 'Mete el archivo en la carpeta <b>Sleep</b> de la microSD — sobrescribe el que ya está.',
+  howto3: 'Modo de pantalla de sueño — <b>«Imagen personalizada»</b>. Bloquea el lector — la tarjeta queda en pantalla.',
   src: "Fuentes de datos y leyenda",
   s1: "Tiempo, amanecer y atardecer — Open-Meteo.com, API abierta sin registro",
   s2: "Ciudad — geocodificador de Open-Meteo",
   s3: "Fase lunar — cálculo astronómico según la fecha (ciclo de 29,5 días)",
   s4: "En el pronóstico: <b>d</b> — día, <b>n</b> — noche, °C",
   s5: "La tarjeta se actualiza cuando generas y subes un nuevo sleep.bmp",
-  howto: "Cómo ponerlo en el dispositivo",
-  howto1: 'Descarga <code>sleep.bmp</code> con el botón de arriba.',
-  howto2: 'Mete el archivo en la carpeta <b>Sleep</b> de la microSD — sobrescribe el que ya está (inkMOD toma la pantalla de bloqueo de ahí).',
-  howto3: 'Modo de pantalla de sueño — <b>«Imagen personalizada»</b> (se configura solo si usaste el botón del sitio).',
-  howto4: 'Bloquea el lector — la tarjeta queda en pantalla. ¿Quieres una nueva? Genera y copia de nuevo.',
   stSearching: "Buscando…", stFound: "{n} encontrados — elige uno", stNotFound: "Ciudad no encontrada", stSearchErr: "Error de red al buscar",
   stLoading: "Cargando el tiempo de {city}…", stReady: "Listo: {w}×{h}. Ya puedes descargar el BMP.",
   stWeatherFail: "No se pudo cargar el tiempo. Comprueba la conexión y pulsa «Actualizar el tiempo».",
@@ -332,7 +356,7 @@ es: {
   stHttps: "Página por HTTPS — el navegador no dejará llegar al lector de tu red. Descarga el archivo (aviso amarillo) y ábrelo localmente.",
   stNoWeather: "Primero carga el tiempo — pulsa «Actualizar el tiempo».",
   noData: "Sin datos del tiempo", dayLbl: "de día", nightLbl: "de noche", sunrise: "amanecer", sunset: "atardecer",
-  illum: "{v}% iluminada", updated: "actualizado", dS: "d", nS: "n", donate: "♥ Donar",
+  illum: "{v}% iluminada", updated: "actualizado", dS: "d", nS: "n", donate: "Donar ♥",
   wmo: {0:"Despejado",1:"Poco nublado",2:"Parcialmente nublado",3:"Cubierto",45:"Niebla",56:"Llovizna",61:"Lluvia débil",63:"Lluvia",65:"Lluvia fuerte",66:"Lluvia helada",71:"Nieve débil",73:"Nieve",75:"Nieve fuerte",77:"Granos de nieve",80:"Chubascos",85:"Nevada",95:"Tormenta",96:"Tormenta con granizo"},
   moon: ["Luna nueva","Creciente iluminante","Cuarto creciente","Gibosa creciente","Luna llena","Gibosa menguante","Cuarto menguante","Luna menguante"]
 },
@@ -342,35 +366,38 @@ de: {
   city: "Stadt", cityPh: "z. B. Berlin", find: "Suchen",
   device: "Gerät", custom: "Eigene…",
   days: "Vorhersagetage (ohne heute)",
-  reader: "Reader (inkMOD)",
-  readerHint: 'Nimm die Adresse, die der Reader im File-Transfer-Modus zeigt. Reagiert er nicht: Ein-/Aus-Taste halten → Reader in File Transfer, Laptop im selben Netz; oder Hotspot <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>.',
-  httpsNote: 'Diese Seite wird über HTTPS ausgeliefert — der Browser blockiert Anfragen an den Reader in deinem Heimnetz (mixed content). Generator und BMP-Download funktionieren vollständig. Für die Ein-Klick-Installation <a href="index.html" download="xteink-meteo-sleep.html">diese Datei herunterladen</a> und am Computer öffnen.',
   invert: "Dunkle Karte (schwarzer Hintergrund)",
   refresh: "Wetter aktualisieren",
   install: "Aktualisieren & auf den Reader installieren",
-  download: "sleep.bmp herunterladen (Kartenleser)",
+  download: "sleep.bmp herunterladen",
+  reader: "Reader (inkMOD)",
+  readerHint: "Nimm die Adresse, die der Reader im File-Transfer-Modus zeigt.",
+  httpsNote: 'Diese Seite wird über HTTPS ausgeliefert — der Browser blockiert Anfragen an den Reader in deinem Heimnetz. Generator und BMP-Download funktionieren vollständig. Für die Ein-Klick-Installation <a href="index.html" download="xteink-meteo-sleep.html">diese Datei herunterladen</a> und am Computer öffnen.',
+  det: "Installation auf den Reader: Details",
+  df1: '„Aktualisieren & auf den Reader installieren“ drücken: der Reader muss im File-Transfer-Modus sein (bei inkMOD — Ein-/Aus-Taste halten, der Server ist nach ~20 s offen), Laptop im selben WLAN.',
+  df2: 'Die Reader-Adresse steht auf seinem Display; im Hotspot InkMOD-Reader ist es http://192.168.4.1. Das Bild landet im Ordner Sleep auf der microSD und der Modus „Eigenes Bild“ wird automatisch gesetzt — Reader sperren und freuen.',
+  df3: 'Kein Button verfügbar (Online-Version)? sleep.bmp herunterladen und manuell in den Sleep-Ordner auf der microSD legen, dann den Modus am Reader wählen.',
+  howto: "Manuelle Installation (Kartenleser)",
+  howto1: 'Lade <code>sleep.bmp</code> mit der Schaltfläche oben herunter.',
+  howto2: 'Lege die Datei in den Ordner <b>Sleep</b> auf der microSD — überschreibe die vorhandene.',
+  howto3: 'Sleep-Screen-Modus — <b>„Eigenes Bild“</b>. Reader sperren — die Karte ist auf dem Display.',
   src: "Datenquellen & Legende",
   s1: "Wetter, Sonnenauf- & -untergang — Open-Meteo.com, offene API ohne Anmeldung",
   s2: "Stadt — Open-Meteo-Geocoder",
   s3: "Mondphase — astronomische Berechnung aus dem Datum (29,5-Tage-Zyklus)",
   s4: "In der Vorhersage: <b>T</b> — tags, <b>N</b> — nachts, °C",
   s5: "Die Karte aktualisiert sich, wenn du ein neues sleep.bmp erzeugst und überträgst",
-  howto: "So kommt es auf das Gerät",
-  howto1: 'Lade <code>sleep.bmp</code> mit der Schaltfläche oben herunter.',
-  howto2: 'Lege die Datei in den Ordner <b>Sleep</b> auf der microSD — überschreibe die vorhandene (inkMOD liest den Sperrbildschirm von dort).',
-  howto3: 'Sleep-Screen-Modus — <b>„Eigenes Bild“</b> (wird automatisch gesetzt, wenn du die Website-Schaltfläche nutzt).',
-  howto4: 'Reader sperren — die Karte ist auf dem Display. Frische Karte: neu generieren und wieder kopieren.',
   stSearching: "Suche…", stFound: "{n} gefunden — bitte wählen", stNotFound: "Stadt nicht gefunden", stSearchErr: "Netzwerkfehler bei der Suche",
   stLoading: "Lade Wetter für {city}…", stReady: "Fertig: {w}×{h}. BMP kann heruntergeladen werden.",
   stWeatherFail: "Wetter konnte nicht geladen werden. Internet prüfen und „Wetter aktualisieren“ drücken.",
   stSendErr: "Reader antwortet nicht. Prüfe: File-Transfer-Modus, Laptop im selben Netz, Adresse korrekt.",
   stApplying: "Bild übertragen. Eigenes Sleep-Screen-Bild wird gesetzt…",
   stDone: "Fertig: sleep.bmp ist auf dem Reader, Modus „Eigenes Bild“ gesetzt. Reader sperren und Karte ansehen.",
-  stApplyFail: "Bild übertragen, aber der Modus konnte nicht gesetzt werden — auf dem Reader „Eigenes Bild“ wählen.",
+  stApplyFail: "Bild übertragen, aber der Modus konnte nicht gesetzt werden — am Reader „Eigenes Bild“ wählen.",
   stHttps: "Seite ist HTTPS — der Browser lässt Anfragen zum Reader in deinem Netz nicht zu. Datei herunterladen (gelber Hinweis) und lokal öffnen.",
   stNoWeather: "Erst das Wetter laden — „Wetter aktualisieren“ drücken.",
   noData: "Keine Wetterdaten", dayLbl: "tags", nightLbl: "nachts", sunrise: "Sonnenaufgang", sunset: "Sonnenuntergang",
-  illum: "{v}% beleuchtet", updated: "aktualisiert", dS: "T", nS: "N", donate: "♥ Spenden",
+  illum: "{v}% beleuchtet", updated: "aktualisiert", dS: "T", nS: "N", donate: "Spenden ♥",
   wmo: {0:"Klar",1:"Überwiegend klar",2:"Teilweise bewölkt",3:"Bedeckt",45:"Nebel",56:"Nieselregen",61:"Leichter Regen",63:"Regen",65:"Starker Regen",66:"Eisregen",71:"Leichter Schneefall",73:"Schneefall",75:"Starker Schneefall",77:"Schneegriesel",80:"Regenschauer",85:"Schneeverbau",95:"Gewitter",96:"Gewitter mit Hagel"},
   moon: ["Neumond","Zunehmende Sichel","Erstes Viertel","Zunehmender Mond","Vollmond","Abnehmender Mond","Letztes Viertel","Abnehmende Sichel"]
 },
@@ -380,24 +407,27 @@ vi: {
   city: "Thành phố", cityPh: "vd. Hà Nội", find: "Tìm",
   device: "Thiết bị", custom: "Tùy chọn…",
   days: "Số ngày dự báo (không tính hôm nay)",
-  reader: "Máy đọc sách (inkMOD)",
-  readerHint: 'Dùng địa chỉ máy đọc sách hiển thị ở chế độ truyền tệp. Nếu không phản hồi: giữ nút nguồn → máy ở File Transfer, máy tính cùng mạng; hoặc điểm truy cập <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>.',
-  httpsNote: 'Trang này dùng HTTPS — trình duyệt chặn yêu cầu tới máy đọc sách trong mạng nhà bạn (mixed content). Tạo ảnh và tải BMP vẫn hoạt động đầy đủ. Để cài đặt một chạm, <a href="index.html" download="xteink-meteo-sleep.html">tải tệp này</a> và mở trên máy tính.',
   invert: "Thẻ tối (nền đen)",
   refresh: "Cập nhật thời tiết",
   install: "Cập nhật & cài đặt vào máy đọc sách",
-  download: "Tải sleep.bmp (đầu đọc thẻ)",
+  download: "Tải sleep.bmp",
+  reader: "Máy đọc sách (inkMOD)",
+  readerHint: "Dùng địa chỉ máy đọc sách hiển thị ở chế độ truyền tệp.",
+  httpsNote: 'Trang này dùng HTTPS — trình duyệt chặn yêu cầu tới máy đọc sách trong mạng nhà bạn. Tạo ảnh và tải BMP vẫn hoạt động đầy đủ. Để cài đặt một chạm, <a href="index.html" download="xteink-meteo-sleep.html">tải tệp này</a> và mở trên máy tính.',
+  det: "Cài vào máy đọc sách: chi tiết",
+  df1: 'Bấm “Cập nhật & cài đặt vào máy đọc sách”: máy phải ở chế độ truyền tệp (trên inkMOD — giữ nút nguồn, máy chủ lên sau ~20 giây), máy tính cùng Wi-Fi.',
+  df2: 'Địa chỉ máy là số hiển thị trên màn hình của nó; ở điểm truy cập InkMOD-Reader là http://192.168.4.1. Ảnh vào thư mục Sleep trên microSD và chế độ “Ảnh tùy chọn” tự đặt — khoá máy và tận hưởng.',
+  df3: 'Không có nút (bản online)? Tải sleep.bmp và chép thủ công vào thư mục Sleep trên microSD, rồi chọn chế độ trên máy.',
+  howto: "Cài thủ công (đầu đọc thẻ)",
+  howto1: 'Tải <code>sleep.bmp</code> bằng nút ở trên.',
+  howto2: 'Chép tệp vào thư mục <b>Sleep</b> trên microSD — ghi đè tệp đã có.',
+  howto3: 'Chế độ màn hình ngủ — <b>“Ảnh tùy chọn”</b>. Khoá máy — thẻ hiện trên màn hình.',
   src: "Nguồn dữ liệu & chú giải",
   s1: "Thời tiết, mặt trời mọc/lặn — Open-Meteo.com, API mở không cần đăng ký",
   s2: "Thành phố — bộ địa lý Open-Meteo",
   s3: "Giai đoạn trăng — tính thiên văn theo ngày (chu kỳ 29,5 ngày)",
   s4: "Trong dự báo: <b>n</b> — ban ngày, <b>đ</b> — ban đêm, °C",
   s5: "Thẻ cập nhật khi bạn tạo và tải lên sleep.bmp mới",
-  howto: "Cách đặt vào thiết bị",
-  howto1: 'Tải <code>sleep.bmp</code> bằng nút ở trên.',
-  howto2: 'Chép tệp vào thư mục <b>Sleep</b> trên microSD — ghi đè tệp đã có (inkMOD lấy màn hình khóa từ đó).',
-  howto3: 'Chế độ màn hình ngủ — <b>“Ảnh tùy chọn”</b> (tự đặt nếu bạn dùng nút trên trang).',
-  howto4: 'Khoá máy đọc sách — thẻ hiện trên màn hình. Muốn thẻ mới — tạo và chép lại.',
   stSearching: "Đang tìm…", stFound: "Tìm thấy {n} — hãy chọn", stNotFound: "Không tìm thấy thành phố", stSearchErr: "Lỗi mạng khi tìm kiếm",
   stLoading: "Đang tải thời tiết cho {city}…", stReady: "Xong: {w}×{h}. Có thể tải BMP.",
   stWeatherFail: "Không tải được thời tiết. Kiểm tra mạng và bấm “Cập nhật thời tiết”.",
@@ -408,7 +438,7 @@ vi: {
   stHttps: "Trang dùng HTTPS — trình duyệt không cho truy cập máy trong mạng của bạn. Tải tệp (ghi vàng ở trên) và mở cục bộ.",
   stNoWeather: "Hãy tải thời tiết trước — bấm “Cập nhật thời tiết”.",
   noData: "Chưa có dữ liệu thời tiết", dayLbl: "ngày", nightLbl: "đêm", sunrise: "mặt trời mọc", sunset: "mặt trời lặn",
-  illum: "chiếu sáng {v}%", updated: "cập nhật", dS: "n", nS: "đ", donate: "♥ Ủng hộ",
+  illum: "chiếu sáng {v}%", updated: "cập nhật", dS: "n", nS: "đ", donate: "Ủng hộ ♥",
   wmo: {0:"Trời quang",1:"Ít mây",2:"Có mây một phần",3:"Nhiều mây",45:"Sương mù",56:"Mưa phùn",61:"Mưa nhỏ",63:"Mưa",65:"Mưa to",66:"Mưa băng giá",71:"Tuyết nhỏ",73:"Tuyết",75:"Tuyết dày",77:"Hạt tuyết",80:"Mưa rào",85:"Có tuyết rơi",95:"Dông",96:"Dông kèm mưa đá"},
   moon: ["Trăng non","Lưỡi liềm đầu tháng","Thượng huyền","Trăng khuyết đầu tháng","Trăng tròn","Trăng khuyết cuối tháng","Hạ huyền","Lưỡi liềm cuối tháng"]
 }
@@ -763,24 +793,24 @@ function applyDevice(){
 function applyDaysActive(){
   for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
 }
+function applyLangActive(){
+  for (const b of document.querySelectorAll(".badge.lang")) b.classList.toggle("active", b.dataset.lang === LANG);
+}
 function applyI18n(){
   document.documentElement.lang = LOCALE[LANG].split("-")[0];
   document.title = t("title");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
   const ph = document.querySelector("[data-i18n-ph]");
   if (ph) ph.placeholder = t("cityPh");
-  for (const b of $("langSeg").children) b.classList.toggle("active", b.dataset.lang === LANG);
   $("donateLink").style.display = DONATE_URL ? "" : "none";
-  if (DONATE_URL) $("donateLink").href = DONATE_URL;
+  applyLangActive();
 }
-$("langSeg").onclick = e => {
-  const b = e.target.closest("button[data-lang]");
-  if (!b) return;
+document.querySelectorAll(".badge.lang").forEach(b => b.onclick = () => {
   LANG = b.dataset.lang;
   storeStr("lang", LANG);
   applyI18n();
   if (weather) drawCard();
-};
+});
 $("deviceSeg").onclick = e => {
   const b = e.target.closest("button[data-dev]");
   if (!b) return;
@@ -826,7 +856,7 @@ async function installOnReader(){
   }
   if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
   const addr = readerAddress();
-  setStatus(t("stLoading").replace("{city}", addr));
+  setStatus(tf("stLoading", { city: addr }));
   drawCard();
   const blob = encodeBMP();
   try {
@@ -855,10 +885,10 @@ $("readerAddr").addEventListener("keydown", e => { if (e.key === "Enter") instal
 
 // ---------- старт ----------
 (function init(){
+  const urlLang = new URLSearchParams(location.search).get("lang");
   const savedLang = storeRaw("lang");
-  const navLang = (navigator.language || "en").toLowerCase();
-  LANG = savedLang || (I18N[navLang.split("-")[0]] ? navLang.split("-")[0] : (navLang.startsWith("zh") ? "zh" : "en"));
-  if (!I18N[LANG]) LANG = "en";
+  const navLang = (navigator.language || "en").toLowerCase().split("-")[0];
+  LANG = (urlLang && I18N[urlLang]) ? urlLang : (savedLang && I18N[savedLang] ? savedLang : (I18N[navLang] ? navLang : "en"));
   const savedCity = storeGet("city");
   if (savedCity){ place = savedCity; $("city").value = savedCity.name; }
   else if (LANG === "ru"){ place = { name: "Санкт-Петербург", lat: 59.9391, lon: 30.3159 }; $("city").value = "Санкт-Петербург"; }
