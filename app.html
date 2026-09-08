@@ -100,6 +100,8 @@
     <h1>Xteink Meteo Sleep</h1>
     <div class="hdrLinks">
       <a class="home" href="index.html" data-i18n="home">←</a>
+      <a class="home" href="index.html#idea" data-i18n="navIdea2"></a>
+      <a class="home" href="index.html#roadmap" data-i18n="navRoad2"></a>
       <button class="badge lang" data-lang="ru" title="Русский">Русский</button>
       <button class="badge lang" data-lang="en" title="English">English</button>
       <button id="cryptoLink" class="badge" style="display:none">₮ <span data-i18n="crypto"></span></button>
@@ -116,6 +118,10 @@
 </header>
 <main>
   <div id="controls">
+    <div class="group">
+      <div class="hint warn" style="margin:0 0 4px" data-i18n="bnFw"></div>
+      <div class="hint" data-i18n="rmTested"></div>
+    </div>
     <div class="group">
       <label data-i18n="city"></label>
       <div class="inline">
@@ -298,7 +304,8 @@ ru: {
   stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать ♥",
-  home: "На главную", widgets: "Виджеты карточки", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
+  home: "На главную", widgets: "Виджеты карточки",
+  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
   crypto: "Крипта", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
   wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
   moon: ["Новолуние","Растущий серп","Первая четверть","Растущая луна","Полнолуние","Убывающая луна","Последняя четверть","Убывающий серп"]
@@ -349,7 +356,8 @@ en: {
   stNoWeather: "Load the weather first — press “Refresh weather”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate ♥",
-  home: "Home", widgets: "Card widgets", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
+  home: "Home", widgets: "Card widgets",
+  bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
   crypto: "Crypto", cmTitle: "Donate in crypto", copied: "Copied ✓",
   wmo: {0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",56:"Drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Rain shower",85:"Snowfall",95:"Thunderstorm",96:"Thunderstorm with hail"},
   moon: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
@@ -400,7 +408,8 @@ zh: {
   stNoWeather: "请先加载天气 — 点击“更新天气”。",
   noData: "暂无天气数据", dayLbl: "白天", nightLbl: "夜间", sunrise: "日出", sunset: "日落",
   illum: "照亮 {v}%", updated: "更新于", dS: "昼", nS: "夜", donate: "支持 ♥",
-  home: "返回首页", widgets: "卡片组件", wDate: "日期", wCur: "当前天气", wDn: "白天/夜间", wSm: "日出日落", wMoon: "月相", wFc: "预报", wCity: "城市和时间",
+  home: "返回首页", widgets: "卡片组件",
+  bnFw: "适用于任何固件 — 普通BMP文件", navIdea2: "理念", navRoad2: "路线图", wDate: "日期", wCur: "当前天气", wDn: "白天/夜间", wSm: "日出日落", wMoon: "月相", wFc: "预报", wCity: "城市和时间",
   crypto: "加密货币", cmTitle: "用加密货币支持", copied: "已复制 ✓",
   wmo: {0:"晴",1:"大致晴朗",2:"局部多云",3:"阴",45:"雾",56:"毛毛雨",61:"小雨",63:"中雨",65:"大雨",66:"冻雨",71:"小雪",73:"雪",75:"大雪",77:"雪粒",80:"阵雨",85:"降雪",95:"雷暴",96:"雷暴伴冰雹"},
   moon: ["新月","蛾眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"]
@@ -451,7 +460,8 @@ es: {
   stNoWeather: "Primero carga el tiempo — pulsa «Actualizar el tiempo».",
   noData: "Sin datos del tiempo", dayLbl: "de día", nightLbl: "de noche", sunrise: "amanecer", sunset: "atardecer",
   illum: "{v}% iluminada", updated: "actualizado", dS: "d", nS: "n", donate: "Donar ♥",
-  home: "Inicio", widgets: "Widgets de la tarjeta", wDate: "Fecha", wCur: "Tiempo ahora", wDn: "Día/noche", wSm: "Amanecer/atardecer", wMoon: "Fase lunar", wFc: "Pronóstico", wCity: "Ciudad y hora",
+  home: "Inicio", widgets: "Widgets de la tarjeta",
+  bnFw: "Vale para cualquier firmware — es un archivo BMP normal", navIdea2: "Idea", navRoad2: "Hoja de ruta", wDate: "Fecha", wCur: "Tiempo ahora", wDn: "Día/noche", wSm: "Amanecer/atardecer", wMoon: "Fase lunar", wFc: "Pronóstico", wCity: "Ciudad y hora",
   crypto: "Cripto", cmTitle: "Apoya con cripto", copied: "¡Copiado ✓",
   wmo: {0:"Despejado",1:"Poco nublado",2:"Parcialmente nublado",3:"Cubierto",45:"Niebla",56:"Llovizna",61:"Lluvia débil",63:"Lluvia",65:"Lluvia fuerte",66:"Lluvia helada",71:"Nieve débil",73:"Nieve",75:"Nieve fuerte",77:"Granos de nieve",80:"Chubascos",85:"Nevada",95:"Tormenta",96:"Tormenta con granizo"},
   moon: ["Luna nueva","Creciente iluminante","Cuarto creciente","Gibosa creciente","Luna llena","Gibosa menguante","Cuarto menguante","Luna menguante"]
@@ -502,7 +512,8 @@ de: {
   stNoWeather: "Erst das Wetter laden — „Wetter aktualisieren“ drücken.",
   noData: "Keine Wetterdaten", dayLbl: "tags", nightLbl: "nachts", sunrise: "Sonnenaufgang", sunset: "Sonnenuntergang",
   illum: "{v}% beleuchtet", updated: "aktualisiert", dS: "T", nS: "N", donate: "Spenden ♥",
-  home: "Startseite", widgets: "Karten-Widgets", wDate: "Datum", wCur: "Wetter jetzt", wDn: "Tags/nachts", wSm: "Sonnenauf-/untergang", wMoon: "Mondphase", wFc: "Vorhersage", wCity: "Stadt & Zeit",
+  home: "Startseite", widgets: "Karten-Widgets",
+  bnFw: "Funktioniert mit jeder Firmware — eine normale BMP-Datei", navIdea2: "Idee", navRoad2: "Roadmap", wDate: "Datum", wCur: "Wetter jetzt", wDn: "Tags/nachts", wSm: "Sonnenauf-/untergang", wMoon: "Mondphase", wFc: "Vorhersage", wCity: "Stadt & Zeit",
   crypto: "Krypto", cmTitle: "Mit Krypto unterstützen", copied: "Kopiert ✓",
   wmo: {0:"Klar",1:"Überwiegend klar",2:"Teilweise bewölkt",3:"Bedeckt",45:"Nebel",56:"Nieselregen",61:"Leichter Regen",63:"Regen",65:"Starker Regen",66:"Eisregen",71:"Leichter Schneefall",73:"Schneefall",75:"Starker Schneefall",77:"Schneegriesel",80:"Regenschauer",85:"Schneeverbau",95:"Gewitter",96:"Gewitter mit Hagel"},
   moon: ["Neumond","Zunehmende Sichel","Erstes Viertel","Zunehmender Mond","Vollmond","Abnehmender Mond","Letztes Viertel","Abnehmende Sichel"]
@@ -553,7 +564,8 @@ vi: {
   stNoWeather: "Hãy tải thời tiết trước — bấm “Cập nhật thời tiết”.",
   noData: "Chưa có dữ liệu thời tiết", dayLbl: "ngày", nightLbl: "đêm", sunrise: "mặt trời mọc", sunset: "mặt trời lặn",
   illum: "chiếu sáng {v}%", updated: "cập nhật", dS: "n", nS: "đ", donate: "Ủng hộ ♥",
-  home: "Trang chủ", widgets: "Widget trên thẻ", wDate: "Ngày", wCur: "Thời tiết", wDn: "Ngày/đêm", wSm: "Mặt trời mọc/lặn", wMoon: "Pha trăng", wFc: "Dự báo", wCity: "Thành phố & giờ",
+  home: "Trang chủ", widgets: "Widget trên thẻ",
+  bnFw: "Phù hợp với mọi firmware — chỉ là tệp BMP", navIdea2: "Ý tưởng", navRoad2: "Lộ trình", wDate: "Ngày", wCur: "Thời tiết", wDn: "Ngày/đêm", wSm: "Mặt trời mọc/lặn", wMoon: "Pha trăng", wFc: "Dự báo", wCity: "Thành phố & giờ",
   crypto: "Crypto", cmTitle: "Ủng hộ bằng tiền mã hóa", copied: "Đã sao chép ✓",
   wmo: {0:"Trời quang",1:"Ít mây",2:"Có mây một phần",3:"Nhiều mây",45:"Sương mù",56:"Mưa phùn",61:"Mưa nhỏ",63:"Mưa",65:"Mưa to",66:"Mưa băng giá",71:"Tuyết nhỏ",73:"Tuyết",75:"Tuyết dày",77:"Hạt tuyết",80:"Mưa rào",85:"Có tuyết rơi",95:"Dông",96:"Dông kèm mưa đá"},
   moon: ["Trăng non","Lưỡi liềm đầu tháng","Thượng huyền","Trăng khuyết đầu tháng","Trăng tròn","Trăng khuyết cuối tháng","Hạ huyền","Lưỡi liềm cuối tháng"]
