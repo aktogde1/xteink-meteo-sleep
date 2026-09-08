@@ -26,7 +26,7 @@ Interface languages: **English · Русский · 中文 · Español · Deutsc
 
 ## One-click install (from a computer)
 
-Download [`app.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/app.html) and open it on your laptop — a **"Update & install to reader"** button appears:
+Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) and open it on your laptop — a **"Update & install to reader"** button appears:
 
 1. Reader — in File Transfer mode (on inkMOD: hold the power button, the server is up in ~20 s)
 2. Laptop — on the same Wi-Fi network (or on the reader's `InkMOD-Reader` hotspot, address `http://192.168.4.1`)
