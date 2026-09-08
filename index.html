@@ -111,6 +111,8 @@
   #compatPop { position:fixed; top:-140px; left:0; right:0; z-index:60; background:var(--warnBg); color:var(--warnText); border-bottom:1px solid var(--warnBorder); padding:14px 52px 14px 20px; font-size:13.5px; line-height:1.55; text-align:center; transition:top .4s ease; }
   #compatPop.show { top:0; }
   #compatPop .ok { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:var(--acc); color:var(--btnText); border:none; border-radius:6px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .ideatop { max-width:720px; margin:12px auto 0; text-align:center; color:var(--dim); font-size:13.5px; line-height:1.55; }
+  .ideatop p { margin:0 0 3px; }
 </style>
 </head>
 <body>
@@ -131,6 +133,11 @@
   </div>
 </header>
 <p style="text-align:center;color:var(--dim);margin:14px 0 0;font-size:14px" data-i18n="subtitle"></p>
+<div class="ideatop">
+  <p data-i18n="ideaP"></p>
+  <p data-i18n="ideaNext"></p>
+</div>
+
 <main>
   <div id="controls">
     <div class="group">
@@ -231,11 +238,6 @@
   <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
 </main>
 
-<section id="about">
-  <h2 data-i18n="ideaT"></h2>
-  <p data-i18n="ideaP"></p>
-  <p class="hint" data-i18n="ideaNext"></p>
-</section>
 <div id="cryptoModal">
   <div class="cmBox">
     <button id="cmClose" title="✕">×</button>
