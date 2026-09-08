@@ -582,7 +582,7 @@ function drawIcon(kind, cx, cy, s){
   const so = s * 0.34;
   if (kind === "sun") drawSun(cx, cy, s * 0.36);
   else if (kind === "moon") drawMoon(cx, cy, s * 0.36, moonPhase(new Date()).phase);
-  else if (kind === "partly"){ drawSun(cx - so, cy - so, s * 0.26); drawCloud(cx + s * 0.06, cy + s * 0.08, s * 0.72); }
+  else if (kind === "partly"){ drawSun(cx - s * 0.18, cy - s * 0.28, s * 0.24); drawCloud(cx + s * 0.08, cy + s * 0.14, s * 0.68); }
   else if (kind === "cloud") drawCloud(cx, cy, s * 0.8);
   else if (kind === "fog"){
     drawCloud(cx, cy - s * 0.14, s * 0.62);
@@ -664,14 +664,20 @@ function drawCard(){
   let y = pad + w * 0.062 + Math.max(h * 0.033, w * 0.095);
 
   if (weather){
-    const tempSize = w * 0.28;
     const iconS = w * 0.32;
+    let tempSize = w * 0.28;
+    const tempStr = fmtTemp(cur.temperature_2m);
+    const maxTempW = w - pad * 2 - iconS - w * 0.06;
     setFont(tempSize, true);
+    while (tempSize > w * 0.12 && ctx.measureText(tempStr).width > maxTempW){
+      tempSize -= 2;
+      setFont(tempSize, true);
+    }
     ctx.textAlign = "left";
     ctx.fillStyle = FG;
-    ctx.fillText(fmtTemp(cur.temperature_2m), pad, y + tempSize * 0.8);
-    drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + tempSize * 0.42, iconS);
-    y += tempSize * 0.8 + w * 0.085;
+    ctx.fillText(tempStr, pad, y + tempSize * 0.8);
+    drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + iconS * 0.48, iconS);
+    y += Math.max(tempSize * 0.8, iconS * 0.96) + w * 0.085;
 
     text(wmoText(cur.weather_code), pad, y, w * 0.072, true);
     y += w * 0.072 + h * 0.014;
@@ -760,27 +766,49 @@ async function searchCity(){
   if (!q) return;
   $("geoResults").innerHTML = "";
   setStatus(t("stSearching"));
+  let list = null;
+  // 1) Open-Meteo geocoder
   try {
-    const r = await fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=8&language=" + LANG + "&format=json");
-    const j = await r.json();
-    if (!j.results || !j.results.length){ setStatus(t("stNotFound"), "err"); return; }
-    setStatus(tf("stFound", { n: j.results.length }));
-    for (const res of j.results){
-      const div = document.createElement("div");
-      div.className = "geoItem";
-      const sub = [res.admin1, res.country].filter(Boolean).join(", ");
-      const b = document.createElement("b"); b.textContent = res.name;
-      const sm = document.createElement("small"); sm.textContent = sub;
-      div.appendChild(b); div.appendChild(sm);
-      div.onclick = () => {
-        $("geoResults").innerHTML = "";
-        place = { name: res.name, lat: res.latitude, lon: res.longitude };
-        storeSet("city", place);
-        loadWeather();
-      };
-      $("geoResults").appendChild(div);
+    for (const lg of [LANG, "", "en"]){
+      const u = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=8&format=json" + (lg ? "&language=" + lg : "");
+      const r = await fetch(u);
+      const j = await r.json();
+      if (j.results && j.results.length){
+        list = j.results.map(res => ({ name: res.name, sub: [res.admin1, res.country].filter(Boolean).join(", "), lat: res.latitude, lon: res.longitude }));
+        break;
+      }
     }
-  } catch(e){ setStatus(t("stSearchErr"), "err"); }
+  } catch(e){ /* переходим к Nominatim */ }
+  // 2) фолбэк: Nominatim (OpenStreetMap), если Open-Meteo недоступен
+  if (!list){
+    try {
+      const u = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&addressdetails=1&limit=8&accept-language=" + (LOCALE[LANG] || "en");
+      const r = await fetch(u);
+      const j = await r.json();
+      if (Array.isArray(j) && j.length){
+        list = j.map(res => {
+          const parts = String(res.display_name || "").split(", ");
+          return { name: res.name || parts[0], sub: parts.slice(1).join(", "), lat: parseFloat(res.lat), lon: parseFloat(res.lon) };
+        });
+      }
+    } catch(e){}
+  }
+  if (!list || !list.length){ setStatus(t("stNotFound"), "err"); return; }
+  setStatus(tf("stFound", { n: list.length }));
+  for (const res of list){
+    const div = document.createElement("div");
+    div.className = "geoItem";
+    const b = document.createElement("b"); b.textContent = res.name;
+    const sm = document.createElement("small"); sm.textContent = res.sub;
+    div.appendChild(b); div.appendChild(sm);
+    div.onclick = () => {
+      $("geoResults").innerHTML = "";
+      place = { name: res.name, lat: res.lat, lon: res.lon };
+      storeSet("city", place);
+      loadWeather();
+    };
+    $("geoResults").appendChild(div);
+  }
 }
 
 async function loadWeather(){
@@ -831,9 +859,26 @@ function applyI18n(){
   $("cryptoLink").style.display = CRYPTO.length ? "" : "none";
   applyLangActive();
 }
-document.querySelectorAll(".badge.lang").forEach(b => b.onclick = () => {
+async function refreshPlaceName(){
+  if (!place) return;
+  try {
+    // Nominatim (OpenStreetMap): отдаёт название города на нужном языке по координатам
+    const r = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + place.lat + "&lon=" + place.lon + "&format=jsonv2&zoom=10&accept-language=" + LOCALE[LANG]);
+    const j = await r.json();
+    const a = j.address || {};
+    const name = a.city || a.town || a.village || a.municipality || a.county;
+    if (name){
+      place.name = name;
+      storeSet("city", place);
+      $("city").value = place.name;
+    }
+  } catch(e){ /* оставляем прежнее имя */ }
+}
+document.querySelectorAll(".badge.lang").forEach(b => b.onclick = async () => {
+  if (LANG === b.dataset.lang) return;
   LANG = b.dataset.lang;
   storeStr("lang", LANG);
+  await refreshPlaceName();
   applyI18n();
   if (weather) drawCard();
 });
