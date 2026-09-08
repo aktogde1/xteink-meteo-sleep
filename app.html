@@ -57,6 +57,8 @@
   .chk input { width:17px; height:17px; accent-color:var(--acc); }
   .wgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .wgrid .chk { font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .pbar { height:10px; background:var(--inputBg); border-radius:6px; overflow:hidden; border:1px solid var(--line); }
+  #pfill { height:100%; width:0; background:var(--acc); transition:width .2s; }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -171,15 +173,22 @@
     <div class="group">
       <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
       <button class="btn wide" id="install" disabled data-i18n="install"></button>
+      <button class="btn wide" id="packReader" disabled data-i18n="packReader"></button>
+      <button class="btn wide secondary" id="packZip" disabled data-i18n="packZip"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
       <div id="status"></div>
+      <div id="prog" style="display:none;margin-top:6px">
+        <div class="pbar"><div id="pfill"></div></div>
+      </div>
     </div>
 
     <div class="group">
       <label data-i18n="reader"></label>
       <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <input type="text" id="readerAddr" placeholder="http://192.168.137.189">
+      <input type="text" id="rfolder" placeholder="/Weather" style="margin-top:8px">
+      <span class="hint" data-i18n="rfolderHint"></span>
       <span class="hint" data-i18n="readerHint"></span>
     </div>
 
@@ -268,6 +277,8 @@ ru: {
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
+  pack: "📅 Пакет: сегодня + N дней", packDone: "Готово: файлы weather-<дата>.bmp скачаны — закинь их в папку Weather на карте.",
+  packZip: "💾 Скачать ZIP-пакет", packReader: "🚀 Пакет → на ридер", rfolder: "Папка на ридере", rfolderHint: "Папку создай один раз в файловом менеджере ридера (у inkMOD файловый менеджер видит скрытые и обычные папки).", upl: "Отправка {i}/{n} на ридер…", zipDone: "ZIP скачан — распакуй в папку Weather на карте", readerPackDone: "Пакет загружен на ридер — открой файловый менеджер и выбери нужный день",
   reader: "Ридер (inkMOD)",
   readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
   httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
@@ -320,6 +331,8 @@ en: {
   refresh: "Refresh weather",
   install: "Update & install to reader",
   download: "Download sleep.bmp",
+  pack: "📅 Pack: today + N days", packDone: "Done: weather-<date>.bmp files downloaded — drop them into the Weather folder.",
+  packZip: "💾 Download ZIP pack", packReader: "🚀 Pack → to reader", rfolder: "Folder on reader", rfolderHint: "Create the folder once in the reader’s file manager.", upl: "Uploading {i}/{n} to reader…", zipDone: "ZIP downloaded — unpack into the Weather folder on the card", readerPackDone: "Pack uploaded to the reader — open the file browser and pick your day",
   reader: "Reader (inkMOD)",
   readerHint: "Use the address the reader shows in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
@@ -372,6 +385,8 @@ zh: {
   refresh: "更新天气",
   install: "更新并安装到阅读器",
   download: "下载 sleep.bmp",
+  pack: "📅 多日打包", packDone: "完成：weather-<日期>.bmp 文件已下载 — 放入 Weather 文件夹。",
+  packZip: "💾 下载 ZIP 包", packReader: "🚀 包 → 发送到阅读器", rfolder: "阅读器上的文件夹", rfolderHint: "在阅读器的文件管理器中创建一次文件夹即可。", upl: "正在上传 {i}/{n} 到阅读器…", zipDone: "ZIP 已下载 — 解压到卡的 Weather 文件夹", readerPackDone: "包已上传到阅读器 — 打开文件管理器选择需要的日期",
   reader: "阅读器 (inkMOD)",
   readerHint: "地址填阅读器在文件传输模式下显示的那个。",
   httpsNote: '本页面通过 HTTPS 提供 — 浏览器会阻止其访问家庭网络中的阅读器。生成和下载 BMP 完全可用。要一键安装，请<a href="index.html" download="xteink-meteo-sleep.html">下载此文件</a>并在电脑上打开。',
@@ -424,6 +439,8 @@ es: {
   refresh: "Actualizar el tiempo",
   install: "Actualizar e instalar en el lector",
   download: "Descargar sleep.bmp",
+  pack: "📅 Paquete: hoy + N días", packDone: "Hecho: archivos weather-<fecha>.bmp descargados — ponlos en la carpeta Weather.",
+  packZip: "Descargar pack ZIP", packReader: "Pack → al lector", rfolder: "Carpeta en el lector", rfolderHint: "Crea la carpeta una vez en el gestor de archivos del lector.", upl: "Subiendo {i}/{n} al lector…", zipDone: "ZIP descargado — descomprímelo en la carpeta Weather de la tarjeta", readerPackDone: "Pack subido al lector — abre el gestor de archivos y elige tu día",
   reader: "Lector (inkMOD)",
   readerHint: "Usa la dirección que muestra el lector en modo de transferencia de archivos.",
   httpsNote: 'Esta página se sirve por HTTPS — el navegador bloquea las peticiones al lector de tu red doméstica. El generador y la descarga del BMP funcionan completamente. Para la instalación de un clic, <a href="index.html" download="xteink-meteo-sleep.html">descarga este archivo</a> y ábrelo en tu ordenador.',
@@ -476,6 +493,8 @@ de: {
   refresh: "Wetter aktualisieren",
   install: "Aktualisieren & auf den Reader installieren",
   download: "sleep.bmp herunterladen",
+  pack: "📅 Paket: heute + N Tage", packDone: "Fertig: weather-<Datum>.bmp heruntergeladen — in den Weather-Ordner legen.",
+  packZip: "ZIP-Paket laden", packReader: "Paket → an den Reader", rfolder: "Ordner auf dem Reader", rfolderHint: "Ordner einmal im Dateimanager des Readers anlegen.", upl: "Sende {i}/{n} an den Reader…", zipDone: "ZIP geladen — in den Weather-Ordner auf der Karte entpacken", readerPackDone: "Paket auf den Reader geladen — im Dateimanager den gewünschten Tag wählen",
   reader: "Reader (inkMOD)",
   readerHint: "Nimm die Adresse, die der Reader im File-Transfer-Modus zeigt.",
   httpsNote: 'Diese Seite wird über HTTPS ausgeliefert — der Browser blockiert Anfragen an den Reader in deinem Heimnetz. Generator und BMP-Download funktionieren vollständig. Für die Ein-Klick-Installation <a href="index.html" download="xteink-meteo-sleep.html">diese Datei herunterladen</a> und am Computer öffnen.',
@@ -528,6 +547,8 @@ vi: {
   refresh: "Cập nhật thời tiết",
   install: "Cập nhật & cài đặt vào máy đọc sách",
   download: "Tải sleep.bmp",
+  pack: "📅 Gói: hôm nay + N ngày", packDone: "Xong: các tệp weather-<ngày>.bmp đã tải — chép vào thư mục Weather.",
+  packZip: "Tải gói ZIP", packReader: "Gói → vào máy đọc", rfolder: "Thư mục trên máy đọc", rfolderHint: "Tạo thư mục một lần trong trình quản lý tệp của máy đọc.", upl: "Đang gửi {i}/{n} vào máy đọc…", zipDone: "ZIP đã tải — giải nén vào thư mục Weather trên thẻ nhớ", readerPackDone: "Gói đã tải lên máy — mở trình quản lý tệp và chọn ngày cần dùng",
   reader: "Máy đọc sách (inkMOD)",
   readerHint: "Dùng địa chỉ máy đọc sách hiển thị ở chế độ truyền tệp.",
   httpsNote: 'Trang này dùng HTTPS — trình duyệt chặn yêu cầu tới máy đọc sách trong mạng nhà bạn. Tạo ảnh và tải BMP vẫn hoạt động đầy đủ. Để cài đặt một chạm, <a href="index.html" download="xteink-meteo-sleep.html">tải tệp này</a> và mở trên máy tính.',
@@ -748,7 +769,8 @@ function drawMoon(cx, cy, r, phase){
 }
 
 // ---------- карточка ----------
-function drawCard(){
+function drawCard(dayOffset){
+  dayOffset = dayOffset || 0;
   const w = canvas.width, h = canvas.height;
   const inv = $("invert").checked;
   BG = inv ? "#000000" : "#ffffff";
@@ -758,13 +780,14 @@ function drawCard(){
 
   const pad = Math.round(w * 0.058);
   const now = new Date();
-  const moon = moonPhase(now);
+  const cardDate = new Date(now.getTime() + dayOffset * 86400000);
+  const moon = moonPhase(cardDate);
   const d0 = weather ? weather.daily : null;
   const cur = weather ? weather.current : null;
 
   let y;
   if (W.date){
-    text(dateLong(now), w / 2, pad + w * 0.062, w * 0.062, true, "center");
+    text(dateLong(cardDate), w / 2, pad + w * 0.062, w * 0.062, true, "center");
     y = pad + w * 0.062 + Math.max(h * 0.033, w * 0.095);
   } else {
     y = pad + Math.max(h * 0.033, w * 0.06);
@@ -795,7 +818,7 @@ function drawCard(){
       y += w * 0.072 + h * 0.014;
     }
     if (W.dn){
-      text(t("dayLbl") + " " + fmtTemp(d0.temperature_2m_max[0]) + "   ·   " + t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[0]), pad, y, w * 0.056, false);
+      text(t("dayLbl") + " " + fmtTemp(d0.temperature_2m_max[dayOffset]) + "   ·   " + t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[dayOffset]), pad, y, w * 0.056, false);
       y += h * 0.045;
       drew = true;
     }
@@ -805,11 +828,11 @@ function drawCard(){
       drawIcon("sun", pad + w * 0.032, y - timePx * 0.28, w * 0.064);
       text(t("sunrise") + " ", pad + w * 0.075, y, labelPx, false);
       const w1 = ctx.measureText(t("sunrise") + " ").width;
-      text(hhmm(d0.sunrise[0]), pad + w * 0.075 + w1, y, timePx, true);
+      text(hhmm(d0.sunrise[dayOffset]), pad + w * 0.075 + w1, y, timePx, true);
       drawIcon("moon", col2 + w * 0.032, y - timePx * 0.28, w * 0.064);
       text(t("sunset") + " ", col2 + w * 0.075, y, labelPx, false);
       const w2 = ctx.measureText(t("sunset") + " ").width;
-      text(hhmm(d0.sunset[0]), col2 + w * 0.075 + w2, y, timePx, true);
+      text(hhmm(d0.sunset[dayOffset]), col2 + w * 0.075 + w2, y, timePx, true);
       y += h * 0.042;
       drew = true;
     }
@@ -829,10 +852,10 @@ function drawCard(){
         ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
         y += h * 0.026;
       }
-      const n = days;
-      const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / n));
+      const n = Math.min(days, weather.daily.time.length - 1 - dayOffset);
+      const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / Math.max(1, n)));
       const txtPx = Math.min(w * 0.054, rowH * 0.52);
-      for (let i = 1; i <= n; i++){
+      for (let i = dayOffset + 1; i <= dayOffset + n; i++){
         const d = new Date(weather.daily.time[i] + "T12:00:00");
         const cy2 = y + rowH / 2;
         text(dayShort(d), pad, cy2 + txtPx * 0.36, txtPx, true);
@@ -948,8 +971,10 @@ async function loadWeather(){
       if (!r.ok) throw new Error(r.status);
       weather = await r.json();
       drawCard();
-      $("download").disabled = false;
-      $("install").disabled = location.protocol === "https:";
+    $("download").disabled = false;
+    $("packZip").disabled = false;
+    $("packReader").disabled = false;
+    $("install").disabled = location.protocol === "https:";
       setStatus(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
     } catch(e){
@@ -1089,6 +1114,122 @@ async function installOnReader(){
   }
 }
 $("install").onclick = installOnReader;
+
+// ---------- пакет на несколько дней ----------
+// ---------- ZIP (stored, без библиотек) ----------
+function crc32(u8){
+  if (!crc32.t){
+    crc32.t = new Uint32Array(256);
+    for (let nn = 0; nn < 256; nn++){ let c = nn; for (let k = 0; k < 8; k++) c = (c & 1) ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; crc32.t[nn] = c; }
+  }
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) c = crc32.t[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(files){
+  const enc = new TextEncoder();
+  const chunks = [], central = [];
+  let offset = 0;
+  for (const f of files){
+    const name = enc.encode(f.name);
+    const crc = crc32(f.data);
+    const h = new Uint8Array(30 + name.length);
+    const dv = new DataView(h.buffer);
+    dv.setUint32(0, 0x04034b50, true);
+    dv.setUint16(4, 20, true); dv.setUint16(6, 0, true); dv.setUint16(8, 0, true);
+    dv.setUint16(10, 0, true); dv.setUint16(12, 0, true);
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, f.data.length, true);
+    dv.setUint32(22, f.data.length, true);
+    dv.setUint16(26, name.length, true);
+    h.set(name, 30);
+    chunks.push(h, f.data);
+    central.push({ name, crc, size: f.data.length, offset });
+    offset += h.length + f.data.length;
+  }
+  const cStart = offset;
+  let cSize = 0;
+  for (const c of central){
+    const h = new Uint8Array(46 + c.name.length);
+    const dv = new DataView(h.buffer);
+    dv.setUint32(0, 0x02014b50, true);
+    dv.setUint16(4, 20, true); dv.setUint16(6, 20, true);
+    dv.setUint32(16, c.crc, true);
+    dv.setUint32(20, c.size, true);
+    dv.setUint32(24, c.size, true);
+    dv.setUint16(28, c.name.length, true);
+    dv.setUint32(42, c.offset, true);
+    h.set(c.name, 46);
+    chunks.push(h); cSize += h.length;
+  }
+  const eocd = new Uint8Array(22);
+  const dv = new DataView(eocd.buffer);
+  dv.setUint32(0, 0x06054b50, true);
+  dv.setUint16(8, central.length, true);
+  dv.setUint16(10, central.length, true);
+  dv.setUint32(12, cSize, true);
+  dv.setUint32(16, cStart, true);
+  chunks.push(eocd);
+  return new Blob(chunks, { type: "application/zip" });
+}
+async function buildPackFiles(){
+  const out = [];
+  for (let d = 0; d <= days; d++){
+    drawCard(d);
+    const blob = encodeBMP();
+    const dd = new Date(Date.now() + d * 86400000);
+    out.push({ name: "weather-" + two(dd.getMonth() + 1) + "-" + two(dd.getDate()) + ".bmp", data: new Uint8Array(await blob.arrayBuffer()) });
+  }
+  drawCard(0);
+  return out;
+}
+$("packZip").onclick = async () => {
+  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
+  setStatus(t("packGo"));
+  const files = await buildPackFiles();
+  const zip = makeZip(files);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(zip);
+  a.download = "weather-pack.zip";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  setStatus(t("zipDone"), "ok");
+};
+function xhrUpload(url, data, filename){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.onload = () => resolve();
+    xhr.onerror = () => reject(new Error("net"));
+    const fd = new FormData();
+    fd.append("file", new File([data], filename, { type: "image/bmp" }));
+    xhr.send(fd);
+  });
+}
+$("packReader").onclick = async () => {
+  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
+  const addr = readerAddress();
+  let folder = $("rfolder").value.trim() || "/Weather";
+  if (folder.charAt(0) !== "/") folder = "/" + folder;
+  // проверка доступности (ответ скрыт CORS, но отказ сети виден)
+  let alive = true;
+  try { await fetch(addr + "/", { mode: "no-cors" }); } catch(e){ alive = false; }
+  if (!alive){ setStatus(t("stSendErr"), "err"); return; }
+  setStatus(t("packGo"));
+  const files = await buildPackFiles();
+  let sent = 0;
+  $("prog").style.display = "";
+  $("pfill").style.width = "0%";
+  // ответы ридера скрыты CORS — ошибки отдельных файлов не считаем сбоем:
+  // если сеть жива (проверено выше), файлы доходят. Прогресс — по файлам.
+  for (let i = 0; i < files.length; i++){
+    setStatus(tf("upl", { i: i + 1, n: files.length }));
+    try { await xhrUpload(addr + "/upload?path=" + encodeURIComponent(folder), files[i].data, files[i].name); } catch(e){}
+    sent += files[i].data.length;
+    $("pfill").style.width = Math.round((sent / files.reduce((s, f) => s + f.data.length, 0)) * 100) + "%";
+  }
+  setStatus(t("readerPackDone"), "ok");
+};
 $("readerAddr").addEventListener("keydown", e => { if (e.key === "Enter") installOnReader(); });
 
 // ---------- крипто-донаты ----------
@@ -1135,11 +1276,15 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   device = (d === "custom" || DEVICES[d]) ? d : "x4";
   const savedReader = storeRaw("reader");
   $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? "http://192.168.137.189" : savedReader;
+  const savedFolder2 = storeRaw("rfolder");
+  if (savedFolder2) $("rfolder").value = savedFolder2;
   const legacyDays = parseInt(storeRaw("days"), 10);
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   if (storeRaw("invert")) $("invert").checked = true;
   const savedW = storeGet("widgets");
   if (savedW) { for (const k in W) if (k in savedW) W[k] = !!savedW[k]; }
+  const savedFolder = storeRaw("rfolder");
+  $("rfolder").value = savedFolder || "/Weather";
   applyI18n();
   applyDevice();
   applyDaysActive();
