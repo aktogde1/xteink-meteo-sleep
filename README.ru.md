@@ -26,7 +26,7 @@
 
 ## Установка в один клик (с компьютера)
 
-Скачай [`app.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/app.html) и открой его на ноуте — появится кнопка **«Обновить и установить на ридер»**:
+Скачай [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) и открой его на ноуте — появится кнопка **«Обновить и установить на ридер»**:
 
 1. Ридер — в режим передачи файлов (в inkMOD — удержание кнопки питания, сервер встаёт за ~20 сек)
 2. Ноут — в ту же Wi-Fi сеть (или в точку доступа ридера `InkMOD-Reader`, адрес `http://192.168.4.1`)
