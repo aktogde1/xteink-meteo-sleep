@@ -15,7 +15,7 @@ A web generator: pick your city → it assembles a black-and-white card, sized e
 
 On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase with illumination %, city and update time. Exactly 2 colors — perfect for e-ink.
 
-Interface languages: **English · Русский · 中文 · Español · Deutsch · Tiếng Việt** — auto-detected from your browser (RU/EN switch in the header; other languages via `?lang=xx` in the URL).
+Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
 ## Quick start
 
@@ -70,7 +70,7 @@ If the generator was useful — you can [donate via Tribute](https://web.tribute
 
 ## Development
 
-The whole app is a single `index.html` — but it has a map. See **[DEVELOPMENT.md](DEVELOPMENT.md)** for the code layout, a "where do I change …" cheat table, known gotchas and the release flow. The project idea and roadmap are shown on the site itself (the 💡 and 🛣 blocks in the sidebar).
+The whole app is a single `index.html` — but it has a map. See **[DEVELOPMENT.md](DEVELOPMENT.md)** for the code layout, a "where do I change …" cheat table, known gotchas and the release flow. The project idea is shown on the site itself (the 💡 section).
 
 ## License
 
