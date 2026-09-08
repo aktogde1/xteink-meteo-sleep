@@ -53,6 +53,9 @@ This document is the code map — it tells you where things live so you don't ha
 | Crypto addresses | `CRYPTO` array (app) |
 | Reader default address | `DEFAULT_READER` (app) |
 | Install endpoints | `installOnReader()` (`/upload?path=/Sleep` + `/api/settings` `{"sleepScreen":3}`) |
+| Multi-day pack (ZIP + upload to reader) | `buildPackFiles()` → `makeZip()`/`crc32()`/`xhrUpload()`; handlers `packZip.onclick` / `packReader.onclick` |
+| Reader folder for the pack | `#rfolder` input (default `/Weather`, stored in `lsx.rfolder`) |
+| Compat banner texts | `bnFw` + `rmTested` (app), `.compat` block (landing) |
 
 ## Widget system
 
