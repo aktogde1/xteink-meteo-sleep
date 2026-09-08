@@ -18,7 +18,7 @@ This document is the code map — it tells you where things live so you don't ha
 | `<style>` | All CSS. Colors **only** via CSS variables; dark theme = `@media (prefers-color-scheme: dark)` overriding the variables (soft dark, not black) |
 | `#compatPop` | Top popup (cookie-notice style): firmware compatibility + tested-on note; dismissible via «Понятно» button, stored in `lsx.compatSeen` |
 | header (`.nav`) | Centered brand; right side: lang badges (Русский/English), ♥ Tribute badge, ₮ Crypto badge, GitHub badge |
-| `#controls` | Generator groups: City → Device → Forecast days → **Card widgets** (checkboxes) → buttons (Install to reader / ZIP pack / To reader / Download sleep.bmp / Refresh) → progress bar → Reader address + folder → collapsible details (install details, manual install, data sources) |
+| `#controls` | Generator groups: City → Device → Forecast days → **Card widgets** (checkboxes) → buttons (Install to reader / ZIP pack / To reader / Download sleep.bmp / Refresh) → Reader address → collapsible details (install details, manual install, data sources) |
 | `#preview` | Canvas `#card` — live card preview |
 | `#about` | Project idea (why a lock screen is a useful zero-battery tool) |
 | `<script>` | Everything: `I18N` (ru/en), drawing, BMP writer, network, reader upload, crypto modal, init |
@@ -55,7 +55,7 @@ This document is the code map — it tells you where things live so you don't ha
 ## Reader upload protocol (inkMOD 1.1.x / CrossPoint)
 
 1. Reader in **File Transfer mode** (inkMOD: hold power ~20 s). Address: `http://inkmod.local`, the IP shown on the reader screen, or `http://192.168.4.1` on the `InkMOD-Reader` hotspot.
-2. `POST {addr}/upload?path=<folder>` — multipart, field `file`. inkMOD lock screens live in the `/Sleep` folder; the multi-day pack goes to `/Weather`.
+2. `POST {addr}/upload?path=<folder>` — multipart, field `file`. inkMOD lock screens live in the `/Sleep` folder; the single install writes `sleep.bmp`.
 3. `POST {addr}/api/settings` — `{"sleepScreen":3}` (= "Custom image"; verified in inkMOD `src/SettingsList.h → buildSleepScreenSetting`).
 4. **Cross-origin reality:** the reader sends no CORS headers → every XHR always fires `onerror`, even on success. Requests still arrive. Therefore: a one-time no-cors `fetch` probe checks reachability (network fail ≠ CORS fail), per-file errors are ignored, and byte-level upload progress is impossible (no upload events cross-origin without CORS).
 5. **Chrome Private Network Access** blocks requests from public HTTPS sites (GitHub Pages) to the reader on the home network → the one-click buttons work from the **local file** or `localhost` only; on the online version the buttons are disabled with a warning.
