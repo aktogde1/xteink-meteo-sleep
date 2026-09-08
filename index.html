@@ -234,6 +234,7 @@ ru: {
   instB3: "Выбери режим экрана сна «Своя картинка» — заблокируй ридер и любуйся.",
   ftrLic: "MIT License · не связан с Xteink, inkMOD или CrossPoint · данные — Open-Meteo",
   rmDone: "✅ Сделано",
+  nextTag: "🛖 В планах",
   rl: [
     ["done", "Старт проекта", "Генератор карточек погоды: температура, прогноз, восход/закат"],
     ["done", "6 языков", "Автоопределение языка браузера"],
@@ -277,6 +278,7 @@ en: {
   instB3: "Set the sleep screen mode to \u201cCustom image\u201d \u2014 lock the reader and enjoy.",
   ftrLic: "MIT License · not affiliated with Xteink, inkMOD or CrossPoint · data by Open-Meteo",
   rmDone: "✅ Done",
+  nextTag: "🛖 Next",
   rl: [
     ["done", "Project launch", "Weather card generator: temperature, forecast, sunrise/sunset"],
     ["done", "6 languages", "Auto-detected from the browser language"],
@@ -320,6 +322,7 @@ zh: {
   instB3: "睡眠屏幕模式选\u201c自定义图片\u201d — 锁定阅读器即可查看。",
   ftrLic: "MIT License · 与 Xteink、inkMOD、CrossPoint 无隶属关系 · 数据来自 Open-Meteo",
   rmDone: "✅ 已完成",
+  nextTag: "🛖 计划中",
   rl: [
     ["done", "项目启动", "天气卡片生成器：温度、预报、日出日落"],
     ["done", "6 种语言", "自动识别浏览器语言"],
@@ -363,6 +366,7 @@ es: {
   instB3: "Modo de pantalla de sue\u00f1o \u00abImagen personalizada\u00bb \u2014 bloquea el lector y disfruta.",
   ftrLic: "MIT License · sin afiliaci\u00f3n con Xteink, inkMOD o CrossPoint · datos de Open-Meteo",
   rmDone: "\u2705 Hecho",
+  nextTag: "🛖 En planes",
   rl: [
     ["done", "Lanzamiento", "Generador de tarjetas del tiempo: temperatura, pron\u00f3stico, amanecer/atardecer"],
     ["done", "6 idiomas", "Detecta autom\u00e1ticamente el idioma del navegador"],
@@ -406,6 +410,7 @@ de: {
   instB3: "Sleep-Screen-Modus \u201eEigenes Bild\u201c w\u00e4hlen \u2014 Reader sperren und freuen.",
   ftrLic: "MIT License · keine Verbindung zu Xteink, inkMOD oder CrossPoint · Daten von Open-Meteo",
   rmDone: "\u2705 Erledigt",
+  nextTag: "🛖 Geplant",
   rl: [
     ["done", "Projektstart", "Wetterkarten-Generator: Temperatur, Vorhersage, Sonnenauf-/untergang"],
     ["done", "6 Sprachen", "Automatisch aus der Browsersprache erkannt"],
@@ -449,6 +454,7 @@ vi: {
   instB3: "Ch\u1ebf \u0111\u1ed9 m\u00e0n h\u00ecnh ng\u1ee7 ch\u1ecdn \u201c\u1ea2nh t\u00f9y ch\u1ec9nh\u201d \u2014 kho\u00e1 m\u00e1y v\u00e0 th\u01b0\u1edfng th\u1ee9c.",
   ftrLic: "MIT License · kh\u00f4ng li\u00ean quan \u0111\u1ebfn Xteink, inkMOD hay CrossPoint · d\u1eef li\u1ec7u t\u1eeb Open-Meteo",
   rmDone: "\u2705 Ho\u00e0n th\u00e0nh",
+  nextTag: "🛖 Kế hoạch",
   rl: [
     ["done", "Kh\u1edfi \u0111\u1ed9ng d\u1ef1 \u00e1n", "Tr\u00ecnh t\u1ea1o th\u1ebb th\u1eddi ti\u1ebft: nhi\u1ec7t \u0111\u1ed9, d\u1ef1 b\u00e1o, m\u1eb7t tr\u1eddi m\u1ecdc/l\u1eb7n"],
     ["done", "6 ng\u00f4n ng\u1eef", "T\u1ef1 nh\u1eadn di\u1ec7n ng\u00f4n ng\u1eef tr\u00ecnh duy\u1ec7t"],
@@ -476,7 +482,7 @@ function applyLang(){
   const tl = document.getElementById("tl");
   tl.innerHTML = "";
   const doneLabel = L[LANG].rmDone.replace("\u2705 ", "");
-  const nextLabel = L[LANG].rmNext.replace("\U0001F6D6 ", "");
+  const nextLabel = L[LANG].nextTag || "…";
   for (const [type, title, desc] of L[LANG].rl){
     const item = document.createElement("div");
     item.className = "tlItem" + (type === "next" ? " next" : "");
