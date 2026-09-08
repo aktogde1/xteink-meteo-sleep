@@ -1,60 +1,63 @@
 # Xteink Meteo Sleep 🌙
 
-**[👉 Открыть сайт](https://aktogde1.github.io/xteink-meteo-sleep/)**
+[![Language](https://img.shields.io/badge/lang-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-2f6f3e?style=flat)](README.ru.md)
+[![Donate](https://img.shields.io/badge/%E2%99%A5-Donate%20via%20Tribute-D64072?style=flat)](https://web.tribute.tg/d/Q5J)
 
-Погода, фаза Луны и восход/закат на экране сна ридеров **Xteink X4 / X4 Pro / X3** (прошивки **inkMOD** и **CrossPoint**).
+**[👉 Open the web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)**
 
-![Карточка на локскрине](screenshot.png)
+Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X4 Pro / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
 
-## Что это
+![Lock screen card](screenshot.png)
 
-Сайт-генератор: выбираешь город → он собирает из виджетов чёрно-белую карточку ровно под экран ридера → скачиваешь `sleep.bmp`. Один HTML-файл, без библиотек и серверов.
+## What is it
 
-**🌐 Языки интерфейса:** Русский · English · 中文 · Español · Deutsch · Tiếng Việt — кнопки в шапке, язык подхватывается автоматически из браузера.
+A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen, from widgets → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
 
-На карточке: дата и день недели, погода сейчас + «днём / ночью», прогноз на 2–5 дней (`д` — днём, `н` — ночью), восход и закат, фаза Луны с процентом освещённости, город и время обновления. Ровно 2 цвета — идеально для e-ink, ничего не размазывается.
+On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase with illumination %, city and update time. Exactly 2 colors — perfect for e-ink.
 
-## Быстрый старт
+Interface languages: **English · Русский · 中文 · Español · Deutsch · Tiếng Việt** — auto-detected from your browser (RU/EN switch in the header; other languages via `?lang=xx` in the URL).
 
-1. Открой [сайт](https://aktogde1.github.io/xteink-meteo-sleep/)
-2. Введи город → выбери устройство (X4 / X4 Pro / X3)
-3. **«Скачать sleep.bmp»** → файл в папку `Sleep` на microSD, перезапиши тот, что там лежит
-4. Режим экрана сна на ридере — «Своя картинка». Заблокировал ридер — карточка на экране ✅
+## Quick start
 
-## Установка в один клик (с компьютера)
+1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
+2. Enter your city → pick your device (X4 / X4 Pro / X3)
+3. **"Download sleep.bmp"** → put the file into the `Sleep` folder on the microSD, overwriting the one already there
+4. Set the sleep screen mode to "Custom image". Lock the reader — the card is on screen ✅
 
-Скачай [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) и открой его на ноуте — появится кнопка **«Обновить и установить на ридер»**:
+## One-click install (from a computer)
 
-1. Ридер — в режим передачи файлов (в inkMOD — удержание кнопки питания, сервер поднимается за ~20 сек)
-2. Ноут — в ту же Wi-Fi сеть (или в точку доступа ридера `InkMOD-Reader`, адрес тогда `http://192.168.4.1`)
-3. Адрес ридера подставится сам (тот, что он показывает на экране) — жми кнопку → картинка летит на ридер, режим «Своя картинка» выставляется автоматически
+Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) and open it on your laptop — a **"Update & install to reader"** button appears:
 
-> **Почему кнопка не работает на онлайн-версии?** Сайт на GitHub Pages — по HTTPS, а ридер в домашней сети — по HTTP. Браузеры блокируют такие запросы (mixed content), обойти нельзя. Локальный файл — полноценный, без ограничений.
+1. Reader — in File Transfer mode (on inkMOD: hold the power button, the server is up in ~20 s)
+2. Laptop — on the same Wi-Fi network (or on the reader's `InkMOD-Reader` hotspot, address `http://192.168.4.1`)
+3. The reader address is pre-filled (the one shown on its screen) — press the button → the image flies to the reader and the "Custom image" mode is set automatically
 
-## Устройства
+> **Why doesn't the button work on the online version?** The web app is served over HTTPS while the reader lives on your home network over HTTP. Browsers block those requests (mixed content) — there is no way around it. The local file is fully featured.
 
-| Кнопка | Разрешение |
+## Devices
+
+| Button | Resolution |
 |---|---|
 | X4 / X4 Pro | 480×800 |
 | X3 | 480×640 |
-| Свой… | любой |
+| Custom… | any |
 
-## Технически
+## Under the hood
 
-- Один файл `index.html`, чистый JS + canvas, без библиотек и сборки
-- Погода, прогноз, восход/закат — [Open-Meteo](https://open-meteo.com/) (открытый API без регистрации); город — их геокодер
-- Фаза Луны — синодический цикл 29,53 сут от опорного новолуния 06.01.2000
-- BMP пишется вручную в JS: 24 бита, bottom-up, порог яркости 140 → ровно 2 цвета
-- Установка на ридер: `POST /upload?path=/Sleep` (multipart, поле `file`) + `POST /api/settings` `{"sleepScreen":3}` — индекс 3 = «Своя картинка» в inkMOD 1.1.x
+- One `index.html` file, plain JS + canvas, no libraries, no build step
+- Weather, forecast, sunrise/sunset — [Open-Meteo](https://open-meteo.com/) (open API, no sign-up); city — their geocoder
+- Moon phase — synodic cycle math (29.53 days from the reference new moon on 2000-01-06)
+- The BMP is hand-written in JS: 24-bit, bottom-up, luminance threshold 140 → exactly 2 colors
+- Install to reader: `POST /upload?path=/Sleep` (multipart, field `file`) + `POST /api/settings` `{"sleepScreen":3}` — index 3 = "Custom image" on inkMOD 1.1.x
 
-## Совместимость
+## Compatibility
 
-Проверено на Xteink X4 + inkMOD 1.1.7. CrossPoint и X3 — поддерживаются размерами и ручным способом; фидбек приветствуется.
+Tested on Xteink X4 + inkMOD 1.1.7. CrossPoint and X3 are supported via sizes and the manual route; feedback welcome.
 
-## Лицензия
+## Support the project ♥
 
-MIT. Автор не связан с Xteink, inkMOD или CrossPoint. Погода — Open-Meteo (некоммерческое использование).
+If the generator was useful — you can [donate via Tribute](https://web.tribute.tg/d/Q5J) (Telegram). Not required, but much appreciated 🙂
 
-## ♥ Поддержать автора
+## License
 
-Если генератор тебе пригодился — можно поддержать разработку через [Tribute](https://web.tribute.tg/d/Q5J) (Telegram). Это необязательно, но приятно 🙂
+MIT. Not affiliated with Xteink, inkMOD or CrossPoint. Weather data — Open-Meteo (non-commercial use).
