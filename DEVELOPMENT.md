@@ -1,9 +1,8 @@
 # Development Guide (agent / contributor blueprint)
 
-The site is **two files**, plain JS + canvas, no build step, no dependencies:
+The site is a **single page** (`index.html`): sticky centered brand, nav menu (Generator / Idea / Roadmap / Install / Releases), compatibility banner, the generator, the project idea section, footer. All logic and translations live in this one file. (`app.html` is just a redirect stub.)
 
-- **`index.html`** — the landing page: sticky centered brand, nav menu, hero, compatibility banner, features grid, project idea, roadmap timeline, install section, footer. Landing strings live in its own `L` dict at the bottom of the file.
-- **`app.html`** — the generator itself (the tool). All logic lives here.
+For the local one-click install there is also `serve.py` — a tiny local server (site + upload relay to the reader) and a `Метео Сервер.bat` launcher.
 
 This document is the code map — it tells you where things live so you don't have to search every time.
 **Rule of the project: whenever you change structure, update this file in the same commit.**
