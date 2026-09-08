@@ -58,6 +58,16 @@
 
 Если генератор тебе пригодился — можно поддержать разработку через [Tribute](https://web.tribute.tg/d/Q5J) (Telegram). Это необязательно, но приятно 🙂
 
+**Криптой:**
+
+[![USDT](https://img.shields.io/badge/USDT-TRC20-26A17B?style=flat)](https://qr.crypt.bot/?url=TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1)
+[![BTC](https://img.shields.io/badge/BTC-Bitcoin-F7931A?style=flat)](https://qr.crypt.bot/?url=bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6)
+[![ETH](https://img.shields.io/badge/ETH-Ethereum-627EEA?style=flat)](https://qr.crypt.bot/?url=0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4)
+
+- USDT (TRC20): `TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1` — [QR](https://qr.crypt.bot/?url=TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1)
+- BTC: `bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6` — [QR](https://qr.crypt.bot/?url=bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6)
+- ETH: `0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4` — [QR](https://qr.crypt.bot/?url=0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4)
+
 ## Лицензия
 
 MIT. Автор не связан с Xteink, inkMOD или CrossPoint. Погода — Open-Meteo (некоммерческое использование).
