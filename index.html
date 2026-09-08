@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xteink Meteo Sleep — погода, луна, восход на локскрине</title>
+<style>
+  :root { --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 "Segoe UI", Arial, sans-serif; }
+  header.site { padding:18px 26px 14px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header.site h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:.2px; }
+  header.site p { margin:3px 0 0; color:var(--dim); font-size:13.5px; }
+  main { display:flex; gap:26px; padding:24px; align-items:flex-start; flex-wrap:wrap; max-width:1180px; margin:0 auto; }
+  #controls { width:340px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .group { margin-bottom:20px; }
+  .group > label { display:block; font-size:12px; color:var(--dim); margin-bottom:7px; text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+  input[type=text] { width:100%; background:#fbfaf8; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
+  input[type=text]:focus { outline:2px solid var(--acc); outline-offset:-1px; }
+  .inline { display:flex; gap:8px; }
+  .inline input { flex:1; }
+  button { cursor:pointer; font-family:inherit; }
+  .btn { background:var(--acc); color:#fff; border:none; border-radius:8px; padding:10px 16px; font-size:14.5px; font-weight:600; }
+  .btn.secondary { background:#eeebe4; color:var(--fg); border:1px solid var(--line); }
+  .btn:disabled { opacity:.4; cursor:default; }
+  .btn.wide { width:100%; margin-bottom:9px; }
+  .seg { display:flex; gap:7px; }
+  .seg button { flex:1; background:#fbfaf8; border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
+  .seg button.active { background:var(--fg); color:#fff; border-color:var(--fg); }
+  .seg.small button { padding:8px 4px; }
+  #customSizeRow { display:none; gap:8px; align-items:center; margin-top:8px; color:var(--dim); }
+  #customSizeRow input[type=number] { width:76px; background:#fbfaf8; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
+  .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
+  .chk input { width:17px; height:17px; accent-color:var(--acc); }
+  .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
+  .warn { color:#7a5200; background:#fdf3d8; border:1px solid #ecd9a0; border-radius:8px; padding:9px 11px; }
+  .warn a { color:var(--acc); font-weight:600; }
+  #geoResults { border:1px solid var(--line); border-radius:8px; margin-top:7px; overflow:hidden; }
+  #geoResults:empty { display:none; }
+  .geoItem { padding:9px 11px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--line); background:#fff; }
+  .geoItem:hover { background:#f2efe9; }
+  .geoItem small { color:var(--dim); display:block; font-size:12px; }
+  #preview { flex:1; min-width:330px; display:flex; justify-content:center; }
+  #frame { background:#fff; padding:12px; border-radius:16px; border:1px solid var(--line); box-shadow:0 2px 14px rgba(0,0,0,.06); }
+  canvas { display:block; image-rendering:pixelated; height:82vh; max-height:840px; border:1px solid #d8d4cc; }
+  #status { font-size:13.5px; color:var(--dim); min-height:20px; margin-top:2px; }
+  #status.ok { color:var(--acc); font-weight:600; }
+  #status.err { color:#b3402a; }
+  #sources { border-top:1px solid var(--line); margin-top:6px; padding-top:13px; font-size:12.5px; color:var(--dim); }
+  #sources > b { display:block; color:var(--fg); font-size:12px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+  #sources li b { color:var(--fg); }
+  #sources ul { margin:0; padding:0; list-style:none; }
+  #sources li { margin-bottom:4px; padding-left:20px; position:relative; }
+  #sources li::before { content:"i"; position:absolute; left:0; top:1.5px; width:13px; height:13px; border:1.4px solid var(--dim); border-radius:50%; font-size:9.5px; font-weight:700; text-align:center; line-height:12px; font-style:italic; font-family:Georgia, serif; }
+  #howto { margin-top:14px; font-size:13px; color:var(--dim); }
+  #howto summary { cursor:pointer; color:var(--fg); font-weight:600; }
+  #howto ol { margin:8px 0 0; padding-left:20px; }
+  #howto li { margin-bottom:5px; }
+  code { background:#f0ede6; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+<header class="site">
+  <h1>Xteink Meteo Sleep</h1>
+  <p>Погода · луна · восход на локскрине Xteink X4 / X4 Pro / X3. Собери по своему городу и скачай как sleep.bmp</p>
+</header>
+<main>
+  <div id="controls">
+    <div class="group">
+      <label>Город</label>
+      <div class="inline">
+        <input type="text" id="city" placeholder="Например: Санкт-Петербург">
+        <button class="btn secondary" id="searchCity">Найти</button>
+      </div>
+      <div id="geoResults"></div>
+    </div>
+
+    <div class="group">
+      <label>Устройство</label>
+      <div class="seg" id="deviceSeg">
+        <button data-dev="x4">X4</button>
+        <button data-dev="x4pro">X4 Pro</button>
+        <button data-dev="x3">X3</button>
+        <button data-dev="custom">Свой…</button>
+      </div>
+      <div id="customSizeRow">
+        <input type="number" id="w" min="120" max="2048" value="480"> ×
+        <input type="number" id="h" min="120" max="2048" value="800">
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Дней прогноза (не считая сегодня)</label>
+      <div class="seg small" id="daysSeg">
+        <button data-days="2">2</button>
+        <button data-days="3">3</button>
+        <button data-days="4">4</button>
+        <button data-days="5">5</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Ридер (inkMOD)</label>
+      <div id="httpsNote" class="hint warn" style="display:none">Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети (защита mixed content). Генератор и скачивание BMP работают полностью. Чтобы ставить карточку одной кнопкой — <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой его на компьютере.</div>
+      <input type="text" id="readerAddr" placeholder="http://192.168.137.189">
+      <span class="hint">Адрес — тот, что ридер показывает в режиме передачи файлов (по умолчанию уже вписан твой). Если вдруг не отвечает: удержание кнопки → ридер в File Transfer, ноут в ту же сеть; либо точка доступа <b>InkMOD-Reader</b> → <code>http://192.168.4.1</code>.</span>
+    </div>
+
+    <div class="group">
+      <label class="chk"><input type="checkbox" id="invert">Тёмная карточка (чёрный фон)</label>
+      <button class="btn wide" id="refresh">Обновить погоду</button>
+      <button class="btn wide" id="install" disabled>Обновить и установить на ридер</button>
+      <button class="btn wide secondary" id="download" disabled>Скачать sleep.bmp (картридер)</button>
+      <div id="status"></div>
+    </div>
+
+    <div id="sources">
+      <b>Источники данных и обозначения</b>
+      <ul>
+        <li>Погода, восход и закат — Open-Meteo.com, открытый API без регистрации</li>
+        <li>Город — геокодер Open-Meteo</li>
+        <li>Фаза Луны — астрорасчёт по дате (цикл 29,5 сут)</li>
+        <li>В прогнозе: <b>д</b> — днём, <b>н</b> — ночью, °C</li>
+        <li>Карточка обновляется, когда ты генерируешь и закидываешь новый sleep.bmp</li>
+      </ul>
+    </div>
+
+    <details id="howto">
+      <summary>Как поставить на устройство</summary>
+      <ol>
+        <li>Скачай <code>sleep.bmp</code> кнопкой выше.</li>
+        <li>Закинь файл в папку <b>Sleep</b> на microSD — перезапиши тот, что там лежит (у inkMOD заставка берётся оттуда).</li>
+        <li>Режим экрана сна — <b>«Своя картинка»</b> (если ставил через кнопку сайта, он уже выставлен сам).</li>
+        <li>Заблокировал — карточка на экране. Нужна свежая — сгенерируй и закинь заново.</li>
+      </ol>
+    </details>
+  </div>
+  <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const canvas = $("card"), ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+// ---------- состояние ----------
+let weather = null;
+let place = null;
+let device = "x4";          // x4 | x4pro | x3 | custom
+const DEFAULT_READER = "http://192.168.137.189"; // адрес ридера юзера в его сети (показывает экран File Transfer)
+let days = 3;               // дней прогноза не считая сегодня
+function storeGet(key){ try { return JSON.parse(localStorage.getItem("lsx." + key)); } catch(e){ return null; } }
+function storeSet(key, val){ localStorage.setItem("lsx." + key, JSON.stringify(val)); }
+function storeStr(key, val){ localStorage.setItem("lsx." + key, val); }
+function storeRaw(key){ return localStorage.getItem("lsx." + key); }
+
+const DEVICES = { x4:[480,800], x4pro:[480,800], x3:[480,640] };
+
+// ---------- даты и строки ----------
+const WD = ["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
+const WD_S = ["вс","пн","вт","ср","чт","пт","сб"];
+const MON = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const fmtTemp = t => (t > 0 ? "+" : "") + Math.round(t) + "°";
+const hhmm = iso => iso.slice(11, 16);
+const two = x => String(x).padStart(2, "0");
+
+// ---------- фаза луны ----------
+const SYNODIC = 29.530588853;
+function moonPhase(date){
+  const ref = Date.UTC(2000, 0, 6, 18, 14); // новолуние 06.01.2000
+  const days = (date.getTime() - ref) / 86400000;
+  let p = (days % SYNODIC) / SYNODIC;
+  if (p < 0) p += 1;
+  const illum = Math.round((1 - Math.cos(2 * Math.PI * p)) / 2 * 100);
+  let name;
+  if (p < .03 || p > .97) name = "Новолуние";
+  else if (p < .22)       name = "Растущий серп";
+  else if (p < .28)       name = "Первая четверть";
+  else if (p < .47)       name = "Растущая луна";
+  else if (p < .53)       name = "Полнолуние";
+  else if (p < .72)       name = "Убывающая луна";
+  else if (p < .78)       name = "Последняя четверть";
+  else                    name = "Убывающий серп";
+  return { phase: p, illum, name };
+}
+
+// ---------- погода: коды WMO ----------
+function wmoText(code){
+  if (code === 0) return "Ясно";
+  if (code === 1) return "Преимущ. ясно";
+  if (code === 2) return "Перем. облачность";
+  if (code === 3) return "Пасмурно";
+  if (code === 45 || code === 48) return "Туман";
+  if (code <= 57) return "Морось";
+  if (code === 61) return "Небольшой дождь";
+  if (code === 63) return "Дождь";
+  if (code === 65) return "Сильный дождь";
+  if (code === 66 || code === 67) return "Ледяной дождь";
+  if (code <= 82) return "Ливень";
+  if (code === 71) return "Небольшой снег";
+  if (code === 73) return "Снег";
+  if (code === 75) return "Сильный снег";
+  if (code === 77) return "Снежные зёрна";
+  if (code <= 86) return "Снегопад";
+  if (code === 95) return "Гроза";
+  return "Гроза с градом";
+}
+function wmoKind(code){
+  if (code === 0) return "sun";
+  if (code <= 2) return "partly";
+  if (code === 3) return "cloud";
+  if (code <= 48) return "fog";
+  if (code <= 57) return "drizzle";
+  if (code <= 67) return "rain";
+  if (code <= 77) return "snow";
+  if (code <= 82) return "rain";
+  if (code <= 86) return "snow";
+  return "thunder";
+}
+
+// ---------- рисование: палитра и примитивы ----------
+let BG = "#ffffff", FG = "#000000";
+
+function setFont(px, bold){ ctx.font = (bold ? "700 " : "400 ") + Math.round(px) + "px 'Segoe UI', Arial, sans-serif"; }
+function text(str, x, y, px, bold, align){
+  setFont(px, bold);
+  ctx.textAlign = align || "left";
+  ctx.fillStyle = FG;
+  ctx.fillText(str, x, y);
+}
+
+function drawSun(cx, cy, r){
+  ctx.strokeStyle = FG;
+  ctx.lineWidth = Math.max(2, r * 0.11);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  for (let i = 0; i < 8; i++){
+    const a = Math.PI / 8 + i * Math.PI / 4;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r * 1.3, cy + Math.sin(a) * r * 1.3);
+    ctx.lineTo(cx + Math.cos(a) * r * 1.62, cy + Math.sin(a) * r * 1.62);
+    ctx.stroke();
+  }
+  ctx.fillStyle = FG;
+}
+function drawCloud(cx, cy, s){
+  ctx.beginPath();
+  ctx.arc(cx - 0.42 * s, cy + 0.12 * s, 0.27 * s, Math.PI * 0.45, Math.PI * 1.55);
+  ctx.arc(cx - 0.02 * s, cy - 0.18 * s, 0.30 * s, Math.PI * 0.9, Math.PI * 1.95);
+  ctx.arc(cx + 0.36 * s, cy + 0.02 * s, 0.24 * s, Math.PI * 1.25, Math.PI * 0.55);
+  ctx.closePath();
+  ctx.fillStyle = BG; ctx.fill();
+  ctx.strokeStyle = FG; ctx.stroke();
+  ctx.fillStyle = FG;
+}
+function drawIcon(kind, cx, cy, s){
+  ctx.strokeStyle = FG; ctx.fillStyle = FG;
+  ctx.lineWidth = Math.max(2, s * 0.055);
+  const so = s * 0.34;
+  if (kind === "sun") drawSun(cx, cy, s * 0.36);
+  else if (kind === "moon") drawMoon(cx, cy, s * 0.36, moonPhase(new Date()).phase);
+  else if (kind === "partly"){ drawSun(cx - so, cy - so, s * 0.26); drawCloud(cx + s * 0.06, cy + s * 0.08, s * 0.72); }
+  else if (kind === "cloud") drawCloud(cx, cy, s * 0.8);
+  else if (kind === "fog"){
+    drawCloud(cx, cy - s * 0.14, s * 0.62);
+    for (let i = 0; i < 3; i++){ ctx.beginPath(); ctx.moveTo(cx - s * 0.34, cy + s * 0.1 + i * s * 0.14); ctx.lineTo(cx + s * 0.34, cy + s * 0.1 + i * s * 0.14); ctx.stroke(); }
+  }
+  else if (kind === "drizzle" || kind === "rain"){
+    drawCloud(cx, cy - s * 0.16, s * 0.66);
+    const n = kind === "rain" ? 3 : 2, len = s * (kind === "rain" ? 0.2 : 0.12);
+    for (let i = 0; i < n; i++){
+      const x = cx + (i - (n - 1) / 2) * s * 0.22;
+      ctx.beginPath(); ctx.moveTo(x, cy + s * 0.1); ctx.lineTo(x - s * 0.07, cy + s * 0.1 + len); ctx.stroke();
+    }
+  }
+  else if (kind === "snow"){
+    drawCloud(cx, cy - s * 0.16, s * 0.66);
+    for (let i = 0; i < 3; i++){
+      const x = cx + (i - 1) * s * 0.22, y = cy + s * 0.16, rr = s * 0.055;
+      for (let a = 0; a < 3; a++){
+        const an = a * Math.PI / 3;
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(an) * rr, y - Math.sin(an) * rr); ctx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); ctx.stroke();
+      }
+    }
+  }
+  else if (kind === "thunder"){
+    drawCloud(cx, cy - s * 0.18, s * 0.62);
+    ctx.beginPath();
+    ctx.moveTo(cx + s * 0.05, cy + s * 0.04);
+    ctx.lineTo(cx - s * 0.08, cy + s * 0.22);
+    ctx.lineTo(cx + s * 0.01, cy + s * 0.22);
+    ctx.lineTo(cx - s * 0.06, cy + s * 0.42);
+    ctx.lineTo(cx + s * 0.12, cy + s * 0.16);
+    ctx.lineTo(cx + s * 0.02, cy + s * 0.16);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = FG; ctx.strokeStyle = FG;
+}
+
+// луна: заливка тёмной части по пикселям + контур
+function drawMoon(cx, cy, r, phase){
+  const k = Math.cos(2 * Math.PI * phase);
+  const waxing = phase <= 0.5;
+  const s = waxing ? 1 : -1;
+  const a = Math.abs(k) * r;
+  const insideTerm = (dx, dy) => a > 0 && (dx * dx) / (a * a) + (dy * dy) / (r * r) <= 1;
+  ctx.fillStyle = FG;
+  for (let dy = -r; dy <= r; dy++){
+    for (let dx = -r; dx <= r; dx++){
+      if (dx * dx + dy * dy > r * r) continue;
+      let dark;
+      if (Math.abs(k) < 0.02) dark = false;
+      else if (Math.abs(k) > 0.98) dark = true;
+      else if (k > 0) dark = (s * dx <= 0) || insideTerm(dx, dy);
+      else dark = (s * dx < 0) && !insideTerm(dx, dy);
+      if (dark) ctx.fillRect(cx + dx, cy + dy, 1, 1);
+    }
+  }
+  ctx.strokeStyle = FG;
+  ctx.lineWidth = Math.max(2, r * 0.07);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = FG;
+}
+
+// ---------- карточка ----------
+function drawCard(){
+  const w = canvas.width, h = canvas.height;
+  const inv = $("invert").checked;
+  BG = inv ? "#000000" : "#ffffff";
+  FG = inv ? "#ffffff" : "#000000";
+  ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
+  ctx.textBaseline = "alphabetic";
+
+  const pad = Math.round(w * 0.058);
+  const now = new Date();
+  const moon = moonPhase(now);
+  const d0 = weather ? weather.daily : null;
+  const cur = weather ? weather.current : null;
+
+  // --- шапка: день недели и дата, по центру ---
+  text(WD[now.getDay()] + ", " + now.getDate() + " " + MON[now.getMonth()], w / 2, pad + w * 0.062, w * 0.062, true, "center");
+
+  let y = pad + w * 0.062 + Math.max(h * 0.033, w * 0.095);
+
+  if (weather){
+    // --- текущая температура + иконка (одна строка) ---
+    const tempSize = w * 0.28;
+    const iconS = w * 0.32;
+    setFont(tempSize, true);
+    ctx.textAlign = "left";
+    ctx.fillStyle = FG;
+    ctx.fillText(fmtTemp(cur.temperature_2m), pad, y + tempSize * 0.8);
+    drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + tempSize * 0.42, iconS);
+    y += tempSize * 0.8 + w * 0.085;
+
+    // --- описание и мин/макс дня ---
+    text(wmoText(cur.weather_code), pad, y, w * 0.072, true);
+    y += w * 0.072 + h * 0.014;
+    text("днём " + fmtTemp(d0.temperature_2m_max[0]) + "   ·   ночью " + fmtTemp(d0.temperature_2m_min[0]), pad, y, w * 0.056, false);
+    y += h * 0.045;
+
+    // --- восход и закат: две колонки с подписями ---
+    const labelPx = w * 0.048, timePx = w * 0.06;
+    const col2 = w * 0.55;
+    // левая колонка: восход
+    drawIcon("sun", pad + w * 0.032, y - timePx * 0.28, w * 0.064);
+    text("восход ", pad + w * 0.075, y, labelPx, false);
+    const w1 = ctx.measureText("восход ").width;
+    text(hhmm(d0.sunrise[0]), pad + w * 0.075 + w1, y, timePx, true);
+    // правая колонка: закат
+    drawIcon("moon", col2 + w * 0.032, y - timePx * 0.28, w * 0.064);
+    text("закат ", col2 + w * 0.075, y, labelPx, false);
+    const w2 = ctx.measureText("закат ").width;
+    text(hhmm(d0.sunset[0]), col2 + w * 0.075 + w2, y, timePx, true);
+    y += h * 0.042;
+
+    // --- луна ---
+    const mr = Math.round(w * 0.085);
+    drawMoon(pad + mr + w * 0.02, y + mr, mr, moon.phase);
+    const mx = pad + mr * 2 + w * 0.075;
+    text(moon.name, mx, y + mr * 0.72, w * 0.06, true);
+    text("освещено " + moon.illum + "%", mx, y + mr * 1.38, w * 0.046, false);
+    y += mr * 2 + h * 0.028;
+
+    // --- разделитель ---
+    ctx.strokeStyle = FG;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+    y += h * 0.026;
+
+    // --- прогноз: день | иконка | д-температура · н-температура ---
+    const n = days;
+    const footH = h * 0.062;
+    const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / n));
+    const txtPx = Math.min(w * 0.054, rowH * 0.52);
+    for (let i = 1; i <= n; i++){
+      const d = new Date(weather.daily.time[i] + "T12:00:00");
+      const cy2 = y + rowH / 2;
+      text(WD_S[d.getDay()] + " " + d.getDate(), pad, cy2 + txtPx * 0.36, txtPx, true);
+      drawIcon(wmoKind(weather.daily.weather_code[i]), w * 0.40, cy2, rowH * 0.62);
+      text("д " + fmtTemp(weather.daily.temperature_2m_max[i]) + " · н " + fmtTemp(weather.daily.temperature_2m_min[i]), w - pad, cy2 + txtPx * 0.36, txtPx, false, "right");
+      y += rowH;
+    }
+
+    // --- подвал ---
+    const fpx = w * 0.04;
+    text(place ? place.name : "", pad, h - footH * 0.3, fpx, false);
+    text("обновлено " + two(now.getHours()) + ":" + two(now.getMinutes()), w - pad, h - footH * 0.3, fpx, false, "right");
+  } else {
+    text("Нет данных о погоде", w / 2, y + h * 0.1, w * 0.07, false, "center");
+  }
+}
+
+// ---------- BMP ----------
+function encodeBMP(){
+  const w = canvas.width, h = canvas.height;
+  const img = ctx.getImageData(0, 0, w, h).data;
+  const rowSize = Math.floor((24 * w + 31) / 32) * 4;
+  const dataSize = rowSize * h, fileSize = 54 + dataSize;
+  const buf = new ArrayBuffer(fileSize), dv = new DataView(buf);
+  dv.setUint8(0, 0x42); dv.setUint8(1, 0x4D);
+  dv.setUint32(2, fileSize, true);
+  dv.setUint32(10, 54, true);
+  dv.setUint32(14, 40, true);
+  dv.setInt32(18, w, true);
+  dv.setInt32(22, h, true);
+  dv.setUint16(26, 1, true);
+  dv.setUint16(28, 24, true);
+  dv.setUint32(34, dataSize, true);
+  for (let y = 0; y < h; y++){
+    let off = 54 + (h - 1 - y) * rowSize;
+    for (let x = 0; x < w; x++){
+      const i = (y * w + x) * 4;
+      const lum = 0.299 * img[i] + 0.587 * img[i + 1] + 0.114 * img[i + 2];
+      const v = lum < 140 ? 0 : 255;
+      dv.setUint8(off, v); dv.setUint8(off + 1, v); dv.setUint8(off + 2, v);
+      off += 3;
+    }
+  }
+  return new Blob([buf], { type: "image/bmp" });
+}
+
+// ---------- сеть ----------
+function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = cls || ""; }
+
+async function searchCity(){
+  const q = $("city").value.trim();
+  if (!q) return;
+  $("geoResults").innerHTML = "";
+  setStatus("Ищем город…");
+  try {
+    const r = await fetch("https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=8&language=ru&format=json");
+    const j = await r.json();
+    if (!j.results || !j.results.length){ setStatus("Город не найден", "err"); return; }
+    setStatus("Найдено: " + j.results.length + ". Выбери из списка.");
+    for (const res of j.results){
+      const div = document.createElement("div");
+      div.className = "geoItem";
+      const sub = [res.admin1, res.country].filter(Boolean).join(", ");
+      const b = document.createElement("b"); b.textContent = res.name;
+      const sm = document.createElement("small"); sm.textContent = sub;
+      div.appendChild(b); div.appendChild(sm);
+      div.onclick = () => {
+        $("geoResults").innerHTML = "";
+        place = { name: res.name, lat: res.latitude, lon: res.longitude };
+        storeSet("city", place);
+        loadWeather();
+      };
+      $("geoResults").appendChild(div);
+    }
+  } catch(e){ setStatus("Ошибка сети при поиске города", "err"); }
+}
+
+async function loadWeather(){
+  if (!place) return;
+  setStatus("Грузим погоду для " + place.name + "…");
+  const n = 1 + days;
+  const url = "https://api.open-meteo.com/v1/forecast?latitude=" + place.lat + "&longitude=" + place.lon +
+    "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
+    "&timezone=auto&forecast_days=" + Math.max(n, 6);
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    weather = await r.json();
+    drawCard();
+    $("download").disabled = false;
+    $("install").disabled = false;
+    setStatus("Готово: " + canvas.width + "×" + canvas.height + ". Можно скачивать BMP.", "ok");
+  } catch(e){ setStatus("Не удалось получить погоду. Проверь интернет и нажми «Обновить».", "err"); }
+}
+
+// ---------- интерфейс ----------
+function currentSize(){
+  if (device === "custom") return [parseInt($("w").value, 10) || 480, parseInt($("h").value, 10) || 800];
+  return DEVICES[device];
+}
+function applyDevice(){
+  $("customSizeRow").style.display = device === "custom" ? "flex" : "none";
+  for (const b of $("deviceSeg").children) b.classList.toggle("active", b.dataset.dev === device);
+  const size = currentSize();
+  canvas.width = size[0]; canvas.height = size[1];
+  if (weather) drawCard();
+  else { ctx.fillStyle = BG; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+  storeStr("device", device);
+}
+function applyDaysActive(){
+  for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
+}
+$("deviceSeg").onclick = e => {
+  const b = e.target.closest("button[data-dev]");
+  if (!b) return;
+  device = b.dataset.dev;
+  applyDevice();
+  if (place) loadWeather();
+};
+$("daysSeg").onclick = e => {
+  const b = e.target.closest("button[data-days]");
+  if (!b) return;
+  days = parseInt(b.dataset.days, 10);
+  applyDaysActive();
+  storeStr("days", String(days));
+  if (place) loadWeather();
+};
+$("w").onchange = applyDevice; $("h").onchange = applyDevice;
+$("invert").onchange = () => { storeStr("invert", $("invert").checked ? "1" : ""); if (weather) drawCard(); };
+$("searchCity").onclick = searchCity;
+$("city").addEventListener("keydown", e => { if (e.key === "Enter") searchCity(); });
+$("refresh").onclick = () => place ? loadWeather() : searchCity();
+$("download").onclick = () => {
+  drawCard();
+  const blob = encodeBMP();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sleep.bmp";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+// ---------- установка на ридер ----------
+function readerAddress(){
+  let addr = $("readerAddr").value.trim().replace(/\/+$/, "");
+  if (!/^https?:\/\//.test(addr)) addr = "http://" + addr;
+  storeStr("reader", addr);
+  return addr;
+}
+
+async function installOnReader(){
+  if (location.protocol === "https:"){
+    setStatus("Страница по HTTPS — браузер не пустит запросы к ридеру в домашней сети. Скачай файл (жёлтая плашка выше) и открой его на компе — там кнопка сработает.", "err");
+    return;
+  }
+  if (!weather){ setStatus("Сначала загрузи погоду — нажми «Обновить погоду».", "err"); return; }
+  const addr = readerAddress();
+  setStatus("Шлю карточку на " + addr + " …");
+  drawCard();
+  const blob = encodeBMP();
+  try {
+    const fd = new FormData();
+    fd.append("file", new File([blob], "sleep.bmp", { type: "image/bmp" }));
+    // у inkMOD кастомная заставка лежит в папке /Sleep на SD (не в корне) — перезаписываем её
+    await fetch(addr + "/upload?path=/Sleep", { method: "POST", mode: "no-cors", body: fd });
+  } catch(e){
+    setStatus("Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети (или в точке доступа InkMOD-Reader), адрес верный.", "err");
+    return;
+  }
+  setStatus("Картинка загружена. Применяю режим «Своя картинка»…");
+  try {
+    await fetch(addr + "/api/settings", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ sleepScreen: 3 })
+    });
+    setStatus("Готово: sleep.bmp на ридере, режим «Своя картинка» выставлен. Заблокируй ридер — увидишь карточку.", "ok");
+  } catch(e){
+    setStatus("Картинка загружена, но режим применить не удалось — выбери «Своя картинка» на ридере вручную.", "err");
+  }
+}
+$("install").onclick = installOnReader;
+$("readerAddr").addEventListener("keydown", e => { if (e.key === "Enter") installOnReader(); });
+
+// ---------- старт ----------
+(function init(){
+  const savedCity = storeGet("city");
+  if (savedCity){ place = savedCity; $("city").value = savedCity.name; }
+  else { place = { name: "Санкт-Петербург", lat: 59.9391, lon: 30.3159 }; $("city").value = "Санкт-Петербург"; }
+  const d = storeRaw("device");
+  device = (d === "custom" || DEVICES[d]) ? d : "x4";
+  const savedReader = storeRaw("reader");
+  // дефолт — реальный адрес его ридера в сети; старый дефолт мигрируем
+  $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? DEFAULT_READER : savedReader;
+  // на HTTPS-хостинге (GitHub Pages) установка на ридер невозможна — mixed content
+  if (location.protocol === "https:"){
+    $("httpsNote").style.display = "block";
+    $("install").disabled = true;
+  }
+  const legacyDays = parseInt(storeRaw("days"), 10);
+  if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
+  if (storeRaw("invert")) $("invert").checked = true;
+  applyDevice();
+  applyDaysActive();
+  loadWeather();
+})();
+</script>
+</body>
+</html>
