@@ -179,6 +179,18 @@
         <li data-i18n="s5"></li>
       </ul>
     </details>
+    <details>
+      <summary data-i18n="ideaT"></summary>
+      <p style="margin:8px 0 0" data-i18n="ideaP"></p>
+    </details>
+    <details>
+      <summary data-i18n="roadT"></summary>
+      <p style="margin:8px 0 4px;color:var(--acc);font-weight:600" data-i18n="rmDone"></p>
+      <ul style="margin:0;padding-left:18px"><li data-i18n="rd"></li></ul>
+      <p style="margin:10px 0 4px;color:var(--dim);font-weight:600" data-i18n="rmNext"></p>
+      <ul style="margin:0;padding-left:18px"><li data-i18n="rn"></li></ul>
+      <p class="hint" style="margin-top:10px" data-i18n="rmTested"></p>
+    </details>
   </div>
   <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
 </main>
@@ -242,6 +254,14 @@ ru: {
   s3: "Фаза Луны — астрорасчёт по дате (цикл 29,5 сут)",
   s4: "В прогнозе: <b>д</b> — днём, <b>н</b> — ночью, °C",
   s5: "Карточка обновляется, когда ты генерируешь и закидываешь новый sleep.bmp",
+  ideaT: "💡 Идея проекта",
+  ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Уже работает",
+  rd: "Карточка погоды (сейчас, днём/ночью, прогноз 2–5 дней) · восход/закат · фаза Луны · 6 языков · светлая/тёмная тема · установка на ридер в 1 клик (локальная версия) · донаты",
+  rmNext: "🏗 В планах",
+  rn: "Вероятность осадков · ветер · ощущаемая температура · UV-индекс · качество воздуха · офлайн-режим (дневная температура как главная) · своя строка текста на карточке · автообновление через форк прошивки",
+  rmTested: "⚠ Протестировано только на Xteink X4 + inkMOD 1.1.7. Другие устройства и прошивки не проверялись — отчёты приветствуются!",
   stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
   stLoading: "Грузим погоду для {city}…", stReady: "Готово: {w}×{h}. Можно скачивать BMP.",
   stWeatherFail: "Не удалось получить погоду. Проверь интернет и нажми «Обновить погоду».",
@@ -284,6 +304,14 @@ en: {
   s3: "Moon phase — astronomical calculation from the date (29.5-day cycle)",
   s4: "Forecast: <b>d</b> — daytime, <b>n</b> — night, °C",
   s5: "The card updates when you generate and upload a new sleep.bmp",
+  ideaT: "💡 Project idea",
+  ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Already working",
+  rd: "Weather card (current, day/night, 2–5 day forecast) · sunrise/sunset · moon phase · 6 interface languages · light/dark theme · one-click install to reader (local version) · donations",
+  rmNext: "🏗 On the roadmap",
+  rn: "Precipitation probability · wind · feels-like temperature · UV index · air quality · offline mode (daily temp as the headline) · custom text line on the card · scheduled auto-refresh via a firmware fork",
+  rmTested: "⚠ Tested only on Xteink X4 + inkMOD 1.1.7. Other devices and firmware are untested — field reports welcome!",
   stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
   stLoading: "Loading weather for {city}…", stReady: "Done: {w}×{h}. You can download the BMP.",
   stWeatherFail: "Couldn\u2019t load the weather. Check the internet and press \u201cRefresh weather\u201d.",
@@ -326,6 +354,14 @@ zh: {
   s3: "月相 — 根据日期的天文计算（29.5 天周期）",
   s4: "预报中：<b>昼</b> — 白天，<b>夜</b> — 夜间，摄氏度",
   s5: "卡片在你生成并上传新的 sleep.bmp 时更新",
+  ideaT: "💡 项目理念",
+  ideaP: "阅读器的锁屏是电子墨水屏：显示图片几乎不耗电。与其放无用的壁纸，不如放一个实用工具：天气概览、日落时间、月相。早上同步 — 一整天（即使离线、在户外）眼前都是实时简报，而不是死板的风景。",
+  roadT: "🛣 路线图",
+  rmDone: "✅ 已实现",
+  rd: "天气卡片（当前、白天/夜间、2–5天预报）· 日出/日落 · 月相 · 6种界面语言 · 亮/暗主题 · 一键安装到阅读器（本地版）· 捐赠",
+  rmNext: "🏗 计划中",
+  rn: "降水概率 · 风力 · 体感温度 · 紫外线指数 · 空气质量 · 离线模式（以白天气温为主）· 卡片自定义文字 · 通过固件fork实现定时自动更新",
+  rmTested: "⚠ 仅在 Xteink X4 + inkMOD 1.1.7 上测试。其他设备和固件未经测试 — 欢迎反馈！",
   stSearching: "搜索城市…", stFound: "找到 {n} 个 — 请选择", stNotFound: "未找到城市", stSearchErr: "搜索时网络错误",
   stLoading: "正在加载 {city} 的天气…", stReady: "完成：{w}×{h}。可以下载 BMP。",
   stWeatherFail: "无法获取天气。请检查网络后点击“更新天气”。",
@@ -368,6 +404,14 @@ es: {
   s3: "Fase lunar — cálculo astronómico según la fecha (ciclo de 29,5 días)",
   s4: "En el pronóstico: <b>d</b> — día, <b>n</b> — noche, °C",
   s5: "La tarjeta se actualiza cuando generas y subes un nuevo sleep.bmp",
+  ideaT: "💡 Idea del proyecto",
+  ideaP: "La pantalla de bloqueo de un lector es e-ink: mostrar una imagen no gasta batería. Así que, en lugar de un fondo inútil, que sea una herramienta útil: resumen del tiempo, puesta de sol, fase lunar. Te sincronizas por la mañana — y todo el día (incluso sin conexión, en la naturaleza) tienes el resumen delante, no un paisaje muerto.",
+  roadT: "🛣 Hoja de ruta",
+  rmDone: "✅ Ya funciona",
+  rd: "Tarjeta del tiempo (actual, día/noche, pronóstico 2–5 días) · amanecer/atardecer · fase lunar · 6 idiomas · tema claro/oscuro · instalación en el lector en 1 clic (versión local) · donaciones",
+  rmNext: "🏗 En planes",
+  rn: "Probabilidad de precipitaciones · viento · sensación térmica · índice UV · calidad del aire · modo sin conexión (temperatura diurna como principal) · línea de texto propia en la tarjeta · autoactualización mediante fork del firmware",
+  rmTested: "⚠ Probado solo en Xteink X4 + inkMOD 1.1.7. Otros dispositivos y firmwares sin probar — ¡informes bienvenidos!",
   stSearching: "Buscando…", stFound: "{n} encontrados — elige uno", stNotFound: "Ciudad no encontrada", stSearchErr: "Error de red al buscar",
   stLoading: "Cargando el tiempo de {city}…", stReady: "Listo: {w}×{h}. Ya puedes descargar el BMP.",
   stWeatherFail: "No se pudo cargar el tiempo. Comprueba la conexión y pulsa «Actualizar el tiempo».",
@@ -410,6 +454,14 @@ de: {
   s3: "Mondphase — astronomische Berechnung aus dem Datum (29,5-Tage-Zyklus)",
   s4: "In der Vorhersage: <b>T</b> — tags, <b>N</b> — nachts, °C",
   s5: "Die Karte aktualisiert sich, wenn du ein neues sleep.bmp erzeugst und überträgst",
+  ideaT: "💡 Projektidee",
+  ideaP: "Der Sperrbildschirm eines Readers ist E-Ink: Ein Bild anzeigen kostet keine Batterie. Also statt eines nutzlosen Hintergrunds ein nützliches Werkzeug: Wetterübersicht, Sonnenuntergang, Mondphase. Morgens synchronisiert — und den ganzen Tag (auch offline, in der Natur) hast du die Zusammenfassung vor Augen statt einer toten Landschaft.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Bereits funktionierend",
+  rd: "Wetterkarte (aktuell, tags/nachts, 2–5 Tage Vorhersage) · Sonnenauf-/untergang · Mondphase · 6 Sprachen · helle/dunkle Theme · Ein-Klick-Installation auf den Reader (lokale Version) · Spenden",
+  rmNext: "🏗 Geplant",
+  rn: "Regenwahrscheinlichkeit · Wind · gefühlte Temperatur · UV-Index · Luftqualität · Offline-Modus (Tagestemperatur als Hauptwert) · eigene Textzeile auf der Karte · geplante Auto-Aktualisierung per Firmware-Fork",
+  rmTested: "⚠ Nur auf Xteink X4 + inkMOD 1.1.7 getestet. Andere Geräte und Firmwares sind ungetestet — Berichte willkommen!",
   stSearching: "Suche…", stFound: "{n} gefunden — bitte wählen", stNotFound: "Stadt nicht gefunden", stSearchErr: "Netzwerkfehler bei der Suche",
   stLoading: "Lade Wetter für {city}…", stReady: "Fertig: {w}×{h}. BMP kann heruntergeladen werden.",
   stWeatherFail: "Wetter konnte nicht geladen werden. Internet prüfen und „Wetter aktualisieren“ drücken.",
@@ -452,6 +504,14 @@ vi: {
   s3: "Giai đoạn trăng — tính thiên văn theo ngày (chu kỳ 29,5 ngày)",
   s4: "Trong dự báo: <b>n</b> — ban ngày, <b>đ</b> — ban đêm, °C",
   s5: "Thẻ cập nhật khi bạn tạo và tải lên sleep.bmp mới",
+  ideaT: "💡 Ý tưởng dự án",
+  ideaP: "Màn hình khóa của máy đọc là e-ink: hiển thị hình ảnh không tốn pin. Thay vì hình nền vô dụng, hãy để nó là công cụ hữu ích: tóm tắt thời tiết, giờ mặt trời lặn, pha trăng. Đồng bộ buổi sáng — cả ngày (kể cả ngoại tuyến, đi dã ngoại) bạn có bản tóm tắt trước mắt thay vì phong cảnh tĩnh.",
+  roadT: "🛣 Lộ trình",
+  rmDone: "✅ Đã hoạt động",
+  rd: "Thẻ thời tiết (hiện tại, ngày/đêm, dự báo 2–5 ngày) · mặt trời mọc/lặn · pha trăng · 6 ngôn ngữ · giao diện sáng/tối · cài đặt vào máy đọc 1 chạm (bản cục bộ) · quyên góp",
+  rmNext: "🏗 Kế hoạch",
+  rn: "Khả năng mưa · gió · nhiệt độ cảm nhận · chỉ số UV · chất lượng không khí · chế độ ngoại tuyến (nhiệt độ ban ngày làm chính) · dòng văn bản tùy chỉnh trên thẻ · tự động cập nhật qua fork firmware",
+  rmTested: "⚠ Chỉ kiểm thử trên Xteink X4 + inkMOD 1.1.7. Các thiết bị và firmware khác chưa kiểm thử — hoan nghênh phản hồi!",
   stSearching: "Đang tìm…", stFound: "Tìm thấy {n} — hãy chọn", stNotFound: "Không tìm thấy thành phố", stSearchErr: "Lỗi mạng khi tìm kiếm",
   stLoading: "Đang tải thời tiết cho {city}…", stReady: "Xong: {w}×{h}. Có thể tải BMP.",
   stWeatherFail: "Không tải được thời tiết. Kiểm tra mạng và bấm “Cập nhật thời tiết”.",
