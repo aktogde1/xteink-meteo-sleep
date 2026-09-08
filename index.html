@@ -44,7 +44,7 @@
   .badge:hover { filter:brightness(1.3); }
   .badge.lang.active { background:var(--acc); color:var(--btnText); }
   .dd { position:relative; display:inline-block; }
-  .ddMenu { position:absolute; top:calc(100% + 6px); right:0; background:var(--panel); border:1px solid var(--line); border-radius:10px; min-width:210px; display:none; z-index:40; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.25); }
+  .ddMenu { position:absolute; top:calc(100% + 6px); right:0; width:100%; background:var(--panel); border:1px solid var(--line); border-radius:10px; display:none; z-index:40; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.25); }
   .dd.open .ddMenu { display:block; }
   .ddItem { display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:9px 11px; border-radius:7px; color:var(--fg); background:none; border:none; cursor:pointer; font-size:13.5px; font-weight:600; font-family:inherit; text-decoration:none; }
   .ddItem:hover { background:var(--inputBg); }
@@ -136,8 +136,8 @@
       <div class="dd" id="donateWrap">
         <button class="badge donate" id="donateBtn"><span class="hh">♥</span> <span data-i18n="donate"></span> <span class="hh">♥</span></button>
         <div class="ddMenu" id="donateMenu">
-          <button class="ddItem" id="ddCrypto">₮ <span><span data-i18n="crypto"></span><small>USDT / BTC / ETH</small></span></button>
-          <a class="ddItem" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener">✈ <span><span>Tribute</span><small>Telegram</small></span></a>
+          <button class="ddItem" id="ddCrypto"><span><span data-i18n="crypto"></span><small>USDT / BTC / ETH</small></span></button>
+          <a class="ddItem" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener"><span><span>Tribute</span><small>Telegram</small></span></a>
         </div>
       </div>
       <a class="badge gh" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener" title="GitHub" style="gap:7px">
