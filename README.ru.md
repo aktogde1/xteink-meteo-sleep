@@ -68,6 +68,10 @@
 - BTC: `bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6` — [QR](https://qr.crypt.bot/?url=bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6)
 - ETH: `0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4` — [QR](https://qr.crypt.bot/?url=0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4)
 
+## Разработка
+
+Весь сайт — один `index.html`, и у него есть карта. Смотри **[DEVELOPMENT.md](DEVELOPMENT.md)**: структура кода, шпаргалка «где что править», известные грабли и процесс релиза. Идея проекта и roadmap показаны на самом сайте (блоки 💡 и 🛣 в боковой панели).
+
 ## Лицензия
 
 MIT. Автор не связан с Xteink, inkMOD или CrossPoint. Погода — Open-Meteo (некоммерческое использование).
