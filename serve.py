@@ -1,4 +1,4 @@
-import http.server, os, sys
+import http.server, os, sys, urllib.request, uuid
 role = sys.argv[1] if len(sys.argv) > 1 else "site"
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -8,7 +8,36 @@ class NoCache:
         super().end_headers()
 
 class Site(NoCache, http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.startswith("/relay-check"):
+            self.send_response(200)
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(b"ok")
+            return
+        super().do_GET()
     def do_POST(self):
+        if self.path.startswith("/relay"):
+            from urllib.parse import urlparse, parse_qs
+            q = parse_qs(urlparse(self.path).query)
+            addr = q.get("addr", [""])[0]
+            name = (q.get("name", ["sleep.bmp"])[0])[:80].replace("/", "_")
+            data = self.rfile.read(int(self.headers.get("Content-Length", 0) or 0))
+            bnd = "----xms" + uuid.uuid4().hex
+            mp = (('--%s\r\nContent-Disposition: form-data; name="file"; filename="%s"\r\nContent-Type: image/bmp\r\n\r\n' % (bnd, name)).encode()
+                  + data + ("\r\n--%s--\r\n" % bnd).encode())
+            req = urllib.request.Request(addr, data=mp, method="POST")
+            req.add_header("Content-Type", "multipart/form-data; boundary=" + bnd)
+            try:
+                up = urllib.request.urlopen(req, timeout=120)
+                out = ("status:" + str(up.getcode())).encode()
+            except Exception as e:
+                out = ("ERR " + str(e)).encode()
+            self.send_response(200)
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(out)
+            return
         if self.path != "/save":
             self.send_error(404); return
         data = self.rfile.read(int(self.headers.get("Content-Length", 0)))
