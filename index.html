@@ -99,8 +99,6 @@
     <button class="burger" id="burger">☰</button>
     <nav class="menu" id="menu">
       <a href="app.html" data-i18n="navApp"></a>
-      <a href="#idea" data-i18n="navIdea"></a>
-      <a href="#roadmap" data-i18n="navRoad"></a>
       <a href="#install" data-i18n="navInst"></a>
       <a href="https://github.com/aktogde1/xteink-meteo-sleep/releases" target="_blank" rel="noopener">Releases</a>
     </nav>
@@ -148,19 +146,11 @@
   </div>
 </section>
 
-<section id="idea">
-  <div class="secIn">
-    <h2 data-i18n="ideaT"></h2>
-    <blockquote data-i18n="ideaP"></blockquote>
-    <cite data-i18n="ideaC"></cite>
-  </div>
-</section>
-
-<section id="roadmap">
-  <div class="secIn">
-    <h2 data-i18n="roadT"></h2>
-    <p class="secSub" data-i18n="roadSub"></p>
-    <div class="tl" id="tl"></div>
+<section id="about">
+  <div class="secIn" style="text-align:center">
+    <h2 data-i18n="aboutT"></h2>
+    <p style="max-width:640px;margin:0 auto 14px;color:var(--dim)" data-i18n="about1"></p>
+    <p style="max-width:640px;margin:0 auto;color:var(--dim)" data-i18n="about2"></p>
   </div>
 </section>
 
@@ -204,6 +194,9 @@
 const LOCALE = { ru:"ru-RU", en:"en-GB", zh:"zh-CN", es:"es-ES", de:"de-DE", vi:"vi-VN" };
 const L = {
 ru: {
+  aboutT: "Обложка или метеостанция — решать тебе",
+  about1: "Заставка может быть просто красивой картинкой. А может быть метеосводкой: температура дня, закат, фаза Луны — то, чем реально пользуешься.",
+  about2: "В будущем мы оптимизируем карточку так, чтобы данные оставались полезными даже несколько дней без синхронизации.",
   title: "Xteink Meteo Sleep — погода на локскрине Xteink X4/X3",
   navApp: "Генератор", navIdea: "Идея", navRoad: "Roadmap", navInst: "Установка",
   heroTag: "Погода, фаза Луны и восход/закат на экране блокировки твоего Xteink X4 / X4 Pro / X3. Бесплатно, на любом языке, для любой прошивки.",
@@ -248,6 +241,9 @@ ru: {
   ]
 },
 en: {
+  aboutT: "A cover or a weather station — your call",
+  about1: "The lock screen can be just a pretty picture. Or it can be a weather briefing: the day’s temperature, sunset, moon phase — things you actually use.",
+  about2: "Next we’ll tune the card so the data stays useful for several days without a sync.",
   title: "Xteink Meteo Sleep — weather on your Xteink X4/X3 lock screen",
   navApp: "Generator", navIdea: "Idea", navRoad: "Roadmap", navInst: "Install",
   heroTag: "Weather, moon phase and sunrise/sunset on the lock screen of your Xteink X4 / X4 Pro / X3. Free, any language, any firmware.",
@@ -292,6 +288,9 @@ en: {
   ]
 },
 zh: {
+  aboutT: "封面还是气象站 — 由你决定",
+  about1: "锁屏可以只是一张漂亮的图片，也可以是实用的天气简报：当日温度、日落、月相 — 整天都用得上。",
+  about2: "未来我们会优化卡片，让数据在几天不同步的情况下依然有用。",
   title: "Xteink Meteo Sleep — Xteink X4/X3 锁屏天气",
   navApp: "生成器", navIdea: "理念", navRoad: "路线图", navInst: "安装",
   heroTag: "在你的 Xteink X4 / X4 Pro / X3 锁屏上显示天气、月相和日出日落。免费、多语言、适配任何固件。",
@@ -336,6 +335,9 @@ zh: {
   ]
 },
 es: {
+  aboutT: "Portada o estación meteorológica — tú decides",
+  about1: "La pantalla de bloqueo puede ser solo una imagen bonita. O puede ser un parte meteorológico: la temperatura del día, el atardecer, la fase lunar — algo que usas de verdad.",
+  about2: "Pronto afinaremos la tarjeta para que los datos sigan siendo útiles varios días sin sincronizar.",
   heroTitle: "El tiempo, la luna y el atardecer en tu pantalla de bloqueo",
   title: "Xteink Meteo Sleep — el tiempo en la pantalla de bloqueo de Xteink X4/X3",
   navApp: "Generador", navIdea: "Idea", navRoad: "Hoja de ruta", navInst: "Instalaci\u00f3n",
@@ -381,6 +383,9 @@ es: {
   ]
 },
 de: {
+  aboutT: "Cover oder Wetterstation — du entscheidest",
+  about1: "Der Sperrbildschirm kann nur ein schönes Bild sein. Oder ein Wetter-Briefing: Tagestemperatur, Sonnenuntergang, Mondphase — Dinge, die du wirklich nutzt.",
+  about2: "Als Nächstes optimieren wir die Karte so, dass die Daten auch mehrere Tage ohne Synchronisierung nützlich bleiben.",
   heroTitle: "Wetter, Mond & Sonnenuntergang auf dem Sperrbildschirm",
   title: "Xteink Meteo Sleep — Wetter auf dem Sperrbildschirm des Xteink X4/X3",
   navApp: "Generator", navIdea: "Idee", navRoad: "Roadmap", navInst: "Installation",
@@ -426,6 +431,9 @@ de: {
   ]
 },
 vi: {
+  aboutT: "Ảnh bìa hay trạm thời tiết — bạn quyết định",
+  about1: "Màn hình khóa có thể chỉ là một ảnh đẹp. Hoặc là bản tin thời tiết: nhiệt độ trong ngày, hoàng hôn, pha trăng — những thứ bạn thực sự dùng.",
+  about2: "Sắp tới chúng tôi sẽ tối ưu thẻ để dữ liệu vẫn hữu ích mấy ngày không đồng bộ.",
   heroTitle: "Thời tiết, mặt trăng và bình minh trên màn hình khóa",
   title: "Xteink Meteo Sleep — th\u1eddi ti\u1ebft tr\u00ean m\u00e0n h\u00ecnh kh\u00f3a Xteink X4/X3",
   navApp: "Tr\u00ecnh t\u1ea1o", navIdea: "\u00dd t\u01b0\u1edfng", navRoad: "L\u1ed9 tr\u00ecnh", navInst: "C\u00e0i \u0111\u1eb7t",
@@ -483,20 +491,6 @@ function applyLang(){
   document.title = L[LANG].title;
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = L[LANG][el.dataset.i18n] ?? ""; });
   document.querySelectorAll(".badge.lang").forEach(b => b.classList.toggle("active", b.dataset.lang === LANG));
-  const tl = document.getElementById("tl");
-  tl.innerHTML = "";
-  const doneLabel = L[LANG].rmDone.replace("\u2705 ", "");
-  const nextLabel = L[LANG].nextTag || "…";
-  for (const [type, title, desc] of L[LANG].rl){
-    const item = document.createElement("div");
-    item.className = "tlItem" + (type === "next" ? " next" : "");
-    const tag = document.createElement("div");
-    tag.className = "tag";
-    tag.textContent = (type === "done" ? "\u2713 " + doneLabel : nextLabel).toUpperCase();
-    item.appendChild(tag);
-    const h = document.createElement("h4"); h.textContent = title; item.appendChild(h);
-    const p = document.createElement("p"); p.textContent = desc; item.appendChild(p);
-    tl.appendChild(item);
   }
 }
 document.querySelectorAll(".badge.lang").forEach(b => b.onclick = () => {
