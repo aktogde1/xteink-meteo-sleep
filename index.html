@@ -43,7 +43,14 @@
   .badge { display:inline-flex; align-items:center; gap:5px; background:var(--badgeBg); color:#fff; border:none; border-radius:4px; padding:7px 11px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
   .badge:hover { filter:brightness(1.3); }
   .badge.lang.active { background:var(--acc); color:var(--btnText); }
-  .badge.donate { color:#f0c14b; }
+  .dd { position:relative; display:inline-block; }
+  .ddMenu { position:absolute; top:calc(100% + 6px); right:0; background:var(--panel); border:1px solid var(--line); border-radius:10px; min-width:210px; display:none; z-index:40; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.25); }
+  .dd.open .ddMenu { display:block; }
+  .ddItem { display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:9px 11px; border-radius:7px; color:var(--fg); background:none; border:none; cursor:pointer; font-size:13.5px; font-weight:600; font-family:inherit; text-decoration:none; }
+  .ddItem:hover { background:var(--inputBg); }
+  .ddItem small { color:var(--dim); font-weight:400; display:block; font-size:11.5px; }
+  .badge.donate { color:#f0c14b; border:2px solid #4a3f22; }
+  .hh { font-size:1.15em; }
   .home { color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:7px 12px; }
   .home:hover { background:var(--codeBg); }
   .iconLink { display:inline-flex; align-items:center; justify-content:center; width:30px; height:25px; border-radius:4px; color:#ffffff; text-decoration:none; background:var(--badgeBg); }
@@ -126,9 +133,17 @@
     <div class="navBadges">
       <button class="badge lang" data-lang="ru" title="Русский">Русский</button>
       <button class="badge lang" data-lang="en" title="English">English</button>
-      <button id="cryptoLink" class="badge" style="display:none">₮ <span data-i18n="crypto"></span></button>
-      <a id="donateLink" class="badge donate" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener" title="Tribute">♥ <span data-i18n="donate"></span></a>
-      <a class="badge gh" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener" title="GitHub">GitHub</a>
+      <div class="dd" id="donateWrap">
+        <button class="badge donate" id="donateBtn"><span class="hh">♥</span> <span data-i18n="donate"></span> <span class="hh">♥</span></button>
+        <div class="ddMenu" id="donateMenu">
+          <button class="ddItem" id="ddCrypto">₮ <span><span data-i18n="crypto"></span><small>USDT / BTC / ETH</small></span></button>
+          <a class="ddItem" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener">✈ <span><span>Tribute</span><small>Telegram</small></span></a>
+        </div>
+      </div>
+      <a class="badge gh" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener" title="GitHub" style="gap:7px">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
     </div>
   </div>
 </header>
@@ -319,7 +334,7 @@ ru: {
   stHttps: "Страница по HTTPS — браузер не пустит запросы к ридеру в домашней сети. Скачай файл (жёлтая плашка выше) и открой его на компе.",
   stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
-  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать ♥",
+  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
   mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
   home: "На главную", widgets: "Виджеты карточки",
   bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
@@ -375,7 +390,7 @@ en: {
   stHttps: "Page is on HTTPS — the browser won\u2019t let it reach the reader on your network. Download the file (yellow note above) and open it locally.",
   stNoWeather: "Load the weather first — press “Refresh weather”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
-  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate ♥",
+  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate",
   mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
   home: "Home", widgets: "Card widgets",
   bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
@@ -811,8 +826,7 @@ function applyI18n(){
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
   const ph = document.querySelector("[data-i18n-ph]");
   if (ph) ph.placeholder = t("cityPh");
-  $("donateLink").style.display = DONATE_URL ? "" : "none";
-  $("cryptoLink").style.display = CRYPTO.length ? "" : "none";
+  $("donateWrap").style.display = (DONATE_URL || CRYPTO.length) ? "" : "none";
   applyLangActive();
 }
 async function refreshPlaceName(){
@@ -1073,7 +1087,18 @@ function buildCryptoRows(){
     rows.appendChild(row);
   }
 }
-$("cryptoLink").onclick = () => { buildCryptoRows(); $("cryptoModal").classList.add("open"); };
+$("donateBtn").onclick = e => {
+  e.stopPropagation();
+  $("donateWrap").classList.toggle("open");
+};
+$("ddCrypto").onclick = () => {
+  $("donateWrap").classList.remove("open");
+  buildCryptoRows();
+  $("cryptoModal").classList.add("open");
+};
+document.addEventListener("click", e => {
+  if (!e.target.closest("#donateWrap")) $("donateWrap").classList.remove("open");
+});
 $("cmClose").onclick = () => $("cryptoModal").classList.remove("open");
 $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoModal").classList.remove("open"); };
 
