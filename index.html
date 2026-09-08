@@ -56,7 +56,6 @@
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
-  .locate { display:flex; align-items:center; gap:6px; margin:9px auto 0; }
   #geoResults { border:1px solid var(--line); border-radius:8px; margin-top:7px; overflow:hidden; }
   #geoResults:empty { display:none; }
   .geoItem { padding:9px 11px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--line); background:var(--panel); }
@@ -101,7 +100,6 @@
         <input type="text" id="city" data-i18n-ph="cityPh">
         <button class="btn secondary" id="searchCity" data-i18n="find"></button>
       </div>
-      <button class="btn secondary locate" id="locate"><span data-i18n="locate"></span></button>
       <div id="geoResults"></div>
     </div>
 
@@ -202,7 +200,6 @@ ru: {
   title: "Xteink Meteo Sleep — погода, луна, восход на локскрине",
   subtitle: "Погода · луна · восход на локскрине Xteink X4 / X4 Pro / X3. Собери по своему городу и скачай как sleep.bmp",
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
-  locate: "📍 Определить местоположение", locLocating: "Определяем местоположение…", locDenied: "Браузер не дал доступ к геолокации — впиши город вручную.", locFail: "Не удалось определить местоположение — впиши город вручную.",
   device: "Устройство", custom: "Свой…",
   days: "Дней прогноза (не считая сегодня)",
   invert: "Тёмная карточка (чёрный фон)",
@@ -244,7 +241,6 @@ en: {
   title: "Xteink Meteo Sleep — weather, moon & sunrise lock screen",
   subtitle: "Weather · moon · sunrise on the lock screen of your Xteink X4 / X4 Pro / X3. Build a card for your city and download it as sleep.bmp",
   city: "City", cityPh: "e.g. Berlin", find: "Search",
-  locate: "📍 Detect my location", locLocating: "Detecting your location…", locDenied: "Location access denied by the browser — type your city manually.", locFail: "Couldn’t detect your location — type your city manually.",
   device: "Device", custom: "Custom…",
   days: "Forecast days (excluding today)",
   invert: "Dark card (black background)",
@@ -286,7 +282,6 @@ zh: {
   title: "Xteink Meteo Sleep — 天气、月相、日出锁屏",
   subtitle: "天气 · 月相 · 日出，显示在 Xteink X4 / X4 Pro / X3 的锁屏上。为你的城市生成卡片并下载为 sleep.bmp",
   city: "城市", cityPh: "例如：上海", find: "搜索",
-  locate: "📍 定位我的位置", locLocating: "正在定位…", locDenied: "浏览器拒绝了定位权限 — 请手动输入城市。", locFail: "无法定位 — 请手动输入城市。",
   device: "设备", custom: "自定义…",
   days: "预报天数（不含今天）",
   invert: "深色卡片（黑色背景）",
@@ -328,7 +323,6 @@ es: {
   title: "Xteink Meteo Sleep — tiempo, luna y amanecer en la pantalla de bloqueo",
   subtitle: "El tiempo · la luna · el amanecer en la pantalla de bloqueo de tu Xteink X4 / X4 Pro / X3. Crea una tarjeta para tu ciudad y descárgala como sleep.bmp",
   city: "Ciudad", cityPh: "p. ej. Madrid", find: "Buscar",
-  locate: "📍 Detectar mi ubicación", locLocating: "Detectando tu ubicación…", locDenied: "El navegador denegó el acceso a la ubicación — escribe tu ciudad a mano.", locFail: "No se pudo detectar tu ubicación — escribe tu ciudad a mano.",
   device: "Dispositivo", custom: "Personalizado…",
   days: "Días de pronóstico (sin hoy)",
   invert: "Tarjeta oscura (fondo negro)",
@@ -370,7 +364,6 @@ de: {
   title: "Xteink Meteo Sleep — Wetter, Mond & Sonnenaufgang als Sperrbildschirm",
   subtitle: "Wetter · Mond · Sonnenaufgang auf dem Sperrbildschirm deines Xteink X4 / X4 Pro / X3. Karte für deine Stadt erstellen und als sleep.bmp herunterladen",
   city: "Stadt", cityPh: "z. B. Berlin", find: "Suchen",
-  locate: "📍 Standort ermitteln", locLocating: "Standort wird ermittelt…", locDenied: "Browser hat den Standortzugriff verweigert — Stadt bitte manuell eingeben.", locFail: "Standort konnte nicht ermittelt werden — Stadt bitte manuell eingeben.",
   device: "Gerät", custom: "Eigene…",
   days: "Vorhersagetage (ohne heute)",
   invert: "Dunkle Karte (schwarzer Hintergrund)",
@@ -412,7 +405,6 @@ vi: {
   title: "Xteink Meteo Sleep — thời tiết, trăng, mặt trời trên màn hình khóa",
   subtitle: "Thời tiết · trăng · mặt trời mọc/lặn trên màn hình khóa Xteink X4 / X4 Pro / X3. Tạo ảnh cho thành phố của bạn và tải xuống sleep.bmp",
   city: "Thành phố", cityPh: "vd. Hà Nội", find: "Tìm",
-  locate: "📍 Xác định vị trí của tôi", locLocating: "Đang xác định vị trí…", locDenied: "Trình duyệt từ chối quyền vị trí — hãy nhập thành phố thủ công.", locFail: "Không xác định được vị trí — hãy nhập thành phố thủ công.",
   device: "Thiết bị", custom: "Tùy chọn…",
   days: "Số ngày dự báo (không tính hôm nay)",
   invert: "Thẻ tối (nền đen)",
@@ -848,27 +840,6 @@ $("download").onclick = () => {
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 };
-
-// ---------- геолокация ----------
-function locateMe(){
-  if (!navigator.geolocation){ setStatus(t("locFail"), "err"); return; }
-  setStatus(t("locLocating"));
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude.toFixed(4), lon = pos.coords.longitude.toFixed(4);
-    try {
-      const r = await fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + lon + "&localityLanguage=" + LANG);
-      const j = await r.json();
-      const name = j.city || j.locality || j.principalSubdivision || lat + ", " + lon;
-      place = { name, lat: parseFloat(lat), lon: parseFloat(lon) };
-      storeSet("city", place);
-      $("city").value = name;
-      loadWeather();
-    } catch(e){ setStatus(t("locFail"), "err"); }
-  }, err => {
-    setStatus(err.code === 1 ? t("locDenied") : t("locFail"), "err");
-  }, { timeout: 10000 });
-}
-$("locate").onclick = locateMe;
 
 // ---------- установка на ридер ----------
 function readerAddress(){
