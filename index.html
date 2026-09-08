@@ -81,8 +81,6 @@
   .chk input { width:17px; height:17px; accent-color:var(--acc); }
   .wgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .wgrid .chk { font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
-  .pbar { height:10px; background:var(--inputBg); border-radius:6px; overflow:hidden; border:1px solid var(--line); }
-  #pfill { height:100%; width:0; background:var(--acc); transition:width .2s; }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -207,22 +205,15 @@
     <div class="group">
       <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
       <button class="btn wide" id="install" disabled data-i18n="install"></button>
-      <button class="btn wide" id="packReader" disabled data-i18n="packReader"></button>
-      <button class="btn wide secondary" id="packZip" disabled data-i18n="packZip"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
       <div id="status"></div>
-      <div id="prog" style="display:none;margin-top:6px">
-        <div class="pbar"><div id="pfill"></div></div>
-      </div>
     </div>
 
     <div class="group">
       <label data-i18n="reader"></label>
       <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <input type="text" id="readerAddr" placeholder="http://192.168.137.189">
-      <input type="text" id="rfolder" placeholder="/Weather" style="margin-top:8px">
-      <span class="hint" data-i18n="rfolderHint"></span>
       <span class="hint" data-i18n="readerHint"></span>
     </div>
 
@@ -300,8 +291,6 @@ ru: {
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
-  pack: "📅 Пакет: сегодня + N дней", packDone: "Готово: файлы weather-<дата>.bmp скачаны — закинь их в папку Weather на карте.",
-  packZip: "💾 Скачать ZIP-пакет", packReader: "🚀 Пакет → на ридер", rfolder: "Папка на ридере", rfolderHint: "Папку создай один раз в файловом менеджере ридера (у inkMOD файловый менеджер видит скрытые и обычные папки).", upl: "Отправка {i}/{n} на ридер…", zipDone: "ZIP скачан — распакуй в папку Weather на карте", readerPackDone: "Пакет загружен на ридер — открой файловый менеджер и выбери нужный день",
   reader: "Ридер (inkMOD)",
   readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
   httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
@@ -356,8 +345,6 @@ en: {
   refresh: "Refresh weather",
   install: "Update & install to reader",
   download: "Download sleep.bmp",
-  pack: "📅 Pack: today + N days", packDone: "Done: weather-<date>.bmp files downloaded — drop them into the Weather folder.",
-  packZip: "💾 Download ZIP pack", packReader: "🚀 Pack → to reader", rfolder: "Folder on reader", rfolderHint: "Create the folder once in the reader’s file manager.", upl: "Uploading {i}/{n} to reader…", zipDone: "ZIP downloaded — unpack into the Weather folder on the card", readerPackDone: "Pack uploaded to the reader — open the file browser and pick your day",
   reader: "Reader (inkMOD)",
   readerHint: "Use the address the reader shows in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
@@ -784,8 +771,6 @@ async function loadWeather(){
       weather = await r.json();
       drawCard();
     $("download").disabled = false;
-    $("packZip").disabled = false;
-    $("packReader").disabled = false;
     $("install").disabled = location.protocol === "https:";
       setStatus(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
@@ -913,156 +898,6 @@ async function installOnReader(){
 $("install").onclick = installOnReader;
 
 // ---------- пакет на несколько дней ----------
-// ---------- ZIP (stored, без библиотек) ----------
-function crc32(u8){
-  if (!crc32.t){
-    crc32.t = new Uint32Array(256);
-    for (let nn = 0; nn < 256; nn++){ let c = nn; for (let k = 0; k < 8; k++) c = (c & 1) ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; crc32.t[nn] = c; }
-  }
-  let c = 0xFFFFFFFF;
-  for (let i = 0; i < u8.length; i++) c = crc32.t[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
-  return (c ^ 0xFFFFFFFF) >>> 0;
-}
-function makeZip(files){
-  const enc = new TextEncoder();
-  const chunks = [], central = [];
-  let offset = 0;
-  for (const f of files){
-    const name = enc.encode(f.name);
-    const crc = crc32(f.data);
-    const h = new Uint8Array(30 + name.length);
-    const dv = new DataView(h.buffer);
-    dv.setUint32(0, 0x04034b50, true);
-    dv.setUint16(4, 20, true); dv.setUint16(6, 0, true); dv.setUint16(8, 0, true);
-    dv.setUint16(10, 0, true); dv.setUint16(12, 0, true);
-    dv.setUint32(14, crc, true);
-    dv.setUint32(18, f.data.length, true);
-    dv.setUint32(22, f.data.length, true);
-    dv.setUint16(26, name.length, true);
-    h.set(name, 30);
-    chunks.push(h, f.data);
-    central.push({ name, crc, size: f.data.length, offset });
-    offset += h.length + f.data.length;
-  }
-  const cStart = offset;
-  let cSize = 0;
-  for (const c of central){
-    const h = new Uint8Array(46 + c.name.length);
-    const dv = new DataView(h.buffer);
-    dv.setUint32(0, 0x02014b50, true);
-    dv.setUint16(4, 20, true); dv.setUint16(6, 20, true);
-    dv.setUint32(16, c.crc, true);
-    dv.setUint32(20, c.size, true);
-    dv.setUint32(24, c.size, true);
-    dv.setUint16(28, c.name.length, true);
-    dv.setUint32(42, c.offset, true);
-    h.set(c.name, 46);
-    chunks.push(h); cSize += h.length;
-  }
-  const eocd = new Uint8Array(22);
-  const dv = new DataView(eocd.buffer);
-  dv.setUint32(0, 0x06054b50, true);
-  dv.setUint16(8, central.length, true);
-  dv.setUint16(10, central.length, true);
-  dv.setUint32(12, cSize, true);
-  dv.setUint32(16, cStart, true);
-  chunks.push(eocd);
-  return new Blob(chunks, { type: "application/zip" });
-}
-async function buildPackFiles(){
-  const out = [];
-  for (let d = 0; d <= days; d++){
-    drawCard(d);
-    const blob = encodeBMP();
-    const dd = new Date(Date.now() + d * 86400000);
-    out.push({ name: "weather-" + two(dd.getMonth() + 1) + "-" + two(dd.getDate()) + ".bmp", data: new Uint8Array(await blob.arrayBuffer()) });
-  }
-  drawCard(0);
-  return out;
-}
-$("packZip").onclick = async () => {
-  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
-  setStatus(t("packGo"));
-  const files = await buildPackFiles();
-  const zip = makeZip(files);
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(zip);
-  a.download = "weather-pack.zip";
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  setStatus(t("zipDone"), "ok");
-};
-function xhrUpload(url, data, filename){
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", url);
-    xhr.onload = () => resolve();
-    xhr.onerror = () => reject(new Error("net"));
-    const fd = new FormData();
-    fd.append("file", new File([data], filename, { type: "image/bmp" }));
-    xhr.send(fd);
-  });
-}
-$("packReader").onclick = async () => {
-  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
-  const addr = readerAddress();
-  let folder = $("rfolder").value.trim() || "/Weather";
-  if (folder.charAt(0) !== "/") folder = "/" + folder;
-  if (RELAY){
-    let alive = true;
-    try { await fetch(addr + "/", { mode: "no-cors" }); } catch(e){ alive = false; }
-    if (!alive){ setStatus(t("stSendErr"), "err"); return; }
-  }
-  setStatus(t("packGo"));
-  const files = await buildPackFiles();
-  let sent = 0;
-  const total = files.reduce((s, f) => s + f.data.length, 0);
-  $("prog").style.display = "";
-  $("pfill").style.width = "0%";
-  for (let i = 0; i < files.length; i++){
-    setStatus(tf("upl", { i: i + 1, n: files.length }));
-    await sendOne(addr, folder, files[i].name, files[i].data, p => {
-      const base = sent / total;
-      $("pfill").style.width = Math.round((base + p * (files[i].data.length / total)) * 100) + "%";
-    });
-    sent += files[i].data.length;
-    $("pfill").style.width = Math.round((sent / total) * 100) + "%";
-  }
-  setStatus(t("readerPackDone"), "ok");
-};
-$("readerAddr").addEventListener("keydown", e => { if (e.key === "Enter") installOnReader(); });
-
-// ---------- релей (локальный сервер) ----------
-let RELAY = false;
-fetch("/relay-check").then(r => { RELAY = r.ok; }).catch(() => {});
-function relaySend(blob, addr, folder, filename, onPct){
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    const url = "/relay?addr=" + encodeURIComponent(addr + "/upload?path=" + encodeURIComponent(folder)) + "&name=" + encodeURIComponent(filename);
-    xhr.open("POST", url);
-    if (xhr.upload) xhr.upload.onprogress = e => { if (e.lengthComputable && onPct) onPct(e.loaded / e.total); };
-    xhr.onload = () => resolve();
-    xhr.onerror = () => reject(new Error("relay"));
-    xhr.send(blob);
-  });
-}
-// слепая отправка напрямую (когда релея нет)
-function directSend(blob, addr, folder, filename){
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", addr + "/upload?path=" + encodeURIComponent(folder));
-    xhr.onload = () => resolve();
-    xhr.onerror = () => resolve(); // ответ скрыт CORS, но запрос уходит
-    const fd = new FormData();
-    fd.append("file", new File([blob], filename, { type: "image/bmp" }));
-    xhr.send(fd);
-  });
-}
-async function sendOne(addr, folder, filename, blob, onPct){
-  if (RELAY) return relaySend(blob, addr, folder, filename, onPct);
-  return directSend(blob, addr, folder, filename);
-}
-
 // ---------- крипто-донаты ----------
 const CRYPTO = [
   { coin: "USDT", net: "TRC20 / TRON", addr: "TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1", qr: "https://qr.crypt.bot/?url=TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1" },
@@ -1118,15 +953,11 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   device = (d === "custom" || DEVICES[d]) ? d : "x4";
   const savedReader = storeRaw("reader");
   $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? "http://192.168.137.189" : savedReader;
-  const savedFolder2 = storeRaw("rfolder");
-  if (savedFolder2) $("rfolder").value = savedFolder2;
   const legacyDays = parseInt(storeRaw("days"), 10);
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   if (storeRaw("invert")) $("invert").checked = true;
   const savedW = storeGet("widgets");
   if (savedW) { for (const k in W) if (k in savedW) W[k] = !!savedW[k]; }
-  const savedFolder = storeRaw("rfolder");
-  $("rfolder").value = savedFolder || "/Weather";
   applyI18n();
   applyDevice();
   applyDaysActive();
