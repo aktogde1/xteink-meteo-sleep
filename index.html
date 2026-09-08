@@ -1,509 +1,1328 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#181b20">
-<title>Xteink Meteo Sleep — погода на локскрине Xteink X4/X3</title>
+<meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f2227" media="(prefers-color-scheme: dark)">
+<title>Xteink Meteo Sleep</title>
 <style>
   :root {
-    --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e; --acc2:#7fb069;
-    --dark:#181b20; --gold:#f0c14b;
+    --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e;
+    --btnText:#ffffff; --inputBg:#fbfaf8; --codeBg:#f0ede6; --warnBg:#fdf3d8; --warnBorder:#ecd9a0; --warnText:#7a5200;
+    --badgeBg:#181b20;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#1f2227; --panel:#262b32; --line:#363c45; --fg:#e6e8ec; --dim:#9aa2ad; --acc:#7cc98b;
+      --btnText:#12210f; --inputBg:#2b3037; --codeBg:#31373f; --warnBg:#3b3320; --warnBorder:#57503a; --warnText:#e8d491;
+      --badgeBg:#0d0f12;
+    }
   }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 "Segoe UI", Arial, sans-serif; }
-  a { color:var(--acc); }
-
-  .nav { position:sticky; top:0; z-index:20; background:var(--dark); color:#fff; padding:14px 20px; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 "Segoe UI", Arial, sans-serif; }
+  .nav { position:sticky; top:0; z-index:20; background:#181b20; padding:14px 20px 12px; }
   .navIn { max-width:1080px; margin:0 auto; text-align:center; }
   .brand { display:inline-block; color:#fff; text-decoration:none; font-size:22px; font-weight:800; letter-spacing:.5px; }
   .brand span { color:var(--acc2); }
   nav.menu { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:6px 18px; flex-wrap:wrap; }
   nav.menu a { color:#cfd4da; text-decoration:none; font-size:14px; font-weight:600; padding:4px 2px; border-bottom:2px solid transparent; }
   nav.menu a:hover { color:#fff; border-bottom-color:var(--acc2); }
-  .navRight { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; }
-  .badge { display:inline-flex; align-items:center; gap:5px; background:#0d0f12; color:#fff; border:1px solid #2a2f36; border-radius:4px; padding:6px 10px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
-  .badge:hover { border-color:var(--acc2); }
-  .badge.donate { color:var(--gold); border-color:#4a3f22; }
-  .badge.lang.active { background:var(--acc); border-color:var(--acc); }
-  .burger { display:none; background:none; border:none; color:#fff; font-size:24px; cursor:pointer; }
-
-  .hero { text-align:center; padding:70px 20px 60px; max-width:900px; margin:0 auto; }
-  .hero h1 { margin:0 0 14px; font-size:44px; line-height:1.15; font-weight:800; }
-  .hero p { margin:0 auto 30px; color:var(--dim); font-size:19px; max-width:640px; }
-  .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
-  .btn { background:var(--acc); color:#fff; text-decoration:none; border:none; border-radius:10px; padding:14px 30px; font-size:17px; font-weight:700; cursor:pointer; font-family:inherit; display:inline-block; }
-  .btn.ghost { background:transparent; color:var(--fg); border:2px solid var(--fg); }
-  .btn:hover { filter:brightness(1.08); }
-
-  .wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
-  .compat { background:#fdf3d8; color:#7a5200; border:1px solid #ecd9a0; border-radius:12px; padding:16px 20px; margin:0 auto 10px; font-size:14px; }
-  .compat b { text-transform:uppercase; font-size:12px; letter-spacing:.5px; }
-  .compat ul { margin:6px 0 0; padding-left:18px; }
-  .compat li { margin:3px 0; }
-
-  section { padding:64px 20px; }
-  section:nth-of-type(even) { background:var(--panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-  .secIn { max-width:980px; margin:0 auto; }
-  h2 { text-align:center; font-size:32px; margin:0 0 10px; font-weight:800; }
-  .secSub { text-align:center; color:var(--dim); margin:0 auto 40px; max-width:620px; }
-
-  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px; }
-  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
-  .card .ico { font-size:30px; }
-  .card h3 { margin:10px 0 6px; font-size:17px; }
-  .card p { margin:0; color:var(--dim); font-size:14px; }
-  section:nth-of-type(even) .card { background:var(--bg); }
-
-  #idea .secIn { text-align:center; }
-  #idea blockquote { margin:0 auto; max-width:760px; font-size:21px; line-height:1.6; font-weight:600; }
-  #idea cite { display:block; margin-top:18px; color:var(--dim); font-style:normal; font-size:14px; }
-
-  .tl { position:relative; max-width:760px; margin:0 auto; padding-left:34px; }
-  .tl::before { content:""; position:absolute; left:10px; top:6px; bottom:6px; width:3px; background:var(--acc2); border-radius:2px; }
-  .tlItem { position:relative; margin-bottom:22px; }
-  .tlItem::before { content:""; position:absolute; left:-31px; top:5px; width:13px; height:13px; border-radius:50%; background:var(--acc); box-shadow:0 0 0 4px rgba(127,176,105,.25); }
-  .tlItem.next::before { background:var(--bg); border:3px solid var(--dim); box-shadow:none; width:9px; height:9px; left:-29px; }
-  .tlItem .tag { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--acc); }
-  .tlItem.next .tag { color:var(--dim); }
-  .tlItem h4 { margin:2px 0 4px; font-size:16px; }
-  .tlItem p { margin:0; color:var(--dim); font-size:14px; }
-
-  .two { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  .how { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
-  .how h3 { margin:0 0 12px; }
-  .how ol { margin:0; padding-left:20px; }
-  .how li { margin-bottom:8px; font-size:14.5px; }
-
-  footer { background:var(--dark); color:#9aa2ad; padding:34px 20px; text-align:center; font-size:13.5px; }
-  footer a { color:#cfd4da; }
-  .ftrLinks { display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
-
-  @media (max-width: 720px) {
-    .hero h1 { font-size:32px; }
-    nav.menu, .navRight { display:none; }
-    nav.menu.open { display:flex; flex-direction:column; gap:14px; margin-top:14px; }
-    nav.menu.open a { font-size:16px; }
-    .navRight.open { display:flex; }
-    .burger { display:block; margin-top:8px; }
-    .two { grid-template-columns:1fr; }
-    section { padding:48px 16px; }
+  .navBadges { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap; }
+  .navBadges .badge { background:#0d0f12; border:1px solid #2a2f36; }
+  .navBadges .badge.lang.active { background:var(--acc); color:#12210f; border-color:var(--acc); }
+  .navBadges .badge.donate { color:var(--gold); border-color:#4a3f22; }
+  #about { max-width:760px; margin:0 auto; padding:40px 20px 10px; text-align:center; }
+  #about h2 { font-size:26px; margin:0 0 12px; }
+  #about p { color:var(--dim); font-size:15.5px; margin:0 0 10px; }
+  header.site { padding:14px 26px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+  .hdrRow { max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  header.site h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:.2px; }
+  header.site p { margin:6px 0 10px; color:var(--dim); font-size:13.5px; max-width:1180px; }
+  .hdrLinks { margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .badge { display:inline-flex; align-items:center; gap:5px; background:var(--badgeBg); color:#fff; border:none; border-radius:4px; padding:7px 11px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
+  .badge:hover { filter:brightness(1.3); }
+  .badge.lang.active { background:var(--acc); color:var(--btnText); }
+  .badge.donate { color:#f0c14b; }
+  .home { color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:7px 12px; }
+  .home:hover { background:var(--codeBg); }
+  .iconLink { display:inline-flex; align-items:center; justify-content:center; width:30px; height:25px; border-radius:4px; color:#ffffff; text-decoration:none; background:var(--badgeBg); }
+  .iconLink:hover { filter:brightness(1.3); }
+  main { display:flex; gap:26px; padding:24px; align-items:flex-start; flex-wrap:wrap; max-width:1180px; margin:0 auto; }
+  #controls { width:340px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .group { margin-bottom:20px; }
+  .group > label { display:block; font-size:12px; color:var(--dim); margin-bottom:7px; text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+  input[type=text] { width:100%; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
+  input[type=text]:focus { outline:2px solid var(--acc); outline-offset:-1px; }
+  .inline { display:flex; gap:8px; }
+  .inline input { flex:1; }
+  button { cursor:pointer; font-family:inherit; }
+  .btn { background:var(--acc); color:var(--btnText); border:none; border-radius:8px; padding:10px 16px; font-size:14.5px; font-weight:600; }
+  .btn.secondary { background:var(--inputBg); color:var(--fg); border:1px solid var(--line); }
+  .btn:disabled { opacity:.4; cursor:default; }
+  .btn.wide { width:100%; margin-bottom:9px; }
+  .seg { display:flex; gap:7px; }
+  .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
+  .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
+  .seg.small button { padding:8px 4px; }
+  #customSizeRow { display:none; gap:8px; align-items:center; margin-top:8px; color:var(--dim); }
+  #customSizeRow input[type=number] { width:76px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
+  .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
+  .chk input { width:17px; height:17px; accent-color:var(--acc); }
+  .wgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .wgrid .chk { font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .pbar { height:10px; background:var(--inputBg); border-radius:6px; overflow:hidden; border:1px solid var(--line); }
+  #pfill { height:100%; width:0; background:var(--acc); transition:width .2s; }
+  .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
+  .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
+  .warn a { color:var(--acc); font-weight:600; }
+  #geoResults { border:1px solid var(--line); border-radius:8px; margin-top:7px; overflow:hidden; }
+  #geoResults:empty { display:none; }
+  .geoItem { padding:9px 11px; cursor:pointer; font-size:14px; border-bottom:1px solid var(--line); background:var(--panel); }
+  .geoItem:hover { background:var(--inputBg); }
+  .geoItem small { color:var(--dim); display:block; font-size:12px; }
+  #preview { flex:1; min-width:330px; display:flex; justify-content:center; }
+  #frame { background:var(--panel); padding:12px; border-radius:16px; border:1px solid var(--line); box-shadow:0 2px 14px rgba(0,0,0,.08); }
+  canvas { display:block; image-rendering:pixelated; height:82vh; max-height:840px; border:1px solid var(--line); }
+  #status { font-size:13.5px; color:var(--dim); min-height:20px; margin-top:2px; }
+  #status.ok { color:var(--acc); font-weight:600; }
+  #status.err { color:#e07a5f; }
+  #cryptoModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50; align-items:center; justify-content:center; }
+  #cryptoModal.open { display:flex; }
+  .cmBox { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; width:min(560px, 92vw); position:relative; }
+  .cmBox h3 { margin:0 0 16px; }
+  .cmRow { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .cmCoin { font-weight:700; width:96px; }
+  .cmCoin small { color:var(--dim); font-weight:400; display:block; font-size:11px; }
+  .cmAddr { flex:1; font-family:Consolas, monospace; font-size:11.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:6px; padding:6px 8px; word-break:break-all; min-width:200px; }
+  .cmBtn { background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; font-weight:600; text-decoration:none; cursor:pointer; }
+  #cmClose { position:absolute; top:8px; right:12px; background:none; border:none; font-size:24px; color:var(--dim); }
+  details { margin-top:12px; font-size:13px; color:var(--dim); }
+  details summary { cursor:pointer; color:var(--fg); font-weight:600; }
+  details ol, details ul { margin:8px 0 0; padding-left:20px; }
+  details li { margin-bottom:5px; }
+  code { background:var(--codeBg); padding:1px 5px; border-radius:4px; font-size:12px; }
+  @media (max-width: 900px) {
+    main { flex-direction: column; align-items: center; }
+    #controls { width:100%; max-width:560px; }
+    #preview { width:100%; }
+    canvas { height:auto; max-height:none; width:100%; }
   }
 </style>
 </head>
 <body>
-
-<div class="nav">
+<header class="nav">
   <div class="navIn">
     <a class="brand" href="#">Xteink <span>Meteo</span> Sleep</a>
-    <button class="burger" id="burger">☰</button>
-    <nav class="menu" id="menu">
-      <a href="app.html" data-i18n="navApp"></a>
-      <a href="#install" data-i18n="navInst"></a>
+    <nav class="menu">
+      <a href="#app" data-i18n="mGen"></a>
+      <a href="#about" data-i18n="mAbout"></a>
+      <a href="#instSec" data-i18n="mInst"></a>
       <a href="https://github.com/aktogde1/xteink-meteo-sleep/releases" target="_blank" rel="noopener">Releases</a>
     </nav>
-    <div class="navRight" id="navRight">
-      <button class="badge lang" data-lang="ru">Русский</button>
-      <button class="badge lang" data-lang="en">English</button>
-      <a class="badge donate" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener">♥ <span data-i18n="donate"></span></a>
-      <a class="badge" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener">GitHub</a>
+    <div class="navBadges">
+      <button class="badge lang" data-lang="ru" title="Русский">Русский</button>
+      <button class="badge lang" data-lang="en" title="English">English</button>
+      <button id="cryptoLink" class="badge" style="display:none">₮ <span data-i18n="crypto"></span></button>
+      <a id="donateLink" class="badge donate" href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener" title="Tribute">♥ <span data-i18n="donate"></span></a>
+      <a class="badge gh" href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener" title="GitHub">GitHub</a>
     </div>
   </div>
-</div>
-
-<div class="hero">
-  <h1>Xteink Meteo Sleep</h1>
-  <p data-i18n="heroTag"></p>
-  <div class="cta">
-    <a class="btn" href="app.html" data-i18n="heroCta"></a>
-    <a class="btn ghost" href="#install" data-i18n="heroCta2"></a>
-  </div>
-</div>
-
-<div class="wrap">
-  <div class="compat">
-    <b data-i18n="bnT"></b>
-    <ul>
-      <li data-i18n="bn1"></li>
-      <li data-i18n="bn2"></li>
-      <li data-i18n="bn3"></li>
-    </ul>
-  </div>
-</div>
-
-<section id="features">
-  <div class="secIn">
-    <h2 data-i18n="featT"></h2>
-    <p class="secSub" data-i18n="featSub"></p>
-    <div class="grid">
-      <div class="card"><div class="ico">🌤</div><h3 data-i18n="f1t"></h3><p data-i18n="f1d"></p></div>
-      <div class="card"><div class="ico">🌅</div><h3 data-i18n="f2t"></h3><p data-i18n="f2d"></p></div>
-      <div class="card"><div class="ico">🌙</div><h3 data-i18n="f3t"></h3><p data-i18n="f3d"></p></div>
-      <div class="card"><div class="ico">🌐</div><h3 data-i18n="f4t"></h3><p data-i18n="f4d"></p></div>
-      <div class="card"><div class="ico">📄</div><h3 data-i18n="f5t"></h3><p data-i18n="f5d"></p></div>
-      <div class="card"><div class="ico">🔋</div><h3 data-i18n="f6t"></h3><p data-i18n="f6d"></p></div>
+</header>
+<p style="text-align:center;color:var(--dim);margin:14px 0 0;font-size:14px" data-i18n="subtitle"></p>
+<main>
+  <div id="controls">
+    <div class="group">
+      <div class="hint warn" style="margin:0 0 4px" data-i18n="bnFw"></div>
+      <div class="hint" data-i18n="rmTested"></div>
     </div>
-  </div>
-</section>
+    <div class="group">
+      <label data-i18n="city"></label>
+      <div class="inline">
+        <input type="text" id="city" data-i18n-ph="cityPh">
+        <button class="btn secondary" id="searchCity" data-i18n="find"></button>
+      </div>
+      <div id="geoResults"></div>
+    </div>
+
+    <div class="group">
+      <label data-i18n="device"></label>
+      <div class="seg" id="deviceSeg">
+        <button data-dev="x4">X4</button>
+        <button data-dev="x4pro">X4 Pro</button>
+        <button data-dev="x3">X3</button>
+        <button data-dev="custom" data-i18n="custom"></button>
+      </div>
+      <div id="customSizeRow">
+        <input type="number" id="w" min="120" max="2048" value="480"> ×
+        <input type="number" id="h" min="120" max="2048" value="800">
+      </div>
+    </div>
+
+    <div class="group">
+      <label data-i18n="days"></label>
+      <div class="seg small" id="daysSeg">
+        <button data-days="2">2</button>
+        <button data-days="3">3</button>
+        <button data-days="4">4</button>
+        <button data-days="5">5</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <label data-i18n="widgets"></label>
+      <div class="wgrid">
+        <label class="chk"><input type="checkbox" id="wgDate"><span data-i18n="wDate"></span></label>
+        <label class="chk"><input type="checkbox" id="wgCur"><span data-i18n="wCur"></span></label>
+        <label class="chk"><input type="checkbox" id="wgDn"><span data-i18n="wDn"></span></label>
+        <label class="chk"><input type="checkbox" id="wgSm"><span data-i18n="wSm"></span></label>
+        <label class="chk"><input type="checkbox" id="wgMoon"><span data-i18n="wMoon"></span></label>
+        <label class="chk"><input type="checkbox" id="wgFc"><span data-i18n="wFc"></span></label>
+        <label class="chk"><input type="checkbox" id="wgCity"><span data-i18n="wCity"></span></label>
+      </div>
+    </div>
+
+    <div class="group">
+      <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
+      <button class="btn wide" id="install" disabled data-i18n="install"></button>
+      <button class="btn wide" id="packReader" disabled data-i18n="packReader"></button>
+      <button class="btn wide secondary" id="packZip" disabled data-i18n="packZip"></button>
+      <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
+      <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
+      <div id="status"></div>
+      <div id="prog" style="display:none;margin-top:6px">
+        <div class="pbar"><div id="pfill"></div></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <label data-i18n="reader"></label>
+      <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
+      <input type="text" id="readerAddr" placeholder="http://192.168.137.189">
+      <input type="text" id="rfolder" placeholder="/Weather" style="margin-top:8px">
+      <span class="hint" data-i18n="rfolderHint"></span>
+      <span class="hint" data-i18n="readerHint"></span>
+    </div>
+
+    <details>
+      <summary data-i18n="det"></summary>
+      <ol>
+        <li data-i18n="df1"></li>
+        <li data-i18n="df2"></li>
+        <li data-i18n="df3"></li>
+      </ol>
+    </details>
+    <details id="instSec">
+      <summary data-i18n="howto"></summary>
+      <ol>
+        <li data-i18n="howto1"></li>
+        <li data-i18n="howto2"></li>
+        <li data-i18n="howto3"></li>
+      </ol>
+    </details>
+    <details>
+      <summary data-i18n="src"></summary>
+      <ul>
+        <li data-i18n="s1"></li>
+        <li data-i18n="s2"></li>
+        <li data-i18n="s3"></li>
+        <li data-i18n="s4"></li>
+        <li data-i18n="s5"></li>
+      </ul>
+    </details>
+      </div>
+  <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
+</main>
 
 <section id="about">
-  <div class="secIn" style="text-align:center">
-    <h2 data-i18n="aboutT"></h2>
-    <p style="max-width:640px;margin:0 auto 14px;color:var(--dim)" data-i18n="about1"></p>
-    <p style="max-width:640px;margin:0 auto;color:var(--dim)" data-i18n="about2"></p>
-  </div>
+  <h2 data-i18n="ideaT"></h2>
+  <p data-i18n="ideaP"></p>
+  <p class="hint" data-i18n="ideaNext"></p>
 </section>
-
-<section id="install">
-  <div class="secIn">
-    <h2 data-i18n="instT"></h2>
-    <p class="secSub" data-i18n="instSub"></p>
-    <div class="two">
-      <div class="how">
-        <h3>⌨ <span data-i18n="instA"></span></h3>
-        <ol>
-          <li data-i18n="instA1"></li>
-          <li data-i18n="instA2"></li>
-          <li data-i18n="instA3"></li>
-        </ol>
-      </div>
-      <div class="how">
-        <h3>💳 <span data-i18n="instB"></span></h3>
-        <ol>
-          <li data-i18n="instB1"></li>
-          <li data-i18n="instB2"></li>
-          <li data-i18n="instB3"></li>
-        </ol>
-      </div>
-    </div>
+<div id="cryptoModal">
+  <div class="cmBox">
+    <button id="cmClose" title="✕">×</button>
+    <h3 data-i18n="cmTitle"></h3>
+    <div id="cmRows"></div>
   </div>
-</section>
-
-<footer>
-  <div class="ftrLinks">
-    <a href="app.html" data-i18n="navApp"></a>
-    <a href="https://github.com/aktogde1/xteink-meteo-sleep" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://web.tribute.tg/d/Q5J" target="_blank" rel="noopener" data-i18n="donate"></a>
-    <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
-  </div>
-  <div data-i18n="ftrLic"></div>
-</footer>
+</div>
 
 <script>
 "use strict";
+const $ = id => document.getElementById(id);
+const canvas = $("card"), ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+// ---------- ссылки ----------
+const REPO_URL = "https://github.com/aktogde1/xteink-meteo-sleep";
+const DONATE_URL = "https://web.tribute.tg/d/Q5J";
+
+// ---------- состояние ----------
+let weather = null;
+let place = null;
+let device = "x4";
+let days = 3;
+let W = Object.assign({ date:true, cur:true, dn:true, sm:true, moon:true, fc:true, city:true }, storeGet("widgets") || {});
+let LANG = "en";
+function storeGet(key){ try { return JSON.parse(localStorage.getItem("lsx." + key)); } catch(e){ return null; } }
+function storeSet(key, val){ localStorage.setItem("lsx." + key, JSON.stringify(val)); }
+function storeStr(key, val){ localStorage.setItem("lsx." + key, val); }
+function storeRaw(key){ return localStorage.getItem("lsx." + key); }
+
+const DEVICES = { x4:[480,800], x4pro:[480,800], x3:[480,640] };
 const LOCALE = { ru:"ru-RU", en:"en-GB", zh:"zh-CN", es:"es-ES", de:"de-DE", vi:"vi-VN" };
-const L = {
+
+// ---------- переводы ----------
+const I18N = {
 ru: {
-  aboutT: "Обложка или метеостанция — решать тебе",
-  about1: "Заставка может быть просто красивой картинкой. А может быть метеосводкой: температура дня, закат, фаза Луны — то, чем реально пользуешься.",
-  about2: "В будущем мы оптимизируем карточку так, чтобы данные оставались полезными даже несколько дней без синхронизации.",
-  title: "Xteink Meteo Sleep — погода на локскрине Xteink X4/X3",
-  navApp: "Генератор", navIdea: "Идея", navRoad: "Roadmap", navInst: "Установка",
-  heroTag: "Погода, фаза Луны и восход/закат на экране блокировки твоего Xteink X4 / X4 Pro / X3. Бесплатно, на любом языке, для любой прошивки.",
-  heroCta: "Открыть генератор", heroCta2: "Как установить",
-  donate: "Поддержать",
-  bnT: "⚠ Совместимость и тестирование",
-  bn1: "Файл sleep.bmp — обычная картинка: подходит к любой прошивке ридера (inkMOD, CrossPoint и другим).",
-  bn2: "Адрес ридера — тот, который он показывает в режиме передачи файлов, — просто впиши его в поле адреса на странице генератора.",
-  bn3: "Где на устройстве должна лежать заставка — зависит от прошивки. Протестировано только на Xteink X4 + inkMOD 1.1.7 — отчёты о других устройствах приветствуются!",
-  featT: "Что на карточке", featSub: "Чёрно-белая e-ink карточка, собранная из виджетов под твой город",
-  f1t: "Погода сейчас", f1d: "Температура, описание и прогноз на 2–5 дней вперёд",
-  f2t: "Восход и закат", f2d: "Планируй день по свету — без телефона",
-  f3t: "Фаза Луны", f3d: "Название и процент освещённости, расчёт по дате",
-  f4t: "6 языков", f4d: "Русский, English, 中文, Español, Deutsch, Tiếng Việt — определяется автоматически",
-  f5t: "Любая прошивка", f5d: "Обычный BMP-файл: inkMOD, CrossPoint и другие",
-  f6t: "Ноль батареи", f6d: "E-ink держит картинку сам — устройство просто спит",
+  title: "Xteink Meteo Sleep — погода, луна, восход на локскрине",
+  subtitle: "Погода · луна · восход на локскрине Xteink X4 / X4 Pro / X3. Собери по своему городу и скачай как sleep.bmp",
+  city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
+  device: "Устройство", custom: "Свой…",
+  days: "Дней прогноза (не считая сегодня)",
+  invert: "Тёмная карточка (чёрный фон)",
+  refresh: "Обновить погоду",
+  install: "Обновить и установить на ридер",
+  download: "Скачать sleep.bmp",
+  pack: "📅 Пакет: сегодня + N дней", packDone: "Готово: файлы weather-<дата>.bmp скачаны — закинь их в папку Weather на карте.",
+  packZip: "💾 Скачать ZIP-пакет", packReader: "🚀 Пакет → на ридер", rfolder: "Папка на ридере", rfolderHint: "Папку создай один раз в файловом менеджере ридера (у inkMOD файловый менеджер видит скрытые и обычные папки).", upl: "Отправка {i}/{n} на ридер…", zipDone: "ZIP скачан — распакуй в папку Weather на карте", readerPackDone: "Пакет загружен на ридер — открой файловый менеджер и выбери нужный день",
+  reader: "Ридер (inkMOD)",
+  readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
+  httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
+  det: "Установка на ридер: подробности",
+  df1: 'Нажми «Обновить и установить на ридер»: ридер — в режиме передачи файлов (в inkMOD — удержание кнопки питания, сервер встаёт за ~20 сек), ноут — в ту же Wi-Fi сеть.',
+  df2: 'Адрес ридера — тот, что он показывает на экране; в режиме точки доступа InkMOD-Reader — http://192.168.4.1. Картинка ложится в папку Sleep на microSD, режим «Своя картинка» включается сам — заблокируй ридер и любуйся.',
+  df3: 'Нет кнопки под рукой (открыл сайт онлайн) — скачай sleep.bmp и закинь в папку Sleep на microSD вручную, режим выбери на ридере.',
+  howto: "Как поставить вручную (картридер)",
+  howto1: 'Скачай <code>sleep.bmp</code> кнопкой выше.',
+  howto2: 'Закинь файл в папку <b>Sleep</b> на microSD — перезапиши тот, что там лежит.',
+  howto3: 'Режим экрана сна — <b>«Своя картинка»</b>. Заблокировал ридер — карточка на экране.',
+  src: "Источники данных и обозначения",
+  s1: "Погода, восход и закат — Open-Meteo.com, открытый API без регистрации",
+  s2: "Город — геокодер Open-Meteo",
+  s3: "Фаза Луны — астрорасчёт по дате (цикл 29,5 сут)",
+  s4: "В прогнозе: <b>д</b> — днём, <b>н</b> — ночью, °C",
+  s5: "Карточка обновляется, когда ты генерируешь и закидываешь новый sleep.bmp",
   ideaT: "💡 Идея проекта",
-  ideaP: "«Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день, даже офлайн на природе, перед глазами живая сводка, а не мёртвый пейзаж.»",
-  ideaC: "— автор проекта",
-  roadT: "🛣 Roadmap", roadSub: "Что уже умеет генератор и что появится дальше",
-  instT: "Как поставить на ридер", instSub: "Два способа — выбери свой",
-  instA: "Кнопкой (с компа)",
-  instA1: "Скачай app.html и открой его на ноутбуке — появится кнопка установки.",
-  instA2: "Ридер — в режим передачи файлов (в inkMOD — удержание кнопки питания), ноут — в ту же сеть.",
-  instA3: "Жми «Обновить и установить на ридер» — картинка и режим выставятся сами.",
-  instB: "Вручную (картридер)",
-  instB1: "Скачай sleep.bmp на странице генератора.",
-  instB2: "Закинь файл в папку заставок на microSD (у inkMOD — папка Sleep).",
-  instB3: "Выбери режим экрана сна «Своя картинка» — заблокируй ридер и любуйся.",
-  ftrLic: "MIT License · не связан с Xteink, inkMOD или CrossPoint · данные — Open-Meteo",
-  rmDone: "✅ Сделано",
-  nextTag: "🛖 В планах",
-  rl: [
-    ["done", "Старт проекта", "Генератор карточек погоды: температура, прогноз, восход/закат"],
-    ["done", "6 языков", "Автоопределение языка браузера"],
-    ["done", "Установка в 1 клик", "Кнопка отправки sleep.bmp прямо на ридер (локальная версия)"],
-    ["done", "Донаты", "Tribute и криптовалюта (USDT / BTC / ETH)"],
-    ["next", "Больше данных", "Осадки, ветер, ощущаемая температура, UV-индекс"],
-    ["next", "Качество воздуха", "PM2.5 и пыльца — для аллергиков"],
-    ["next", "Своя строка на карточке", "Заметка дня рядом с прогнозом"],
-    ["next", "Автообновление", "Форк прошивки: карточка обновляется по расписанию сама"]
-  ]
+  ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Уже работает",
+  rd: "Карточка погоды (сейчас, днём/ночью, прогноз 2–5 дней) · восход/закат · фаза Луны · 6 языков · светлая/тёмная тема · установка на ридер в 1 клик (локальная версия) · донаты",
+  rmNext: "🏗 В планах",
+  rn: "Вероятность осадков · ветер · ощущаемая температура · UV-индекс · качество воздуха · офлайн-режим (дневная температура как главная) · своя строка текста на карточке · автообновление через форк прошивки",
+  rmTested: "⚠ Протестировано только на Xteink X4 + inkMOD 1.1.7. Другие устройства и прошивки не проверялись — отчёты приветствуются!",
+  stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
+  stLoading: "Грузим погоду для {city}…", stReady: "Готово: {w}×{h}. Можно скачивать BMP.",
+  stWeatherFail: "Не удалось получить погоду. Проверь интернет и нажми «Обновить погоду».",
+  stSendErr: "Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети, адрес верный.",
+  stApplying: "Картинка загружена. Применяю режим «Своя картинка»…",
+  stDone: "Готово: sleep.bmp на ридере, режим «Своя картинка» выставлен. Заблокируй ридер — увидишь карточку.",
+  stApplyFail: "Картинка загружена, но режим применить не удалось — выбери «Своя картинка» на ридере вручную.",
+  stHttps: "Страница по HTTPS — браузер не пустит запросы к ридеру в домашней сети. Скачай файл (жёлтая плашка выше) и открой его на компе.",
+  stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
+  noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
+  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать ♥",
+  mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
+  home: "На главную", widgets: "Виджеты карточки",
+  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
+  crypto: "Крипта", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
+  wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
+  moon: ["Новолуние","Растущий серп","Первая четверть","Растущая луна","Полнолуние","Убывающая луна","Последняя четверть","Убывающий серп"]
 },
 en: {
-  aboutT: "A cover or a weather station — your call",
-  about1: "The lock screen can be just a pretty picture. Or it can be a weather briefing: the day’s temperature, sunset, moon phase — things you actually use.",
-  about2: "Next we’ll tune the card so the data stays useful for several days without a sync.",
-  title: "Xteink Meteo Sleep — weather on your Xteink X4/X3 lock screen",
-  navApp: "Generator", navIdea: "Idea", navRoad: "Roadmap", navInst: "Install",
-  heroTag: "Weather, moon phase and sunrise/sunset on the lock screen of your Xteink X4 / X4 Pro / X3. Free, any language, any firmware.",
-  heroCta: "Open the generator", heroCta2: "How to install",
-  donate: "Donate",
-  bnT: "⚠ Compatibility & testing",
-  bn1: "The sleep.bmp file is just an image: it works with any reader firmware (inkMOD, CrossPoint and others).",
-  bn2: "The reader address is the one it shows in File Transfer mode — simply enter it in the address field of the generator page.",
-  bn3: "Where the lock screen image must be placed depends on the firmware. Tested only on Xteink X4 + inkMOD 1.1.7 — reports about other devices are welcome!",
-  featT: "What's on the card", featSub: "A black-and-white e-ink card assembled from widgets for your city",
-  f1t: "Weather now", f1d: "Temperature, conditions and a 2–5 day forecast",
-  f2t: "Sunrise & sunset", f2d: "Plan your day by daylight — no phone needed",
-  f3t: "Moon phase", f3d: "Name and illumination %, calculated from the date",
-  f4t: "6 languages", f4d: "Русский, English, 中文, Español, Deutsch, Tiếng Việt — auto-detected",
-  f5t: "Any firmware", f5d: "A plain BMP file: inkMOD, CrossPoint and more",
-  f6t: "Zero battery", f6d: "E-ink holds the image by itself — the device just sleeps",
+  title: "Xteink Meteo Sleep — weather, moon & sunrise lock screen",
+  subtitle: "Weather · moon · sunrise on the lock screen of your Xteink X4 / X4 Pro / X3. Build a card for your city and download it as sleep.bmp",
+  city: "City", cityPh: "e.g. Berlin", find: "Search",
+  device: "Device", custom: "Custom…",
+  days: "Forecast days (excluding today)",
+  invert: "Dark card (black background)",
+  refresh: "Refresh weather",
+  install: "Update & install to reader",
+  download: "Download sleep.bmp",
+  pack: "📅 Pack: today + N days", packDone: "Done: weather-<date>.bmp files downloaded — drop them into the Weather folder.",
+  packZip: "💾 Download ZIP pack", packReader: "🚀 Pack → to reader", rfolder: "Folder on reader", rfolderHint: "Create the folder once in the reader’s file manager.", upl: "Uploading {i}/{n} to reader…", zipDone: "ZIP downloaded — unpack into the Weather folder on the card", readerPackDone: "Pack uploaded to the reader — open the file browser and pick your day",
+  reader: "Reader (inkMOD)",
+  readerHint: "Use the address the reader shows in File Transfer mode.",
+  httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
+  det: "Installing to the reader: details",
+  df1: 'Press “Update & install to reader”: the reader must be in File Transfer mode (on inkMOD — hold the power button, the server is up in ~20 s), laptop on the same Wi-Fi.',
+  df2: 'The reader address is what it shows on its screen; on the InkMOD-Reader hotspot it\u2019s http://192.168.4.1. The image lands in the Sleep folder on the microSD and the “Custom image” mode is set automatically — lock the reader and enjoy.',
+  df3: 'No button available (you\u2019re on the online version)? Download sleep.bmp and put it into the Sleep folder on the microSD manually, then pick the mode on the reader.',
+  howto: "Manual install (card reader)",
+  howto1: 'Download <code>sleep.bmp</code> with the button above.',
+  howto2: 'Put the file into the <b>Sleep</b> folder on the microSD — overwrite the one already there.',
+  howto3: 'Sleep screen mode — <b>“Custom image”</b>. Lock the reader — the card is on screen.',
+  src: "Data sources & legend",
+  s1: "Weather, sunrise & sunset — Open-Meteo.com, open API, no sign-up",
+  s2: "City — Open-Meteo geocoder",
+  s3: "Moon phase — astronomical calculation from the date (29.5-day cycle)",
+  s4: "Forecast: <b>d</b> — daytime, <b>n</b> — night, °C",
+  s5: "The card updates when you generate and upload a new sleep.bmp",
   ideaT: "💡 Project idea",
-  ideaP: "\u201cAn e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day, even offline out in nature, you have a live briefing instead of a dead landscape.\u201d",
-  ideaC: "— the project author",
-  roadT: "\U0001F6E3 Roadmap", roadSub: "What the generator already does and what comes next",
-  instT: "How to put it on the reader", instSub: "Two ways — pick yours",
-  instA: "By button (from a computer)",
-  instA1: "Download app.html and open it on your laptop — an install button appears.",
-  instA2: "Reader — in File Transfer mode (on inkMOD: hold the power button), laptop on the same network.",
-  instA3: "Press \u201cUpdate & install to reader\u201d — the image and the mode are set automatically.",
-  instB: "Manually (card reader)",
-  instB1: "Download sleep.bmp on the generator page.",
-  instB2: "Put the file into the lock-screen folder on the microSD (on inkMOD it\u2019s the Sleep folder).",
-  instB3: "Set the sleep screen mode to \u201cCustom image\u201d \u2014 lock the reader and enjoy.",
-  ftrLic: "MIT License · not affiliated with Xteink, inkMOD or CrossPoint · data by Open-Meteo",
-  rmDone: "✅ Done",
-  nextTag: "🛖 Next",
-  rl: [
-    ["done", "Project launch", "Weather card generator: temperature, forecast, sunrise/sunset"],
-    ["done", "6 languages", "Auto-detected from the browser language"],
-    ["done", "One-click install", "Push sleep.bmp straight to the reader (local version)"],
-    ["done", "Donations", "Tribute and crypto (USDT / BTC / ETH)"],
-    ["next", "More data", "Precipitation, wind, feels-like temperature, UV index"],
-    ["next", "Air quality", "PM2.5 and pollen — for allergy sufferers"],
-    ["next", "Custom card line", "A note of the day next to the forecast"],
-    ["next", "Auto-refresh", "Firmware fork: the card updates itself on schedule"]
-  ]
+  ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Already working",
+  rd: "Weather card (current, day/night, 2–5 day forecast) · sunrise/sunset · moon phase · 6 interface languages · light/dark theme · one-click install to reader (local version) · donations",
+  rmNext: "🏗 On the roadmap",
+  rn: "Precipitation probability · wind · feels-like temperature · UV index · air quality · offline mode (daily temp as the headline) · custom text line on the card · scheduled auto-refresh via a firmware fork",
+  rmTested: "⚠ Tested only on Xteink X4 + inkMOD 1.1.7. Other devices and firmware are untested — field reports welcome!",
+  stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
+  stLoading: "Loading weather for {city}…", stReady: "Done: {w}×{h}. You can download the BMP.",
+  stWeatherFail: "Couldn\u2019t load the weather. Check the internet and press \u201cRefresh weather\u201d.",
+  stSendErr: "Reader is not responding. Check: it\u2019s in File Transfer mode, laptop on the same network, address correct.",
+  stApplying: "Image uploaded. Applying the custom sleep screen…",
+  stDone: "Done: sleep.bmp is on the reader, sleep screen set to Custom. Lock the reader to see the card.",
+  stApplyFail: "Image uploaded, but couldn\u2019t set the mode — pick “Custom image” on the reader manually.",
+  stHttps: "Page is on HTTPS — the browser won\u2019t let it reach the reader on your network. Download the file (yellow note above) and open it locally.",
+  stNoWeather: "Load the weather first — press “Refresh weather”.",
+  noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
+  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate ♥",
+  mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
+  home: "Home", widgets: "Card widgets",
+  bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
+  crypto: "Crypto", cmTitle: "Donate in crypto", copied: "Copied ✓",
+  wmo: {0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",56:"Drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Rain shower",85:"Snowfall",95:"Thunderstorm",96:"Thunderstorm with hail"},
+  moon: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
 },
 zh: {
-  aboutT: "封面还是气象站 — 由你决定",
-  about1: "锁屏可以只是一张漂亮的图片，也可以是实用的天气简报：当日温度、日落、月相 — 整天都用得上。",
-  about2: "未来我们会优化卡片，让数据在几天不同步的情况下依然有用。",
-  title: "Xteink Meteo Sleep — Xteink X4/X3 锁屏天气",
-  navApp: "生成器", navIdea: "理念", navRoad: "路线图", navInst: "安装",
-  heroTag: "在你的 Xteink X4 / X4 Pro / X3 锁屏上显示天气、月相和日出日落。免费、多语言、适配任何固件。",
-  heroCta: "打开生成器", heroCta2: "安装方法",
-  donate: "支持",
-  bnT: "⚠ 兼容性与测试",
-  bn1: "sleep.bmp 只是一张图片：适用于任何阅读器固件（inkMOD、CrossPoint 等）。",
-  bn2: "阅读器地址就是它在文件传输模式下显示的那个 — 只需填入生成器页面的地址栏。",
-  bn3: "锁屏图片在设备上的存放位置取决于固件。仅在 Xteink X4 + inkMOD 1.1.7 上测试 — 欢迎其他设备的反馈！",
-  featT: "卡片内容", featSub: "为你的城市定制的黑白 e-ink 卡片",
-  f1t: "当前天气", f1d: "温度、天气描述和 2–5 天预报",
-  f2t: "日出与日落", f2d: "不需要手机也能安排一天的作息",
-  f3t: "月相", f3d: "名称和照亮百分比，按日期计算",
-  f4t: "6 种语言", f4d: "自动识别浏览器语言",
-  f5t: "任意固件", f5d: "普通 BMP 文件：inkMOD、CrossPoint 等",
-  f6t: "零耗电", f6d: "电子墨水屏自己保持画面 — 设备只在睡觉",
+  title: "Xteink Meteo Sleep — 天气、月相、日出锁屏",
+  subtitle: "天气 · 月相 · 日出，显示在 Xteink X4 / X4 Pro / X3 的锁屏上。为你的城市生成卡片并下载为 sleep.bmp",
+  city: "城市", cityPh: "例如：上海", find: "搜索",
+  device: "设备", custom: "自定义…",
+  days: "预报天数（不含今天）",
+  invert: "深色卡片（黑色背景）",
+  refresh: "更新天气",
+  install: "更新并安装到阅读器",
+  download: "下载 sleep.bmp",
+  pack: "📅 多日打包", packDone: "完成：weather-<日期>.bmp 文件已下载 — 放入 Weather 文件夹。",
+  packZip: "💾 下载 ZIP 包", packReader: "🚀 包 → 发送到阅读器", rfolder: "阅读器上的文件夹", rfolderHint: "在阅读器的文件管理器中创建一次文件夹即可。", upl: "正在上传 {i}/{n} 到阅读器…", zipDone: "ZIP 已下载 — 解压到卡的 Weather 文件夹", readerPackDone: "包已上传到阅读器 — 打开文件管理器选择需要的日期",
+  reader: "阅读器 (inkMOD)",
+  readerHint: "地址填阅读器在文件传输模式下显示的那个。",
+  httpsNote: '本页面通过 HTTPS 提供 — 浏览器会阻止其访问家庭网络中的阅读器。生成和下载 BMP 完全可用。要一键安装，请<a href="index.html" download="xteink-meteo-sleep.html">下载此文件</a>并在电脑上打开。',
+  det: "安装到阅读器：详细步骤",
+  df1: '点击“更新并安装到阅读器”：阅读器需处于文件传输模式（inkMOD 长按电源键，约 20 秒服务启动），电脑连同一 Wi-Fi。',
+  df2: '地址填阅读器屏幕上显示的那个；热点 InkMOD-Reader 模式下为 http://192.168.4.1。图片会放入 microSD 的 Sleep 文件夹，并自动设为“自定义图片”锁屏 — 锁定阅读器即可查看。',
+  df3: '没有安装按钮（在线版）？下载 sleep.bmp，手动放进 microSD 的 Sleep 文件夹，再在阅读器上选择模式。',
+  howto: "手动安装（读卡器）",
+  howto1: '用上方按钮下载 <code>sleep.bmp</code>。',
+  howto2: '把文件放进 microSD 的 <b>Sleep</b> 文件夹，覆盖原有文件。',
+  howto3: '睡眠屏幕模式 — “自定义图片”。锁定阅读器即可看到卡片。',
+  src: "数据来源与说明",
+  s1: "天气、日出和日落 — Open-Meteo.com 开放 API，无需注册",
+  s2: "城市 — Open-Meteo 地理编码",
+  s3: "月相 — 根据日期的天文计算（29.5 天周期）",
+  s4: "预报中：<b>昼</b> — 白天，<b>夜</b> — 夜间，摄氏度",
+  s5: "卡片在你生成并上传新的 sleep.bmp 时更新",
   ideaT: "💡 项目理念",
-  ideaP: "\u201c阅读器的锁屏是电子墨水屏：显示图片几乎不耗电。与其放无用的壁纸，不如放一个实用工具：天气概览、日落时间、月相。早上同步一次 — 一整天（即使离线、在户外）眼前都是实时简报，而不是死板的风景。\u201d",
-  ideaC: "— 项目作者",
-  roadT: "\U0001F6E3 路线图", roadSub: "生成器已有的功能和接下来的计划",
-  instT: "如何安装到阅读器", instSub: "两种方式 — 选适合你的",
-  instA: "按钮安装（从电脑）",
-  instA1: "下载 app.html 并在笔记本电脑上打开 — 会出现安装按钮。",
-  instA2: "阅读器进入文件传输模式（inkMOD 长按电源键），电脑连同一网络。",
-  instA3: "点击\u201c更新并安装到阅读器\u201d — 图片和模式自动设置。",
-  instB: "手动安装（读卡器）",
-  instB1: "在生成器页面下载 sleep.bmp。",
-  instB2: "把文件放进 microSD 的锁屏文件夹（inkMOD 是 Sleep 文件夹）。",
-  instB3: "睡眠屏幕模式选\u201c自定义图片\u201d — 锁定阅读器即可查看。",
-  ftrLic: "MIT License · 与 Xteink、inkMOD、CrossPoint 无隶属关系 · 数据来自 Open-Meteo",
-  rmDone: "✅ 已完成",
-  nextTag: "🛖 计划中",
-  rl: [
-    ["done", "项目启动", "天气卡片生成器：温度、预报、日出日落"],
-    ["done", "6 种语言", "自动识别浏览器语言"],
-    ["done", "一键安装", "把 sleep.bmp 直接推送到阅读器（本地版）"],
-    ["done", "捐赠", "Tribute 和加密货币（USDT / BTC / ETH）"],
-    ["next", "更多数据", "降水、风力、体感温度、紫外线指数"],
-    ["next", "空气质量", "PM2.5 和花粉 — 过敏人群友好"],
-    ["next", "卡片自定义文字", "预报旁边的一行备注"],
-    ["next", "自动更新", "固件 fork：卡片按计划自动更新"]
-  ]
+  ideaP: "阅读器的锁屏是电子墨水屏：显示图片几乎不耗电。与其放无用的壁纸，不如放一个实用工具：天气概览、日落时间、月相。早上同步 — 一整天（即使离线、在户外）眼前都是实时简报，而不是死板的风景。",
+  roadT: "🛣 路线图",
+  rmDone: "✅ 已实现",
+  rd: "天气卡片（当前、白天/夜间、2–5天预报）· 日出/日落 · 月相 · 6种界面语言 · 亮/暗主题 · 一键安装到阅读器（本地版）· 捐赠",
+  rmNext: "🏗 计划中",
+  rn: "降水概率 · 风力 · 体感温度 · 紫外线指数 · 空气质量 · 离线模式（以白天气温为主）· 卡片自定义文字 · 通过固件fork实现定时自动更新",
+  rmTested: "⚠ 仅在 Xteink X4 + inkMOD 1.1.7 上测试。其他设备和固件未经测试 — 欢迎反馈！",
+  stSearching: "搜索城市…", stFound: "找到 {n} 个 — 请选择", stNotFound: "未找到城市", stSearchErr: "搜索时网络错误",
+  stLoading: "正在加载 {city} 的天气…", stReady: "完成：{w}×{h}。可以下载 BMP。",
+  stWeatherFail: "无法获取天气。请检查网络后点击“更新天气”。",
+  stSendErr: "阅读器无响应。请检查：是否处于文件传输模式、电脑是否在同一网络、地址是否正确。",
+  stApplying: "图片已上传。正在设置自定义锁屏…",
+  stDone: "完成：sleep.bmp 已在阅读器上，锁屏已设为自定义图片。锁定阅读器即可查看。",
+  stApplyFail: "图片已上传，但无法设置模式 — 请在阅读器上手动选择“自定义图片”。",
+  stHttps: "页面为 HTTPS — 浏览器不允许访问你网络中的阅读器。请下载文件（上方黄色提示）并在本地打开。",
+  stNoWeather: "请先加载天气 — 点击“更新天气”。",
+  noData: "暂无天气数据", dayLbl: "白天", nightLbl: "夜间", sunrise: "日出", sunset: "日落",
+  illum: "照亮 {v}%", updated: "更新于", dS: "昼", nS: "夜", donate: "支持 ♥",
+  mGen: "生成器", mAbout: "关于项目", mInst: "安装", bnPlace: "文件放哪取决于固件：inkMOD 为 Sleep 文件夹。", ideaNext: "计划：让卡片在几天不同步的情况下仍然有用。",
+  home: "返回首页", widgets: "卡片组件",
+  bnFw: "适用于任何固件 — 普通BMP文件", navIdea2: "理念", navRoad2: "路线图", wDate: "日期", wCur: "当前天气", wDn: "白天/夜间", wSm: "日出日落", wMoon: "月相", wFc: "预报", wCity: "城市和时间",
+  crypto: "加密货币", cmTitle: "用加密货币支持", copied: "已复制 ✓",
+  wmo: {0:"晴",1:"大致晴朗",2:"局部多云",3:"阴",45:"雾",56:"毛毛雨",61:"小雨",63:"中雨",65:"大雨",66:"冻雨",71:"小雪",73:"雪",75:"大雪",77:"雪粒",80:"阵雨",85:"降雪",95:"雷暴",96:"雷暴伴冰雹"},
+  moon: ["新月","蛾眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"]
 },
 es: {
-  aboutT: "Portada o estación meteorológica — tú decides",
-  about1: "La pantalla de bloqueo puede ser solo una imagen bonita. O puede ser un parte meteorológico: la temperatura del día, el atardecer, la fase lunar — algo que usas de verdad.",
-  about2: "Pronto afinaremos la tarjeta para que los datos sigan siendo útiles varios días sin sincronizar.",
-  heroTitle: "El tiempo, la luna y el atardecer en tu pantalla de bloqueo",
-  title: "Xteink Meteo Sleep — el tiempo en la pantalla de bloqueo de Xteink X4/X3",
-  navApp: "Generador", navIdea: "Idea", navRoad: "Hoja de ruta", navInst: "Instalaci\u00f3n",
-  heroTag: "El tiempo, la fase lunar y el amanecer/atardecer en la pantalla de bloqueo de tu Xteink X4 / X4 Pro / X3. Gratis, en cualquier idioma, para cualquier firmware.",
-  heroCta: "Abrir el generador", heroCta2: "C\u00f3mo instalar",
-  donate: "Donar",
-  bnT: "\u26a0 Compatibilidad y pruebas",
-  bn1: "El archivo sleep.bmp es solo una imagen: funciona con cualquier firmware del lector (inkMOD, CrossPoint y otros).",
-  bn2: "La direcci\u00f3n del lector es la que muestra en modo de transferencia de archivos — solo escr\u00edbela en el campo de direcci\u00f3n de la p\u00e1gina del generador.",
-  bn3: "D\u00f3nde debe estar la imagen en el dispositivo depende del firmware. Probado solo en Xteink X4 + inkMOD 1.1.7 — \u00a1bienvenidos los informes de otros dispositivos!",
-  featT: "Qu\u00e9 hay en la tarjeta", featSub: "Una tarjeta e-ink en blanco y negro con widgets para tu ciudad",
-  f1t: "Tiempo ahora", f1d: "Temperatura, condiciones y pron\u00f3stico de 2\u20135 d\u00edas",
-  f2t: "Amanecer y atardecer", f2d: "Planifica el d\u00eda por la luz \u2014 sin tel\u00e9fono",
-  f3t: "Fase lunar", f3d: "Nombre y porcentaje de iluminaci\u00f3n, calculado por fecha",
-  f4t: "6 idiomas", f4d: "Se detecta autom\u00e1ticamente el idioma del navegador",
-  f5t: "Cualquier firmware", f5d: "Un archivo BMP normal: inkMOD, CrossPoint y m\u00e1s",
-  f6t: "Cero bater\u00eda", f6d: "El e-ink mantiene la imagen solo \u2014 el dispositivo duerme",
-  ideaT: "\U0001F4A1 Idea del proyecto",
-  ideaP: "\u00abLa pantalla de bloqueo de un lector es e-ink: mostrar una imagen no gasta bater\u00eda. As\u00ed que, en lugar de un fondo in\u00fatil, que sea una herramienta \u00fatil: resumen del tiempo, puesta de sol, fase lunar. Te sincronizas por la ma\u00f1ana \u2014 y todo el d\u00eda, incluso sin conexi\u00f3n en la naturaleza, tienes el resumen delante, no un paisaje muerto.\u00bb",
-  ideaC: "\u2014 el autor del proyecto",
-  roadT: "\U0001F6E3 Hoja de ruta", roadSub: "Lo que ya hace el generador y lo que viene",
-  instT: "C\u00f3mo ponerlo en el lector", instSub: "Dos formas \u2014 elige la tuya",
-  instA: "Con bot\u00f3n (desde el ordenador)",
-  instA1: "Descarga app.html y \u00e1brelo en tu port\u00e1til \u2014 aparece un bot\u00f3n de instalaci\u00f3n.",
-  instA2: "Lector en modo de transferencia de archivos (en inkMOD: mant\u00e9n el bot\u00f3n de encendido), port\u00e1til en la misma red.",
-  instA3: "Pulsa \u00abActualizar e instalar en el lector\u00bb \u2014 la imagen y el modo se configuran solos.",
-  instB: "Manual (lector de tarjetas)",
-  instB1: "Descarga sleep.bmp en la p\u00e1gina del generador.",
-  instB2: "Mete el archivo en la carpeta de pantalla de bloqueo de la microSD (en inkMOD es la carpeta Sleep).",
-  instB3: "Modo de pantalla de sue\u00f1o \u00abImagen personalizada\u00bb \u2014 bloquea el lector y disfruta.",
-  ftrLic: "MIT License · sin afiliaci\u00f3n con Xteink, inkMOD o CrossPoint · datos de Open-Meteo",
-  rmDone: "\u2705 Hecho",
-  nextTag: "🛖 En planes",
-  rl: [
-    ["done", "Lanzamiento", "Generador de tarjetas del tiempo: temperatura, pron\u00f3stico, amanecer/atardecer"],
-    ["done", "6 idiomas", "Detecta autom\u00e1ticamente el idioma del navegador"],
-    ["done", "Instalaci\u00f3n en 1 clic", "Env\u00eda sleep.bmp directamente al lector (versi\u00f3n local)"],
-    ["done", "Donaciones", "Tribute y criptomonedas (USDT / BTC / ETH)"],
-    ["next", "M\u00e1s datos", "Precipitaciones, viento, sensaci\u00f3n t\u00e9rmica, \u00edndice UV"],
-    ["next", "Calidad del aire", "PM2.5 y polen \u2014 para al\u00e9rgicos"],
-    ["next", "L\u00ednea propia", "Una nota del d\u00eda junto al pron\u00f3stico"],
-    ["next", "Autoactualizaci\u00f3n", "Fork del firmware: la tarjeta se actualiza sola por horario"]
-  ]
+  title: "Xteink Meteo Sleep — tiempo, luna y amanecer en la pantalla de bloqueo",
+  subtitle: "El tiempo · la luna · el amanecer en la pantalla de bloqueo de tu Xteink X4 / X4 Pro / X3. Crea una tarjeta para tu ciudad y descárgala como sleep.bmp",
+  city: "Ciudad", cityPh: "p. ej. Madrid", find: "Buscar",
+  device: "Dispositivo", custom: "Personalizado…",
+  days: "Días de pronóstico (sin hoy)",
+  invert: "Tarjeta oscura (fondo negro)",
+  refresh: "Actualizar el tiempo",
+  install: "Actualizar e instalar en el lector",
+  download: "Descargar sleep.bmp",
+  pack: "📅 Paquete: hoy + N días", packDone: "Hecho: archivos weather-<fecha>.bmp descargados — ponlos en la carpeta Weather.",
+  packZip: "Descargar pack ZIP", packReader: "Pack → al lector", rfolder: "Carpeta en el lector", rfolderHint: "Crea la carpeta una vez en el gestor de archivos del lector.", upl: "Subiendo {i}/{n} al lector…", zipDone: "ZIP descargado — descomprímelo en la carpeta Weather de la tarjeta", readerPackDone: "Pack subido al lector — abre el gestor de archivos y elige tu día",
+  reader: "Lector (inkMOD)",
+  readerHint: "Usa la dirección que muestra el lector en modo de transferencia de archivos.",
+  httpsNote: 'Esta página se sirve por HTTPS — el navegador bloquea las peticiones al lector de tu red doméstica. El generador y la descarga del BMP funcionan completamente. Para la instalación de un clic, <a href="index.html" download="xteink-meteo-sleep.html">descarga este archivo</a> y ábrelo en tu ordenador.',
+  det: "Instalación en el lector: detalles",
+  df1: 'Pulsa «Actualizar e instalar en el lector»: el lector debe estar en modo de transferencia de archivos (en inkMOD — mantén pulsado el botón de encendido, el servidor arranca en ~20 s), portátil en la misma red Wi-Fi.',
+  df2: 'La dirección del lector es la que muestra en su pantalla; en el hotspot InkMOD-Reader es http://192.168.4.1. La imagen se guarda en la carpeta Sleep de la microSD y el modo «Imagen personalizada» se activa solo — bloquea el lector y listo.',
+  df3: '¿Sin botón (versión online)? Descarga sleep.bmp y mete en la carpeta Sleep de la microSD a mano, luego elige el modo en el lector.',
+  howto: "Instalación manual (lector de tarjetas)",
+  howto1: 'Descarga <code>sleep.bmp</code> con el botón de arriba.',
+  howto2: 'Mete el archivo en la carpeta <b>Sleep</b> de la microSD — sobrescribe el que ya está.',
+  howto3: 'Modo de pantalla de sueño — <b>«Imagen personalizada»</b>. Bloquea el lector — la tarjeta queda en pantalla.',
+  src: "Fuentes de datos y leyenda",
+  s1: "Tiempo, amanecer y atardecer — Open-Meteo.com, API abierta sin registro",
+  s2: "Ciudad — geocodificador de Open-Meteo",
+  s3: "Fase lunar — cálculo astronómico según la fecha (ciclo de 29,5 días)",
+  s4: "En el pronóstico: <b>d</b> — día, <b>n</b> — noche, °C",
+  s5: "La tarjeta se actualiza cuando generas y subes un nuevo sleep.bmp",
+  ideaT: "💡 Idea del proyecto",
+  ideaP: "La pantalla de bloqueo de un lector es e-ink: mostrar una imagen no gasta batería. Así que, en lugar de un fondo inútil, que sea una herramienta útil: resumen del tiempo, puesta de sol, fase lunar. Te sincronizas por la mañana — y todo el día (incluso sin conexión, en la naturaleza) tienes el resumen delante, no un paisaje muerto.",
+  roadT: "🛣 Hoja de ruta",
+  rmDone: "✅ Ya funciona",
+  rd: "Tarjeta del tiempo (actual, día/noche, pronóstico 2–5 días) · amanecer/atardecer · fase lunar · 6 idiomas · tema claro/oscuro · instalación en el lector en 1 clic (versión local) · donaciones",
+  rmNext: "🏗 En planes",
+  rn: "Probabilidad de precipitaciones · viento · sensación térmica · índice UV · calidad del aire · modo sin conexión (temperatura diurna como principal) · línea de texto propia en la tarjeta · autoactualización mediante fork del firmware",
+  rmTested: "⚠ Probado solo en Xteink X4 + inkMOD 1.1.7. Otros dispositivos y firmwares sin probar — ¡informes bienvenidos!",
+  stSearching: "Buscando…", stFound: "{n} encontrados — elige uno", stNotFound: "Ciudad no encontrada", stSearchErr: "Error de red al buscar",
+  stLoading: "Cargando el tiempo de {city}…", stReady: "Listo: {w}×{h}. Ya puedes descargar el BMP.",
+  stWeatherFail: "No se pudo cargar el tiempo. Comprueba la conexión y pulsa «Actualizar el tiempo».",
+  stSendErr: "El lector no responde. Comprueba: modo File Transfer, portátil en la misma red y dirección correcta.",
+  stApplying: "Imagen subida. Aplicando la pantalla de sueño personalizada…",
+  stDone: "Listo: sleep.bmp está en el lector y el modo «Imagen personalizada» aplicado. Bloquea el lector para ver la tarjeta.",
+  stApplyFail: "Imagen subida, pero no se pudo aplicar el modo — elige «Imagen personalizada» en el lector.",
+  stHttps: "Página por HTTPS — el navegador no dejará llegar al lector de tu red. Descarga el archivo (aviso amarillo) y ábrelo localmente.",
+  stNoWeather: "Primero carga el tiempo — pulsa «Actualizar el tiempo».",
+  noData: "Sin datos del tiempo", dayLbl: "de día", nightLbl: "de noche", sunrise: "amanecer", sunset: "atardecer",
+  illum: "{v}% iluminada", updated: "actualizado", dS: "d", nS: "n", donate: "Donar ♥",
+  mGen: "Generador", mAbout: "Sobre el proyecto", mInst: "Instalación", bnPlace: "Dónde poner el archivo depende del firmware: en inkMOD es la carpeta Sleep.", ideaNext: "Previsto: que la tarjeta siga siendo útil varios días sin sincronizar.",
+  home: "Inicio", widgets: "Widgets de la tarjeta",
+  bnFw: "Vale para cualquier firmware — es un archivo BMP normal", navIdea2: "Idea", navRoad2: "Hoja de ruta", wDate: "Fecha", wCur: "Tiempo ahora", wDn: "Día/noche", wSm: "Amanecer/atardecer", wMoon: "Fase lunar", wFc: "Pronóstico", wCity: "Ciudad y hora",
+  crypto: "Cripto", cmTitle: "Apoya con cripto", copied: "¡Copiado ✓",
+  wmo: {0:"Despejado",1:"Poco nublado",2:"Parcialmente nublado",3:"Cubierto",45:"Niebla",56:"Llovizna",61:"Lluvia débil",63:"Lluvia",65:"Lluvia fuerte",66:"Lluvia helada",71:"Nieve débil",73:"Nieve",75:"Nieve fuerte",77:"Granos de nieve",80:"Chubascos",85:"Nevada",95:"Tormenta",96:"Tormenta con granizo"},
+  moon: ["Luna nueva","Creciente iluminante","Cuarto creciente","Gibosa creciente","Luna llena","Gibosa menguante","Cuarto menguante","Luna menguante"]
 },
 de: {
-  aboutT: "Cover oder Wetterstation — du entscheidest",
-  about1: "Der Sperrbildschirm kann nur ein schönes Bild sein. Oder ein Wetter-Briefing: Tagestemperatur, Sonnenuntergang, Mondphase — Dinge, die du wirklich nutzt.",
-  about2: "Als Nächstes optimieren wir die Karte so, dass die Daten auch mehrere Tage ohne Synchronisierung nützlich bleiben.",
-  heroTitle: "Wetter, Mond & Sonnenuntergang auf dem Sperrbildschirm",
-  title: "Xteink Meteo Sleep — Wetter auf dem Sperrbildschirm des Xteink X4/X3",
-  navApp: "Generator", navIdea: "Idee", navRoad: "Roadmap", navInst: "Installation",
-  heroTag: "Wetter, Mondphase und Sonnenauf-/untergang auf dem Sperrbildschirm deines Xteink X4 / X4 Pro / X3. Kostenlos, in jeder Sprache, f\u00fcr jede Firmware.",
-  heroCta: "Generator \u00f6ffnen", heroCta2: "Installation",
-  donate: "Spenden",
-  bnT: "\u26a0 Kompatibilit\u00e4t & Tests",
-  bn1: "Die sleep.bmp-Datei ist nur ein Bild: Sie funktioniert mit jeder Reader-Firmware (inkMOD, CrossPoint und andere).",
-  bn2: "Die Reader-Adresse ist die, die er im File-Transfer-Modus zeigt \u2014 einfach in das Adressfeld der Generator-Seite eintragen.",
-  bn3: "Wo das Sperrbildschirm-Bild auf dem Ger\u00e4t liegen muss, h\u00e4ngt von der Firmware ab. Getestet nur auf Xteink X4 + inkMOD 1.1.7 \u2014 Berichte zu anderen Ger\u00e4ten willkommen!",
-  featT: "Was auf der Karte ist", featSub: "Eine schwarz-wei\u00dfe E-Ink-Karte aus Widgets f\u00fcr deine Stadt",
-  f1t: "Wetter jetzt", f1d: "Temperatur, Bedingungen und 2\u20135 Tage Vorhersage",
-  f2t: "Sonnenauf- & -untergang", f2d: "Den Tag nach Licht planen \u2014 ohne Handy",
-  f3t: "Mondphase", f3d: "Name und Beleuchtungsprozent, berechnet aus dem Datum",
-  f4t: "6 Sprachen", f4d: "Wird automatisch aus der Browsersprache erkannt",
-  f5t: "Jede Firmware", f5d: "Eine normale BMP-Datei: inkMOD, CrossPoint und mehr",
-  f6t: "Null Batterie", f6d: "E-Ink h\u00e4lt das Bild selbst \u2014 das Ger\u00e4t schl\u00e4ft nur",
-  ideaT: "\U0001F4A1 Projektidee",
-  ideaP: "\u201eDer Sperrbildschirm eines Readers ist E-Ink: Ein Bild anzeigen kostet keine Batterie. Also statt eines nutzlosen Hintergrunds ein n\u00fctzliches Werkzeug: Wetter\u00fcbersicht, Sonnenuntergang, Mondphase. Morgens synchronisiert \u2014 und den ganzen Tag, auch offline in der Natur, hast du die Zusammenfassung vor Augen statt einer toten Landschaft.\u201c",
-  ideaC: "\u2014 der Projektautor",
-  roadT: "\U0001F6E3 Roadmap", roadSub: "Was der Generator schon kann und was kommt",
-  instT: "So kommt es auf den Reader", instSub: "Zwei Wege \u2014 such dir einen aus",
-  instA: "Per Button (vom Computer)",
-  instA1: "app.html herunterladen und auf dem Laptop \u00f6ffnen \u2014 ein Installations-Button erscheint.",
-  instA2: "Reader in den File-Transfer-Modus (bei inkMOD: Ein-/Aus-Taste halten), Laptop im selben Netz.",
-  instA3: "\u201eAktualisieren & auf den Reader installieren\u201c dr\u00fccken \u2014 Bild und Modus werden automatisch gesetzt.",
-  instB: "Manuell (Kartenleser)",
-  instB1: "sleep.bmp auf der Generator-Seite herunterladen.",
-  instB2: "Datei in den Sperrbildschirm-Ordner auf der microSD legen (bei inkMOD der Ordner Sleep).",
-  instB3: "Sleep-Screen-Modus \u201eEigenes Bild\u201c w\u00e4hlen \u2014 Reader sperren und freuen.",
-  ftrLic: "MIT License · keine Verbindung zu Xteink, inkMOD oder CrossPoint · Daten von Open-Meteo",
-  rmDone: "\u2705 Erledigt",
-  nextTag: "🛖 Geplant",
-  rl: [
-    ["done", "Projektstart", "Wetterkarten-Generator: Temperatur, Vorhersage, Sonnenauf-/untergang"],
-    ["done", "6 Sprachen", "Automatisch aus der Browsersprache erkannt"],
-    ["done", "Ein-Klick-Installation", "sleep.bmp direkt auf den Reader \u00fcbertragen (lokale Version)"],
-    ["done", "Spenden", "Tribute und Krypto (USDT / BTC / ETH)"],
-    ["next", "Mehr Daten", "Niederschlag, Wind, gef\u00fchlte Temperatur, UV-Index"],
-    ["next", "Luftqualit\u00e4t", "PM2.5 und Pollen \u2014 f\u00fcr Allergiker"],
-    ["next", "Eigene Zeile", "Eine Tagesnotiz neben der Vorhersage"],
-    ["next", "Auto-Aktualisierung", "Firmware-Fork: Die Karte aktualisiert sich selbst nach Zeitplan"]
-  ]
+  title: "Xteink Meteo Sleep — Wetter, Mond & Sonnenaufgang als Sperrbildschirm",
+  subtitle: "Wetter · Mond · Sonnenaufgang auf dem Sperrbildschirm deines Xteink X4 / X4 Pro / X3. Karte für deine Stadt erstellen und als sleep.bmp herunterladen",
+  city: "Stadt", cityPh: "z. B. Berlin", find: "Suchen",
+  device: "Gerät", custom: "Eigene…",
+  days: "Vorhersagetage (ohne heute)",
+  invert: "Dunkle Karte (schwarzer Hintergrund)",
+  refresh: "Wetter aktualisieren",
+  install: "Aktualisieren & auf den Reader installieren",
+  download: "sleep.bmp herunterladen",
+  pack: "📅 Paket: heute + N Tage", packDone: "Fertig: weather-<Datum>.bmp heruntergeladen — in den Weather-Ordner legen.",
+  packZip: "ZIP-Paket laden", packReader: "Paket → an den Reader", rfolder: "Ordner auf dem Reader", rfolderHint: "Ordner einmal im Dateimanager des Readers anlegen.", upl: "Sende {i}/{n} an den Reader…", zipDone: "ZIP geladen — in den Weather-Ordner auf der Karte entpacken", readerPackDone: "Paket auf den Reader geladen — im Dateimanager den gewünschten Tag wählen",
+  reader: "Reader (inkMOD)",
+  readerHint: "Nimm die Adresse, die der Reader im File-Transfer-Modus zeigt.",
+  httpsNote: 'Diese Seite wird über HTTPS ausgeliefert — der Browser blockiert Anfragen an den Reader in deinem Heimnetz. Generator und BMP-Download funktionieren vollständig. Für die Ein-Klick-Installation <a href="index.html" download="xteink-meteo-sleep.html">diese Datei herunterladen</a> und am Computer öffnen.',
+  det: "Installation auf den Reader: Details",
+  df1: '„Aktualisieren & auf den Reader installieren“ drücken: der Reader muss im File-Transfer-Modus sein (bei inkMOD — Ein-/Aus-Taste halten, der Server ist nach ~20 s offen), Laptop im selben WLAN.',
+  df2: 'Die Reader-Adresse steht auf seinem Display; im Hotspot InkMOD-Reader ist es http://192.168.4.1. Das Bild landet im Ordner Sleep auf der microSD und der Modus „Eigenes Bild“ wird automatisch gesetzt — Reader sperren und freuen.',
+  df3: 'Kein Button verfügbar (Online-Version)? sleep.bmp herunterladen und manuell in den Sleep-Ordner auf der microSD legen, dann den Modus am Reader wählen.',
+  howto: "Manuelle Installation (Kartenleser)",
+  howto1: 'Lade <code>sleep.bmp</code> mit der Schaltfläche oben herunter.',
+  howto2: 'Lege die Datei in den Ordner <b>Sleep</b> auf der microSD — überschreibe die vorhandene.',
+  howto3: 'Sleep-Screen-Modus — <b>„Eigenes Bild“</b>. Reader sperren — die Karte ist auf dem Display.',
+  src: "Datenquellen & Legende",
+  s1: "Wetter, Sonnenauf- & -untergang — Open-Meteo.com, offene API ohne Anmeldung",
+  s2: "Stadt — Open-Meteo-Geocoder",
+  s3: "Mondphase — astronomische Berechnung aus dem Datum (29,5-Tage-Zyklus)",
+  s4: "In der Vorhersage: <b>T</b> — tags, <b>N</b> — nachts, °C",
+  s5: "Die Karte aktualisiert sich, wenn du ein neues sleep.bmp erzeugst und überträgst",
+  ideaT: "💡 Projektidee",
+  ideaP: "Der Sperrbildschirm eines Readers ist E-Ink: Ein Bild anzeigen kostet keine Batterie. Also statt eines nutzlosen Hintergrunds ein nützliches Werkzeug: Wetterübersicht, Sonnenuntergang, Mondphase. Morgens synchronisiert — und den ganzen Tag (auch offline, in der Natur) hast du die Zusammenfassung vor Augen statt einer toten Landschaft.",
+  roadT: "🛣 Roadmap",
+  rmDone: "✅ Bereits funktionierend",
+  rd: "Wetterkarte (aktuell, tags/nachts, 2–5 Tage Vorhersage) · Sonnenauf-/untergang · Mondphase · 6 Sprachen · helle/dunkle Theme · Ein-Klick-Installation auf den Reader (lokale Version) · Spenden",
+  rmNext: "🏗 Geplant",
+  rn: "Regenwahrscheinlichkeit · Wind · gefühlte Temperatur · UV-Index · Luftqualität · Offline-Modus (Tagestemperatur als Hauptwert) · eigene Textzeile auf der Karte · geplante Auto-Aktualisierung per Firmware-Fork",
+  rmTested: "⚠ Nur auf Xteink X4 + inkMOD 1.1.7 getestet. Andere Geräte und Firmwares sind ungetestet — Berichte willkommen!",
+  stSearching: "Suche…", stFound: "{n} gefunden — bitte wählen", stNotFound: "Stadt nicht gefunden", stSearchErr: "Netzwerkfehler bei der Suche",
+  stLoading: "Lade Wetter für {city}…", stReady: "Fertig: {w}×{h}. BMP kann heruntergeladen werden.",
+  stWeatherFail: "Wetter konnte nicht geladen werden. Internet prüfen und „Wetter aktualisieren“ drücken.",
+  stSendErr: "Reader antwortet nicht. Prüfe: File-Transfer-Modus, Laptop im selben Netz, Adresse korrekt.",
+  stApplying: "Bild übertragen. Eigenes Sleep-Screen-Bild wird gesetzt…",
+  stDone: "Fertig: sleep.bmp ist auf dem Reader, Modus „Eigenes Bild“ gesetzt. Reader sperren und Karte ansehen.",
+  stApplyFail: "Bild übertragen, aber der Modus konnte nicht gesetzt werden — am Reader „Eigenes Bild“ wählen.",
+  stHttps: "Seite ist HTTPS — der Browser lässt Anfragen zum Reader in deinem Netz nicht zu. Datei herunterladen (gelber Hinweis) und lokal öffnen.",
+  stNoWeather: "Erst das Wetter laden — „Wetter aktualisieren“ drücken.",
+  noData: "Keine Wetterdaten", dayLbl: "tags", nightLbl: "nachts", sunrise: "Sonnenaufgang", sunset: "Sonnenuntergang",
+  illum: "{v}% beleuchtet", updated: "aktualisiert", dS: "T", nS: "N", donate: "Spenden ♥",
+  mGen: "Generator", mAbout: "Über", mInst: "Installation", bnPlace: "Wo die Datei hingehört, hängt von der Firmware ab: bei inkMOD der Ordner Sleep.", ideaNext: "Geplant: Die Karte soll auch mehrere Tage ohne Sync nützlich bleiben.",
+  home: "Startseite", widgets: "Karten-Widgets",
+  bnFw: "Funktioniert mit jeder Firmware — eine normale BMP-Datei", navIdea2: "Idee", navRoad2: "Roadmap", wDate: "Datum", wCur: "Wetter jetzt", wDn: "Tags/nachts", wSm: "Sonnenauf-/untergang", wMoon: "Mondphase", wFc: "Vorhersage", wCity: "Stadt & Zeit",
+  crypto: "Krypto", cmTitle: "Mit Krypto unterstützen", copied: "Kopiert ✓",
+  wmo: {0:"Klar",1:"Überwiegend klar",2:"Teilweise bewölkt",3:"Bedeckt",45:"Nebel",56:"Nieselregen",61:"Leichter Regen",63:"Regen",65:"Starker Regen",66:"Eisregen",71:"Leichter Schneefall",73:"Schneefall",75:"Starker Schneefall",77:"Schneegriesel",80:"Regenschauer",85:"Schneeverbau",95:"Gewitter",96:"Gewitter mit Hagel"},
+  moon: ["Neumond","Zunehmende Sichel","Erstes Viertel","Zunehmender Mond","Vollmond","Abnehmender Mond","Letztes Viertel","Abnehmende Sichel"]
 },
 vi: {
-  aboutT: "Ảnh bìa hay trạm thời tiết — bạn quyết định",
-  about1: "Màn hình khóa có thể chỉ là một ảnh đẹp. Hoặc là bản tin thời tiết: nhiệt độ trong ngày, hoàng hôn, pha trăng — những thứ bạn thực sự dùng.",
-  about2: "Sắp tới chúng tôi sẽ tối ưu thẻ để dữ liệu vẫn hữu ích mấy ngày không đồng bộ.",
-  heroTitle: "Thời tiết, mặt trăng và bình minh trên màn hình khóa",
-  title: "Xteink Meteo Sleep — th\u1eddi ti\u1ebft tr\u00ean m\u00e0n h\u00ecnh kh\u00f3a Xteink X4/X3",
-  navApp: "Tr\u00ecnh t\u1ea1o", navIdea: "\u00dd t\u01b0\u1edfng", navRoad: "L\u1ed9 tr\u00ecnh", navInst: "C\u00e0i \u0111\u1eb7t",
-  heroTag: "Th\u1eddi ti\u1ebft, pha tr\u0103ng v\u00e0 m\u1eb7t tr\u1eddi m\u1ecdc/l\u1eb7n tr\u00ean m\u00e0n h\u00ecnh kh\u00f3a c\u1ee7a Xteink X4 / X4 Pro / X3. Mi\u1ec5n ph\u00ed, \u0111a ng\u00f4n ng\u1eef, m\u1ecdi firmware.",
-  heroCta: "M\u1edf tr\u00ecnh t\u1ea1o", heroCta2: "C\u00e1ch c\u00e0i \u0111\u1eb7t",
-  donate: "\u1ee6ng h\u1ed9",
-  bnT: "\u26a0 T\u01b0\u01a1ng th\u00edch & ki\u1ec3m th\u1eed",
-  bn1: "T\u1ec7p sleep.bmp ch\u1ec9 l\u00e0 m\u1ed9t \u1ea3nh: ho\u1ea1t \u0111\u1ed9ng v\u1edbi m\u1ecdi firmware c\u1ee7a m\u00e1y \u0111\u1ecdc s\u00e1ch (inkMOD, CrossPoint v\u00e0 kh\u00e1c).",
-  bn2: "\u0110\u1ecba ch\u1ec9 m\u00e1y \u0111\u1ecdc l\u00e0 s\u1ed1 n\u00f3 hi\u1ec3n th\u1ecb \u1edf ch\u1ebf \u0111\u1ed9 truy\u1ec1n t\u1ec7p \u2014 ch\u1ec9 c\u1ea7n nh\u1eadp v\u00e0o \u00f4 \u0111\u1ecba ch\u1ec9 tr\u00ean trang tr\u00ecnh t\u1ea1o.",
-  bn3: "V\u1ecb tr\u00ed \u1ea3nh kh\u00f3a tr\u00ean thi\u1ebft b\u1ecb ph\u1ee5 thu\u1ed9c firmware. Ch\u1ec9 ki\u1ec3m th\u1eed tr\u00ean Xteink X4 + inkMOD 1.1.7 \u2014 hoan ngh\u00eanh ph\u1ea3n h\u1ed3i t\u1eeb c\u00e1c thi\u1ebft b\u1ecb kh\u00e1c!",
-  featT: "Tr\u00ean th\u1ebb c\u00f3 g\u00ec", featSub: "Th\u1ebb e-ink \u0111en tr\u1eafng gh\u00e9p t\u1eeb widget cho th\u00e0nh ph\u1ed1 c\u1ee7a b\u1ea1n",
-  f1t: "Th\u1eddi ti\u1ebft hi\u1ec7n t\u1ea1i", f1d: "Nhi\u1ec7t \u0111\u1ed9, m\u00f4 t\u1ea3 v\u00e0 d\u1ef1 b\u00e1o 2\u20135 ng\u00e0y",
-  f2t: "M\u1eb7t tr\u1eddi m\u1ecdc & l\u1eb7n", f2d: "T\u1ed5 ch\u1ee9c ng\u00e0y theo \u00e1nh s\u00e1ng \u2014 kh\u00f4ng c\u1ea7n \u0111i\u1ec7n tho\u1ea1i",
-  f3t: "Pha tr\u0103ng", f3d: "T\u00ean v\u00e0 % chi\u1ebfu s\u00e1ng, t\u00ednh theo ng\u00e0y",
-  f4t: "6 ng\u00f4n ng\u1eef", f4d: "T\u1ef1 nh\u1eadn di\u1ec7n ng\u00f4n ng\u1eef tr\u00ecnh duy\u1ec7t",
-  f5t: "M\u1ecdi firmware", f5d: "T\u1ec7p BMP th\u00f4ng th\u01b0\u1eddng: inkMOD, CrossPoint v\u00e0 kh\u00e1c",
-  f6t: "Kh\u00f4ng t\u1ed1n pin", f6d: "E-ink t\u1ef1 gi\u1eef \u1ea3nh \u2014 m\u00e1y ch\u1ec9 ng\u1ee7",
-  ideaT: "\U0001F4A1 \u00dd t\u01b0\u1edfng d\u1ef1 \u00e1n",
-  ideaP: "\u201cM\u00e0n h\u00ecnh kh\u00f3a c\u1ee7a m\u00e1y \u0111\u1ecdc l\u00e0 e-ink: hi\u1ec3n th\u1ecb h\u00ecnh \u1ea3nh kh\u00f4ng t\u1ed1n pin. Thay v\u00ec h\u00ecnh n\u1ec1n v\u00f4 d\u1ee5ng, h\u00e3y \u0111\u1ec3 n\u00f3 l\u00e0 c\u00f4ng c\u1ee5 h\u1eefu \u00edch: t\u00f3m t\u1eaft th\u1eddi ti\u1ebft, gi\u1edd m\u1eb7t tr\u1eddi l\u1eb7n, pha tr\u0103ng. \u0110\u1ed3ng b\u1ed9 bu\u1ed5i s\u00e1ng \u2014 c\u1ea3 ng\u00e0y, k\u1ec3 c\u1ea3 ngo\u1ea1i tuy\u1ebfn khi \u0111i d\u00e3 ngo\u1ea1i, b\u1ea1n c\u00f3 b\u1ea3n t\u00f3m t\u1eaft tr\u01b0\u1edbc m\u1eaft thay v\u00ec phong c\u1ea3nh t\u0129nh.\u201d",
-  ideaC: "\u2014 t\u00e1c gi\u1ea3 d\u1ef1 \u00e1n",
-  roadT: "\U0001F6E3 L\u1ed9 tr\u00ecnh", roadSub: "Tr\u00ecnh t\u1ea1o \u0111\u00e3 c\u00f3 g\u00ec v\u00e0 s\u1eafp c\u00f3 g\u00ec",
-  instT: "C\u00e1ch c\u00e0i v\u00e0o m\u00e1y \u0111\u1ecdc s\u00e1ch", instSub: "Hai c\u00e1ch \u2014 ch\u1ecdn c\u00e1ch c\u1ee7a b\u1ea1n",
-  instA: "B\u1eb1ng n\u00fat (t\u1eeb m\u00e1y t\u00ednh)",
-  instA1: "T\u1ea3i app.html v\u00e0 m\u1edf tr\u00ean laptop \u2014 n\u00fat c\u00e0i \u0111\u1eb7t s\u1ebd xu\u1ea5t hi\u1ec7n.",
-  instA2: "M\u00e1y \u0111\u1ecdc \u1edf ch\u1ebf \u0111\u1ed9 truy\u1ec1n t\u1ec7p (tr\u00ean inkMOD: gi\u1eef n\u00fat ngu\u1ed3n), m\u00e1y t\u00ednh c\u00f9ng m\u1ea1ng.",
-  instA3: "B\u1ea5m \u201cC\u1eadp nh\u1eadt & c\u00e0i \u0111\u1eb7t\u201d \u2014 \u1ea3nh v\u00e0 ch\u1ebf \u0111\u1ed9 t\u1ef1 \u0111\u1eb7t.",
-  instB: "Th\u1ee7 c\u00f4ng (\u0111\u1ea7u \u0111\u1ecdc th\u1ebb)",
-  instB1: "T\u1ea3i sleep.bmp \u1edf trang tr\u00ecnh t\u1ea1o.",
-  instB2: "Ch\u00e9p t\u1ec7p v\u00e0o th\u01b0 m\u1ee5c m\u00e0n h\u00ecnh kh\u00f3a tr\u00ean microSD (tr\u00ean inkMOD l\u00e0 th\u01b0 m\u1ee5c Sleep).",
-  instB3: "Ch\u1ebf \u0111\u1ed9 m\u00e0n h\u00ecnh ng\u1ee7 ch\u1ecdn \u201c\u1ea2nh t\u00f9y ch\u1ec9nh\u201d \u2014 kho\u00e1 m\u00e1y v\u00e0 th\u01b0\u1edfng th\u1ee9c.",
-  ftrLic: "MIT License · kh\u00f4ng li\u00ean quan \u0111\u1ebfn Xteink, inkMOD hay CrossPoint · d\u1eef li\u1ec7u t\u1eeb Open-Meteo",
-  rmDone: "\u2705 Ho\u00e0n th\u00e0nh",
-  nextTag: "🛖 Kế hoạch",
-  rl: [
-    ["done", "Kh\u1edfi \u0111\u1ed9ng d\u1ef1 \u00e1n", "Tr\u00ecnh t\u1ea1o th\u1ebb th\u1eddi ti\u1ebft: nhi\u1ec7t \u0111\u1ed9, d\u1ef1 b\u00e1o, m\u1eb7t tr\u1eddi m\u1ecdc/l\u1eb7n"],
-    ["done", "6 ng\u00f4n ng\u1eef", "T\u1ef1 nh\u1eadn di\u1ec7n ng\u00f4n ng\u1eef tr\u00ecnh duy\u1ec7t"],
-    ["done", "C\u00e0i \u0111\u1eb7t 1 ch\u1ea1m", "\u0110\u1ea9y sleep.bmp tr\u1ef1c ti\u1ebfp v\u00e0o m\u00e1y \u0111\u1ecdc (b\u1ea3n c\u1ee5c b\u1ed9)"],
-    ["done", "Quy\u00ean g\u00f3p", "Tribute v\u00e0 ti\u1ec1n m\u00e3 h\u00f3a (USDT / BTC / ETH)"],
-    ["next", "Th\u00eam d\u1eef li\u1ec7u", "M\u01b0a, gi\u00f3, nhi\u1ec7t \u0111\u1ed9 c\u1ea3m nh\u1eadn, ch\u1ec9 s\u1ed1 UV"],
-    ["next", "Ch\u1ea5t l\u01b0\u1ee3ng kh\u00f4ng kh\u00ed", "PM2.5 v\u00e0 ph\u1ea5n ph\u1ea5n \u2014 cho ng\u01b0\u1eddi d\u1ecb \u1ee9ng"],
-    ["next", "D\u00f2ng t\u00f9y ch\u1ec9nh", "Ghi ch\u00fa c\u1ee7a ng\u00e0y c\u1ea1nh d\u1ef1 b\u00e1o"],
-    ["next", "T\u1ef1 \u0111\u1ed9ng c\u1eadp nh\u1eadt", "Fork firmware: th\u1ebb t\u1ef1 c\u1eadp nh\u1eadt theo l\u1ecbch"]
-  ]
+  title: "Xteink Meteo Sleep — thời tiết, trăng, mặt trời trên màn hình khóa",
+  subtitle: "Thời tiết · trăng · mặt trời mọc/lặn trên màn hình khóa Xteink X4 / X4 Pro / X3. Tạo ảnh cho thành phố của bạn và tải xuống sleep.bmp",
+  city: "Thành phố", cityPh: "vd. Hà Nội", find: "Tìm",
+  device: "Thiết bị", custom: "Tùy chọn…",
+  days: "Số ngày dự báo (không tính hôm nay)",
+  invert: "Thẻ tối (nền đen)",
+  refresh: "Cập nhật thời tiết",
+  install: "Cập nhật & cài đặt vào máy đọc sách",
+  download: "Tải sleep.bmp",
+  pack: "📅 Gói: hôm nay + N ngày", packDone: "Xong: các tệp weather-<ngày>.bmp đã tải — chép vào thư mục Weather.",
+  packZip: "Tải gói ZIP", packReader: "Gói → vào máy đọc", rfolder: "Thư mục trên máy đọc", rfolderHint: "Tạo thư mục một lần trong trình quản lý tệp của máy đọc.", upl: "Đang gửi {i}/{n} vào máy đọc…", zipDone: "ZIP đã tải — giải nén vào thư mục Weather trên thẻ nhớ", readerPackDone: "Gói đã tải lên máy — mở trình quản lý tệp và chọn ngày cần dùng",
+  reader: "Máy đọc sách (inkMOD)",
+  readerHint: "Dùng địa chỉ máy đọc sách hiển thị ở chế độ truyền tệp.",
+  httpsNote: 'Trang này dùng HTTPS — trình duyệt chặn yêu cầu tới máy đọc sách trong mạng nhà bạn. Tạo ảnh và tải BMP vẫn hoạt động đầy đủ. Để cài đặt một chạm, <a href="index.html" download="xteink-meteo-sleep.html">tải tệp này</a> và mở trên máy tính.',
+  det: "Cài vào máy đọc sách: chi tiết",
+  df1: 'Bấm “Cập nhật & cài đặt vào máy đọc sách”: máy phải ở chế độ truyền tệp (trên inkMOD — giữ nút nguồn, máy chủ lên sau ~20 giây), máy tính cùng Wi-Fi.',
+  df2: 'Địa chỉ máy là số hiển thị trên màn hình của nó; ở điểm truy cập InkMOD-Reader là http://192.168.4.1. Ảnh vào thư mục Sleep trên microSD và chế độ “Ảnh tùy chọn” tự đặt — khoá máy và tận hưởng.',
+  df3: 'Không có nút (bản online)? Tải sleep.bmp và chép thủ công vào thư mục Sleep trên microSD, rồi chọn chế độ trên máy.',
+  howto: "Cài thủ công (đầu đọc thẻ)",
+  howto1: 'Tải <code>sleep.bmp</code> bằng nút ở trên.',
+  howto2: 'Chép tệp vào thư mục <b>Sleep</b> trên microSD — ghi đè tệp đã có.',
+  howto3: 'Chế độ màn hình ngủ — <b>“Ảnh tùy chọn”</b>. Khoá máy — thẻ hiện trên màn hình.',
+  src: "Nguồn dữ liệu & chú giải",
+  s1: "Thời tiết, mặt trời mọc/lặn — Open-Meteo.com, API mở không cần đăng ký",
+  s2: "Thành phố — bộ địa lý Open-Meteo",
+  s3: "Giai đoạn trăng — tính thiên văn theo ngày (chu kỳ 29,5 ngày)",
+  s4: "Trong dự báo: <b>n</b> — ban ngày, <b>đ</b> — ban đêm, °C",
+  s5: "Thẻ cập nhật khi bạn tạo và tải lên sleep.bmp mới",
+  ideaT: "💡 Ý tưởng dự án",
+  ideaP: "Màn hình khóa của máy đọc là e-ink: hiển thị hình ảnh không tốn pin. Thay vì hình nền vô dụng, hãy để nó là công cụ hữu ích: tóm tắt thời tiết, giờ mặt trời lặn, pha trăng. Đồng bộ buổi sáng — cả ngày (kể cả ngoại tuyến, đi dã ngoại) bạn có bản tóm tắt trước mắt thay vì phong cảnh tĩnh.",
+  roadT: "🛣 Lộ trình",
+  rmDone: "✅ Đã hoạt động",
+  rd: "Thẻ thời tiết (hiện tại, ngày/đêm, dự báo 2–5 ngày) · mặt trời mọc/lặn · pha trăng · 6 ngôn ngữ · giao diện sáng/tối · cài đặt vào máy đọc 1 chạm (bản cục bộ) · quyên góp",
+  rmNext: "🏗 Kế hoạch",
+  rn: "Khả năng mưa · gió · nhiệt độ cảm nhận · chỉ số UV · chất lượng không khí · chế độ ngoại tuyến (nhiệt độ ban ngày làm chính) · dòng văn bản tùy chỉnh trên thẻ · tự động cập nhật qua fork firmware",
+  rmTested: "⚠ Chỉ kiểm thử trên Xteink X4 + inkMOD 1.1.7. Các thiết bị và firmware khác chưa kiểm thử — hoan nghênh phản hồi!",
+  stSearching: "Đang tìm…", stFound: "Tìm thấy {n} — hãy chọn", stNotFound: "Không tìm thấy thành phố", stSearchErr: "Lỗi mạng khi tìm kiếm",
+  stLoading: "Đang tải thời tiết cho {city}…", stReady: "Xong: {w}×{h}. Có thể tải BMP.",
+  stWeatherFail: "Không tải được thời tiết. Kiểm tra mạng và bấm “Cập nhật thời tiết”.",
+  stSendErr: "Máy đọc sách không phản hồi. Kiểm tra: đang ở File Transfer, máy tính cùng mạng, địa chỉ đúng.",
+  stApplying: "Đã tải ảnh lên. Đang đặt màn hình khóa tùy chọn…",
+  stDone: "Xong: sleep.bmp đã trên máy, chế độ “Ảnh tùy chọn” đã đặt. Khoá máy để xem thẻ.",
+  stApplyFail: "Đã tải ảnh, nhưng chưa đặt được chế độ — hãy chọn “Ảnh tùy chọn” trên máy.",
+  stHttps: "Trang dùng HTTPS — trình duyệt không cho truy cập máy trong mạng của bạn. Tải tệp (ghi vàng ở trên) và mở cục bộ.",
+  stNoWeather: "Hãy tải thời tiết trước — bấm “Cập nhật thời tiết”.",
+  noData: "Chưa có dữ liệu thời tiết", dayLbl: "ngày", nightLbl: "đêm", sunrise: "mặt trời mọc", sunset: "mặt trời lặn",
+  illum: "chiếu sáng {v}%", updated: "cập nhật", dS: "n", nS: "đ", donate: "Ủng hộ ♥",
+  mGen: "Trình tạo", mAbout: "Về dự án", mInst: "Cài đặt", bnPlace: "Nơi đặt tệp phụ thuộc firmware: trên inkMOD là thư mục Sleep.", ideaNext: "Kế hoạch: giúp thẻ hữu ích vài ngày không đồng bộ.",
+  home: "Trang chủ", widgets: "Widget trên thẻ",
+  bnFw: "Phù hợp với mọi firmware — chỉ là tệp BMP", navIdea2: "Ý tưởng", navRoad2: "Lộ trình", wDate: "Ngày", wCur: "Thời tiết", wDn: "Ngày/đêm", wSm: "Mặt trời mọc/lặn", wMoon: "Pha trăng", wFc: "Dự báo", wCity: "Thành phố & giờ",
+  crypto: "Crypto", cmTitle: "Ủng hộ bằng tiền mã hóa", copied: "Đã sao chép ✓",
+  wmo: {0:"Trời quang",1:"Ít mây",2:"Có mây một phần",3:"Nhiều mây",45:"Sương mù",56:"Mưa phùn",61:"Mưa nhỏ",63:"Mưa",65:"Mưa to",66:"Mưa băng giá",71:"Tuyết nhỏ",73:"Tuyết",75:"Tuyết dày",77:"Hạt tuyết",80:"Mưa rào",85:"Có tuyết rơi",95:"Dông",96:"Dông kèm mưa đá"},
+  moon: ["Trăng non","Lưỡi liềm đầu tháng","Thượng huyền","Trăng khuyết đầu tháng","Trăng tròn","Trăng khuyết cuối tháng","Hạ huyền","Lưỡi liềm cuối tháng"]
 }
 };
 
-const params = new URLSearchParams(location.search);
-const savedLang = localStorage.getItem("lsx.lang");
-let LANG = (params.get("lang") && L[params.get("lang")]) ? params.get("lang")
-        : (savedLang && L[savedLang]) ? savedLang
-        : (L[(navigator.language || "en").toLowerCase().split("-")[0]] ? (navigator.language || "en").toLowerCase().split("-")[0] : "en");
+function t(key){
+  return (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
+}
+function tf(key, map){
+  return t(key).replace(/\{(\w+)\}/g, (_, k) => map[k]);
+}
 
-function applyLang(){
-  document.documentElement.lang = LOCALE[LANG].split("-")[0];
-  document.title = L[LANG].title;
-  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = L[LANG][el.dataset.i18n] ?? ""; });
-  document.querySelectorAll(".badge.lang").forEach(b => b.classList.toggle("active", b.dataset.lang === LANG));
+// ---------- даты ----------
+const fmtTemp = t => (t > 0 ? "+" : "") + Math.round(t) + "°";
+const hhmm = iso => iso.slice(11, 16);
+const two = x => String(x).padStart(2, "0");
+function dateLong(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "long", day: "numeric", month: "long" }).format(d); }
+function dayShort(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "short" }).format(d) + " " + d.getDate(); }
+
+// ---------- фаза луны ----------
+const SYNODIC = 29.530588853;
+function moonPhase(date){
+  const ref = Date.UTC(2000, 0, 6, 18, 14);
+  const daysMs = (date.getTime() - ref) / 86400000;
+  let p = (daysMs % SYNODIC) / SYNODIC;
+  if (p < 0) p += 1;
+  const illum = Math.round((1 - Math.cos(2 * Math.PI * p)) / 2 * 100);
+  let idx;
+  if (p < .03 || p > .97) idx = 0;
+  else if (p < .22) idx = 1;
+  else if (p < .28) idx = 2;
+  else if (p < .47) idx = 3;
+  else if (p < .53) idx = 4;
+  else if (p < .72) idx = 5;
+  else if (p < .78) idx = 6;
+  else idx = 7;
+  return { phase: p, illum, name: I18N[LANG].moon[idx] };
+}
+
+// ---------- погода: коды WMO ----------
+function wmoKey(code){
+  if (code === 0) return 0;
+  if (code === 1) return 1;
+  if (code === 2) return 2;
+  if (code === 3) return 3;
+  if (code <= 48) return 45;
+  if (code <= 57) return 56;
+  if (code === 61) return 61;
+  if (code === 63) return 63;
+  if (code === 65) return 65;
+  if (code <= 67) return 66;
+  if (code <= 72) return 71;
+  if (code <= 74) return 73;
+  if (code <= 76) return 75;
+  if (code === 77) return 77;
+  if (code <= 82) return 80;
+  if (code <= 86) return 85;
+  if (code === 95) return 95;
+  return 96;
+}
+function wmoText(code){
+  const d = I18N[LANG].wmo;
+  const k = wmoKey(code);
+  return d[k] !== undefined ? d[k] : d[80];
+}
+function wmoKind(code){
+  if (code === 0) return "sun";
+  if (code <= 2) return "partly";
+  if (code === 3) return "cloud";
+  if (code <= 48) return "fog";
+  if (code <= 57) return "drizzle";
+  if (code <= 67) return "rain";
+  if (code <= 77) return "snow";
+  if (code <= 82) return "rain";
+  if (code <= 86) return "snow";
+  return "thunder";
+}
+
+// ---------- рисование ----------
+let BG = "#ffffff", FG = "#000000";
+
+function setFont(px, bold){ ctx.font = (bold ? "700 " : "400 ") + Math.round(px) + "px 'Segoe UI', Arial, sans-serif"; }
+function text(str, x, y, px, bold, align){
+  setFont(px, bold);
+  ctx.textAlign = align || "left";
+  ctx.fillStyle = FG;
+  ctx.fillText(str, x, y);
+}
+
+function drawSun(cx, cy, r){
+  ctx.strokeStyle = FG;
+  ctx.lineWidth = Math.max(2, r * 0.11);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  for (let i = 0; i < 8; i++){
+    const a = Math.PI / 8 + i * Math.PI / 4;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r * 1.3, cy + Math.sin(a) * r * 1.3);
+    ctx.lineTo(cx + Math.cos(a) * r * 1.62, cy + Math.sin(a) * r * 1.62);
+    ctx.stroke();
+  }
+  ctx.fillStyle = FG;
+}
+function drawCloud(cx, cy, s){
+  ctx.beginPath();
+  ctx.arc(cx - 0.42 * s, cy + 0.12 * s, 0.27 * s, Math.PI * 0.45, Math.PI * 1.55);
+  ctx.arc(cx - 0.02 * s, cy - 0.18 * s, 0.30 * s, Math.PI * 0.9, Math.PI * 1.95);
+  ctx.arc(cx + 0.36 * s, cy + 0.02 * s, 0.24 * s, Math.PI * 1.25, Math.PI * 0.55);
+  ctx.closePath();
+  ctx.fillStyle = BG; ctx.fill();
+  ctx.strokeStyle = FG; ctx.stroke();
+  ctx.fillStyle = FG;
+}
+function drawIcon(kind, cx, cy, s){
+  ctx.strokeStyle = FG; ctx.fillStyle = FG;
+  ctx.lineWidth = Math.max(2, s * 0.055);
+  const so = s * 0.34;
+  if (kind === "sun") drawSun(cx, cy, s * 0.36);
+  else if (kind === "moon") drawMoon(cx, cy, s * 0.36, moonPhase(new Date()).phase);
+  else if (kind === "partly"){ drawSun(cx - s * 0.18, cy - s * 0.28, s * 0.24); drawCloud(cx + s * 0.08, cy + s * 0.14, s * 0.68); }
+  else if (kind === "cloud") drawCloud(cx, cy, s * 0.8);
+  else if (kind === "fog"){
+    drawCloud(cx, cy - s * 0.14, s * 0.62);
+    for (let i = 0; i < 3; i++){ ctx.beginPath(); ctx.moveTo(cx - s * 0.34, cy + s * 0.1 + i * s * 0.14); ctx.lineTo(cx + s * 0.34, cy + s * 0.1 + i * s * 0.14); ctx.stroke(); }
+  }
+  else if (kind === "drizzle" || kind === "rain"){
+    drawCloud(cx, cy - s * 0.16, s * 0.66);
+    const n = kind === "rain" ? 3 : 2, len = s * (kind === "rain" ? 0.2 : 0.12);
+    for (let i = 0; i < n; i++){
+      const x = cx + (i - (n - 1) / 2) * s * 0.22;
+      ctx.beginPath(); ctx.moveTo(x, cy + s * 0.1); ctx.lineTo(x - s * 0.07, cy + s * 0.1 + len); ctx.stroke();
+    }
+  }
+  else if (kind === "snow"){
+    drawCloud(cx, cy - s * 0.16, s * 0.66);
+    for (let i = 0; i < 3; i++){
+      const x = cx + (i - 1) * s * 0.22, y = cy + s * 0.16, rr = s * 0.055;
+      for (let a = 0; a < 3; a++){
+        const an = a * Math.PI / 3;
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(an) * rr, y - Math.sin(an) * rr); ctx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); ctx.stroke();
+      }
+    }
+  }
+  else if (kind === "thunder"){
+    drawCloud(cx, cy - s * 0.18, s * 0.62);
+    ctx.beginPath();
+    ctx.moveTo(cx + s * 0.05, cy + s * 0.04);
+    ctx.lineTo(cx - s * 0.08, cy + s * 0.22);
+    ctx.lineTo(cx + s * 0.01, cy + s * 0.22);
+    ctx.lineTo(cx - s * 0.06, cy + s * 0.42);
+    ctx.lineTo(cx + s * 0.12, cy + s * 0.16);
+    ctx.lineTo(cx + s * 0.02, cy + s * 0.16);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = FG; ctx.strokeStyle = FG;
+}
+
+function drawMoon(cx, cy, r, phase){
+  const k = Math.cos(2 * Math.PI * phase);
+  const waxing = phase <= 0.5;
+  const s = waxing ? 1 : -1;
+  const a = Math.abs(k) * r;
+  const insideTerm = (dx, dy) => a > 0 && (dx * dx) / (a * a) + (dy * dy) / (r * r) <= 1;
+  ctx.fillStyle = FG;
+  for (let dy = -r; dy <= r; dy++){
+    for (let dx = -r; dx <= r; dx++){
+      if (dx * dx + dy * dy > r * r) continue;
+      let dark;
+      if (Math.abs(k) < 0.02) dark = false;
+      else if (Math.abs(k) > 0.98) dark = true;
+      else if (k > 0) dark = (s * dx <= 0) || insideTerm(dx, dy);
+      else dark = (s * dx < 0) && !insideTerm(dx, dy);
+      if (dark) ctx.fillRect(cx + dx, cy + dy, 1, 1);
+    }
+  }
+  ctx.strokeStyle = FG;
+  ctx.lineWidth = Math.max(2, r * 0.07);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = FG;
+}
+
+// ---------- карточка ----------
+function drawCard(dayOffset){
+  dayOffset = dayOffset || 0;
+  const w = canvas.width, h = canvas.height;
+  const inv = $("invert").checked;
+  BG = inv ? "#000000" : "#ffffff";
+  FG = inv ? "#ffffff" : "#000000";
+  ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
+  ctx.textBaseline = "alphabetic";
+
+  const pad = Math.round(w * 0.058);
+  const now = new Date();
+  const cardDate = new Date(now.getTime() + dayOffset * 86400000);
+  const moon = moonPhase(cardDate);
+  const d0 = weather ? weather.daily : null;
+  const cur = weather ? weather.current : null;
+
+  let y;
+  if (W.date){
+    text(dateLong(cardDate), w / 2, pad + w * 0.062, w * 0.062, true, "center");
+    y = pad + w * 0.062 + Math.max(h * 0.033, w * 0.095);
+  } else {
+    y = pad + Math.max(h * 0.033, w * 0.06);
+  }
+
+  if (weather){
+    let drew = false;
+    const footH = h * 0.062;
+
+    if (W.cur){
+      drew = true;
+      const iconS = w * 0.32;
+      let tempSize = w * 0.28;
+      const tempStr = fmtTemp(cur.temperature_2m);
+      const maxTempW = w - pad * 2 - iconS - w * 0.06;
+      setFont(tempSize, true);
+      while (tempSize > w * 0.12 && ctx.measureText(tempStr).width > maxTempW){
+        tempSize -= 2;
+        setFont(tempSize, true);
+      }
+      ctx.textAlign = "left";
+      ctx.fillStyle = FG;
+      ctx.fillText(tempStr, pad, y + tempSize * 0.8);
+      drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + iconS * 0.48, iconS);
+      y += Math.max(tempSize * 0.8, iconS * 0.96) + w * 0.085;
+
+      text(wmoText(cur.weather_code), pad, y, w * 0.072, true);
+      y += w * 0.072 + h * 0.014;
+    }
+    if (W.dn){
+      text(t("dayLbl") + " " + fmtTemp(d0.temperature_2m_max[dayOffset]) + "   ·   " + t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[dayOffset]), pad, y, w * 0.056, false);
+      y += h * 0.045;
+      drew = true;
+    }
+    if (W.sm){
+      const labelPx = w * 0.048, timePx = w * 0.06;
+      const col2 = w * 0.55;
+      drawIcon("sun", pad + w * 0.032, y - timePx * 0.28, w * 0.064);
+      text(t("sunrise") + " ", pad + w * 0.075, y, labelPx, false);
+      const w1 = ctx.measureText(t("sunrise") + " ").width;
+      text(hhmm(d0.sunrise[dayOffset]), pad + w * 0.075 + w1, y, timePx, true);
+      drawIcon("moon", col2 + w * 0.032, y - timePx * 0.28, w * 0.064);
+      text(t("sunset") + " ", col2 + w * 0.075, y, labelPx, false);
+      const w2 = ctx.measureText(t("sunset") + " ").width;
+      text(hhmm(d0.sunset[dayOffset]), col2 + w * 0.075 + w2, y, timePx, true);
+      y += h * 0.042;
+      drew = true;
+    }
+    if (W.moon){
+      const mr = Math.round(w * 0.085);
+      drawMoon(pad + mr + w * 0.02, y + mr, mr, moon.phase);
+      const mx = pad + mr * 2 + w * 0.075;
+      text(moon.name, mx, y + mr * 0.72, w * 0.06, true);
+      text(t("illum").replace("{v}", moon.illum), mx, y + mr * 1.38, w * 0.046, false);
+      y += mr * 2 + h * 0.028;
+      drew = true;
+    }
+    if (W.fc){
+      if (drew){
+        ctx.strokeStyle = FG;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+        y += h * 0.026;
+      }
+      const n = Math.min(days, weather.daily.time.length - 1 - dayOffset);
+      const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / Math.max(1, n)));
+      const txtPx = Math.min(w * 0.054, rowH * 0.52);
+      for (let i = dayOffset + 1; i <= dayOffset + n; i++){
+        const d = new Date(weather.daily.time[i] + "T12:00:00");
+        const cy2 = y + rowH / 2;
+        text(dayShort(d), pad, cy2 + txtPx * 0.36, txtPx, true);
+        drawIcon(wmoKind(weather.daily.weather_code[i]), w * 0.40, cy2, rowH * 0.62);
+        text(t("dS") + " " + fmtTemp(weather.daily.temperature_2m_max[i]) + " · " + t("nS") + " " + fmtTemp(weather.daily.temperature_2m_min[i]), w - pad, cy2 + txtPx * 0.36, txtPx, false, "right");
+        y += rowH;
+      }
+      drew = true;
+    }
+    if (W.city){
+      const fpx = w * 0.04;
+      text(place ? place.name : "", pad, h - footH * 0.3, fpx, false);
+      text(t("updated") + " " + two(now.getHours()) + ":" + two(now.getMinutes()), w - pad, h - footH * 0.3, fpx, false, "right");
+    }
+  } else {
+    text(t("noData"), w / 2, y + h * 0.1, w * 0.07, false, "center");
   }
 }
-document.querySelectorAll(".badge.lang").forEach(b => b.onclick = () => {
+
+// ---------- BMP ----------
+function encodeBMP(){
+  const w = canvas.width, h = canvas.height;
+  const img = ctx.getImageData(0, 0, w, h).data;
+  const rowSize = Math.floor((24 * w + 31) / 32) * 4;
+  const dataSize = rowSize * h, fileSize = 54 + dataSize;
+  const buf = new ArrayBuffer(fileSize), dv = new DataView(buf);
+  dv.setUint8(0, 0x42); dv.setUint8(1, 0x4D);
+  dv.setUint32(2, fileSize, true);
+  dv.setUint32(10, 54, true);
+  dv.setUint32(14, 40, true);
+  dv.setInt32(18, w, true);
+  dv.setInt32(22, h, true);
+  dv.setUint16(26, 1, true);
+  dv.setUint16(28, 24, true);
+  dv.setUint32(34, dataSize, true);
+  for (let y = 0; y < h; y++){
+    let off = 54 + (h - 1 - y) * rowSize;
+    for (let x = 0; x < w; x++){
+      const i = (y * w + x) * 4;
+      const lum = 0.299 * img[i] + 0.587 * img[i + 1] + 0.114 * img[i + 2];
+      const v = lum < 140 ? 0 : 255;
+      dv.setUint8(off, v); dv.setUint8(off + 1, v); dv.setUint8(off + 2, v);
+      off += 3;
+    }
+  }
+  return new Blob([buf], { type: "image/bmp" });
+}
+
+// ---------- сеть ----------
+function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = cls || ""; }
+
+async function searchCity(){
+  const q = $("city").value.trim();
+  if (!q) return;
+  $("geoResults").innerHTML = "";
+  setStatus(t("stSearching"));
+  let list = null;
+  // 1) Open-Meteo geocoder
+  try {
+    for (const lg of [LANG, "", "en"]){
+      const u = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=8&format=json" + (lg ? "&language=" + lg : "");
+      const r = await fetch(u);
+      const j = await r.json();
+      if (j.results && j.results.length){
+        list = j.results.map(res => ({ name: res.name, sub: [res.admin1, res.country].filter(Boolean).join(", "), lat: res.latitude, lon: res.longitude }));
+        break;
+      }
+    }
+  } catch(e){ /* переходим к Nominatim */ }
+  // 2) фолбэк: Nominatim (OpenStreetMap), если Open-Meteo недоступен
+  if (!list){
+    try {
+      const u = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(q) + "&format=jsonv2&addressdetails=1&limit=8&accept-language=" + (LOCALE[LANG] || "en");
+      const r = await fetch(u);
+      const j = await r.json();
+      if (Array.isArray(j) && j.length){
+        list = j.map(res => {
+          const parts = String(res.display_name || "").split(", ");
+          return { name: res.name || parts[0], sub: parts.slice(1).join(", "), lat: parseFloat(res.lat), lon: parseFloat(res.lon) };
+        });
+      }
+    } catch(e){}
+  }
+  if (!list || !list.length){ setStatus(t("stNotFound"), "err"); return; }
+  setStatus(tf("stFound", { n: list.length }));
+  for (const res of list){
+    const div = document.createElement("div");
+    div.className = "geoItem";
+    const b = document.createElement("b"); b.textContent = res.name;
+    const sm = document.createElement("small"); sm.textContent = res.sub;
+    div.appendChild(b); div.appendChild(sm);
+    div.onclick = () => {
+      $("geoResults").innerHTML = "";
+      place = { name: res.name, lat: res.lat, lon: res.lon };
+      storeSet("city", place);
+      loadWeather();
+    };
+    $("geoResults").appendChild(div);
+  }
+}
+
+async function loadWeather(){
+  window._lw = (window._lw || 0) + 1;
+  if (!place) return;
+  setStatus(tf("stLoading", { city: place.name }));
+  const n = 1 + days;
+  const url = "https://api.open-meteo.com/v1/forecast?latitude=" + place.lat + "&longitude=" + place.lon +
+    "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
+    "&timezone=auto&forecast_days=" + Math.max(n, 6);
+  for (let attempt = 0; attempt < 2; attempt++){
+    try {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(r.status);
+      weather = await r.json();
+      drawCard();
+    $("download").disabled = false;
+    $("packZip").disabled = false;
+    $("packReader").disabled = false;
+    $("install").disabled = location.protocol === "https:";
+      setStatus(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
+      return;
+    } catch(e){
+      if (attempt === 0){ await new Promise(res => setTimeout(res, 1500)); setStatus("…повтор"); }
+    }
+  }
+  setStatus(t("stWeatherFail") + " [" + (window._lwErr || 0) + "]", "err");
+}
+
+// ---------- интерфейс ----------
+function currentSize(){
+  if (device === "custom") return [parseInt($("w").value, 10) || 480, parseInt($("h").value, 10) || 800];
+  return DEVICES[device];
+}
+function applyDevice(){
+  $("customSizeRow").style.display = device === "custom" ? "flex" : "none";
+  for (const b of $("deviceSeg").children) b.classList.toggle("active", b.dataset.dev === device);
+  const size = currentSize();
+  canvas.width = size[0]; canvas.height = size[1];
+  if (weather) drawCard();
+  else { ctx.fillStyle = BG; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+  storeStr("device", device);
+}
+function applyWidgets(){
+  for (const id in wMap){ $(id).checked = W[wMap[id]]; }
+}
+const wMap = { wgDate:"date", wgCur:"cur", wgDn:"dn", wgSm:"sm", wgMoon:"moon", wgFc:"fc", wgCity:"city" };
+for (const id in wMap){
+  $(id).onchange = () => { W[wMap[id]] = $(id).checked; storeSet("widgets", W); if (weather) drawCard(); };
+}
+function applyDaysActive(){
+  for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
+}
+function applyLangActive(){
+  for (const b of document.querySelectorAll(".badge.lang")) b.classList.toggle("active", b.dataset.lang === LANG);
+}
+function applyI18n(){
+  document.documentElement.lang = LOCALE[LANG].split("-")[0];
+  document.title = t("title");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  const ph = document.querySelector("[data-i18n-ph]");
+  if (ph) ph.placeholder = t("cityPh");
+  $("donateLink").style.display = DONATE_URL ? "" : "none";
+  $("cryptoLink").style.display = CRYPTO.length ? "" : "none";
+  applyLangActive();
+}
+async function refreshPlaceName(){
+  if (!place) return;
+  try {
+    // Nominatim (OpenStreetMap): отдаёт название города на нужном языке по координатам
+    const r = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + place.lat + "&lon=" + place.lon + "&format=jsonv2&zoom=10&accept-language=" + LOCALE[LANG]);
+    const j = await r.json();
+    const a = j.address || {};
+    const name = a.city || a.town || a.village || a.municipality || a.county;
+    if (name){
+      place.name = name;
+      storeSet("city", place);
+      $("city").value = place.name;
+    }
+  } catch(e){ /* оставляем прежнее имя */ }
+}
+document.querySelectorAll(".badge.lang").forEach(b => b.onclick = async () => {
+  if (LANG === b.dataset.lang) return;
   LANG = b.dataset.lang;
-  localStorage.setItem("lsx.lang", LANG);
-  applyLang();
+  storeStr("lang", LANG);
+  await refreshPlaceName();
+  applyI18n();
+  if (weather) drawCard();
 });
-document.getElementById("burger").onclick = () => {
-  document.getElementById("menu").classList.toggle("open");
-  document.getElementById("navRight").classList.toggle("open");
+$("deviceSeg").onclick = e => {
+  const b = e.target.closest("button[data-dev]");
+  if (!b) return;
+  device = b.dataset.dev;
+  applyDevice();
+  if (place) loadWeather();
 };
-document.querySelectorAll("#menu a").forEach(a => a.onclick = () => document.getElementById("menu").classList.remove("open"));
-applyLang();
+$("daysSeg").onclick = e => {
+  const b = e.target.closest("button[data-days]");
+  if (!b) return;
+  days = parseInt(b.dataset.days, 10);
+  applyDaysActive();
+  storeStr("days", String(days));
+  if (place) loadWeather();
+};
+$("w").onchange = applyDevice; $("h").onchange = applyDevice;
+$("invert").onchange = () => { storeStr("invert", $("invert").checked ? "1" : ""); if (weather) drawCard(); };
+$("searchCity").onclick = searchCity;
+$("city").addEventListener("keydown", e => { if (e.key === "Enter") searchCity(); });
+$("refresh").onclick = () => place ? loadWeather() : searchCity();
+$("download").onclick = () => {
+  drawCard();
+  const blob = encodeBMP();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sleep.bmp";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+// ---------- установка на ридер ----------
+function readerAddress(){
+  let addr = $("readerAddr").value.trim().replace(/\/+$/, "");
+  if (!/^https?:\/\//.test(addr)) addr = "http://" + addr;
+  storeStr("reader", addr);
+  return addr;
+}
+
+async function installOnReader(){
+  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
+  const addr = readerAddress();
+  let folder = "/Sleep";
+  setStatus(tf("stLoading", { city: addr }));
+  drawCard();
+  const blob = encodeBMP();
+  try {
+    await sendOne(addr, folder, "sleep.bmp", blob, p => {});
+  } catch(e){
+    setStatus(t("stSendErr"), "err");
+    return;
+  }
+  try { await fetch(addr + "/api/settings", { mode: "no-cors", method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ sleepScreen: 3 }) }); } catch(e){}
+  setStatus(t("stDone"), "ok");
+}
+
+$("install").onclick = installOnReader;
+
+// ---------- пакет на несколько дней ----------
+// ---------- ZIP (stored, без библиотек) ----------
+function crc32(u8){
+  if (!crc32.t){
+    crc32.t = new Uint32Array(256);
+    for (let nn = 0; nn < 256; nn++){ let c = nn; for (let k = 0; k < 8; k++) c = (c & 1) ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; crc32.t[nn] = c; }
+  }
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) c = crc32.t[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(files){
+  const enc = new TextEncoder();
+  const chunks = [], central = [];
+  let offset = 0;
+  for (const f of files){
+    const name = enc.encode(f.name);
+    const crc = crc32(f.data);
+    const h = new Uint8Array(30 + name.length);
+    const dv = new DataView(h.buffer);
+    dv.setUint32(0, 0x04034b50, true);
+    dv.setUint16(4, 20, true); dv.setUint16(6, 0, true); dv.setUint16(8, 0, true);
+    dv.setUint16(10, 0, true); dv.setUint16(12, 0, true);
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, f.data.length, true);
+    dv.setUint32(22, f.data.length, true);
+    dv.setUint16(26, name.length, true);
+    h.set(name, 30);
+    chunks.push(h, f.data);
+    central.push({ name, crc, size: f.data.length, offset });
+    offset += h.length + f.data.length;
+  }
+  const cStart = offset;
+  let cSize = 0;
+  for (const c of central){
+    const h = new Uint8Array(46 + c.name.length);
+    const dv = new DataView(h.buffer);
+    dv.setUint32(0, 0x02014b50, true);
+    dv.setUint16(4, 20, true); dv.setUint16(6, 20, true);
+    dv.setUint32(16, c.crc, true);
+    dv.setUint32(20, c.size, true);
+    dv.setUint32(24, c.size, true);
+    dv.setUint16(28, c.name.length, true);
+    dv.setUint32(42, c.offset, true);
+    h.set(c.name, 46);
+    chunks.push(h); cSize += h.length;
+  }
+  const eocd = new Uint8Array(22);
+  const dv = new DataView(eocd.buffer);
+  dv.setUint32(0, 0x06054b50, true);
+  dv.setUint16(8, central.length, true);
+  dv.setUint16(10, central.length, true);
+  dv.setUint32(12, cSize, true);
+  dv.setUint32(16, cStart, true);
+  chunks.push(eocd);
+  return new Blob(chunks, { type: "application/zip" });
+}
+async function buildPackFiles(){
+  const out = [];
+  for (let d = 0; d <= days; d++){
+    drawCard(d);
+    const blob = encodeBMP();
+    const dd = new Date(Date.now() + d * 86400000);
+    out.push({ name: "weather-" + two(dd.getMonth() + 1) + "-" + two(dd.getDate()) + ".bmp", data: new Uint8Array(await blob.arrayBuffer()) });
+  }
+  drawCard(0);
+  return out;
+}
+$("packZip").onclick = async () => {
+  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
+  setStatus(t("packGo"));
+  const files = await buildPackFiles();
+  const zip = makeZip(files);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(zip);
+  a.download = "weather-pack.zip";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  setStatus(t("zipDone"), "ok");
+};
+function xhrUpload(url, data, filename){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.onload = () => resolve();
+    xhr.onerror = () => reject(new Error("net"));
+    const fd = new FormData();
+    fd.append("file", new File([data], filename, { type: "image/bmp" }));
+    xhr.send(fd);
+  });
+}
+$("packReader").onclick = async () => {
+  if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
+  const addr = readerAddress();
+  let folder = $("rfolder").value.trim() || "/Weather";
+  if (folder.charAt(0) !== "/") folder = "/" + folder;
+  if (RELAY){
+    let alive = true;
+    try { await fetch(addr + "/", { mode: "no-cors" }); } catch(e){ alive = false; }
+    if (!alive){ setStatus(t("stSendErr"), "err"); return; }
+  }
+  setStatus(t("packGo"));
+  const files = await buildPackFiles();
+  let sent = 0;
+  const total = files.reduce((s, f) => s + f.data.length, 0);
+  $("prog").style.display = "";
+  $("pfill").style.width = "0%";
+  for (let i = 0; i < files.length; i++){
+    setStatus(tf("upl", { i: i + 1, n: files.length }));
+    await sendOne(addr, folder, files[i].name, files[i].data, p => {
+      const base = sent / total;
+      $("pfill").style.width = Math.round((base + p * (files[i].data.length / total)) * 100) + "%";
+    });
+    sent += files[i].data.length;
+    $("pfill").style.width = Math.round((sent / total) * 100) + "%";
+  }
+  setStatus(t("readerPackDone"), "ok");
+};
+$("readerAddr").addEventListener("keydown", e => { if (e.key === "Enter") installOnReader(); });
+
+// ---------- релей (локальный сервер) ----------
+let RELAY = false;
+fetch("/relay-check").then(r => { RELAY = r.ok; }).catch(() => {});
+function relaySend(blob, addr, folder, filename, onPct){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const url = "/relay?addr=" + encodeURIComponent(addr + "/upload?path=" + encodeURIComponent(folder)) + "&name=" + encodeURIComponent(filename);
+    xhr.open("POST", url);
+    if (xhr.upload) xhr.upload.onprogress = e => { if (e.lengthComputable && onPct) onPct(e.loaded / e.total); };
+    xhr.onload = () => resolve();
+    xhr.onerror = () => reject(new Error("relay"));
+    xhr.send(blob);
+  });
+}
+// слепая отправка напрямую (когда релея нет)
+function directSend(blob, addr, folder, filename){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", addr + "/upload?path=" + encodeURIComponent(folder));
+    xhr.onload = () => resolve();
+    xhr.onerror = () => resolve(); // ответ скрыт CORS, но запрос уходит
+    const fd = new FormData();
+    fd.append("file", new File([blob], filename, { type: "image/bmp" }));
+    xhr.send(fd);
+  });
+}
+async function sendOne(addr, folder, filename, blob, onPct){
+  if (RELAY) return relaySend(blob, addr, folder, filename, onPct);
+  return directSend(blob, addr, folder, filename);
+}
+
+// ---------- крипто-донаты ----------
+const CRYPTO = [
+  { coin: "USDT", net: "TRC20 / TRON", addr: "TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1", qr: "https://qr.crypt.bot/?url=TXkyArvXBQyFqSMcfK7pFeeaCyaYgenUg1" },
+  { coin: "BTC", net: "Bitcoin", addr: "bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6", qr: "https://qr.crypt.bot/?url=bc1qyp7rcyasjk6k0eh84qc8wvveaptyqnkmmt33p6" },
+  { coin: "ETH", net: "Ethereum", addr: "0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4", qr: "https://qr.crypt.bot/?url=0x68ba5c4b009579525fac3318AcD4Ec00938C5Ca4" }
+];
+const COPY_ICON = String.fromCodePoint(0x1F4CC);
+const COPIED_ICON = "✓".normalize();
+function buildCryptoRows(){
+  const rows = $("cmRows"); rows.innerHTML = "";
+  for (const c of CRYPTO){
+    const row = document.createElement("div"); row.className = "cmRow";
+    const coin = document.createElement("div"); coin.className = "cmCoin";
+    coin.innerHTML = c.coin + "<small>" + c.net + "</small>";
+    const addr = document.createElement("div"); addr.className = "cmAddr"; addr.textContent = c.addr;
+    const copy = document.createElement("button"); copy.className = "cmBtn"; copy.textContent = COPY_ICON;
+    copy.onclick = () => {
+      const done = () => { copy.textContent = COPIED_ICON + " " + t("copied"); setTimeout(() => { copy.textContent = COPY_ICON; }, 1600); };
+      const fallback = () => { prompt(t("copied"), c.addr); done(); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(c.addr).then(done, fallback);
+      else fallback();
+    };
+    const qr = document.createElement("a"); qr.className = "cmBtn"; qr.href = c.qr; qr.target = "_blank"; qr.rel = "noopener"; qr.textContent = "QR ↗";
+    row.append(coin, addr, copy, qr);
+    rows.appendChild(row);
+  }
+}
+$("cryptoLink").onclick = () => { buildCryptoRows(); $("cryptoModal").classList.add("open"); };
+$("cmClose").onclick = () => $("cryptoModal").classList.remove("open");
+$("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoModal").classList.remove("open"); };
+
+// ---------- старт ----------
+(function init(){
+  const urlLang = new URLSearchParams(location.search).get("lang");
+  const savedLang = storeRaw("lang");
+  const navLang = (navigator.language || "en").toLowerCase().split("-")[0];
+  LANG = (urlLang && I18N[urlLang]) ? urlLang : (savedLang && I18N[savedLang] ? savedLang : (I18N[navLang] ? navLang : "en"));
+  const savedCity = storeGet("city");
+  if (savedCity){ place = savedCity; $("city").value = savedCity.name; }
+  else if (LANG === "ru"){ place = { name: "Санкт-Петербург", lat: 59.9391, lon: 30.3159 }; $("city").value = "Санкт-Петербург"; }
+  const d = storeRaw("device");
+  device = (d === "custom" || DEVICES[d]) ? d : "x4";
+  const savedReader = storeRaw("reader");
+  $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? "http://192.168.137.189" : savedReader;
+  const savedFolder2 = storeRaw("rfolder");
+  if (savedFolder2) $("rfolder").value = savedFolder2;
+  const legacyDays = parseInt(storeRaw("days"), 10);
+  if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
+  if (storeRaw("invert")) $("invert").checked = true;
+  const savedW = storeGet("widgets");
+  if (savedW) { for (const k in W) if (k in savedW) W[k] = !!savedW[k]; }
+  const savedFolder = storeRaw("rfolder");
+  $("rfolder").value = savedFolder || "/Weather";
+  applyI18n();
+  applyDevice();
+  applyDaysActive();
+  applyWidgets();
+  if (place) loadWeather();
+})();
 </script>
 </body>
 </html>
