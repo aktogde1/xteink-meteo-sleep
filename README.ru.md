@@ -1,6 +1,6 @@
 # Xteink Meteo Sleep 🌙
 
-[![English](https://img.shields.io/badge/lang-English-2f6f3e?style=flat)](README.md)
+[![📖 ENGLISH VERSION](https://img.shields.io/badge/📖_ENGLISH_VERSION-181b20?style=for-the-badge)](README.md)
 [![Поддержать](https://img.shields.io/badge/%E2%99%A5-Tribute-D64072?style=flat)](https://web.tribute.tg/d/Q5J)
 
 **[👉 Открыть сайт](https://aktogde1.github.io/xteink-meteo-sleep/)**
