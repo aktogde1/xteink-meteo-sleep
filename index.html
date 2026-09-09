@@ -66,10 +66,6 @@
   input[type=text] { width:100%; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
   input[type=text]:focus { outline:2px solid var(--acc); outline-offset:-1px; }
   .inline { display:flex; gap:8px; }
-  .addrRow { display:flex; align-items:center; gap:6px; }
-  .addrProto, .addrDot { color:var(--dim); font-size:14px; font-weight:600; flex-shrink:0; }
-  .addrRow input[type=text] { flex:1; min-width:0; padding:9px 10px; text-align:center; }
-  .addrRow #readerTail { width:74px; flex:0 0 auto; }
   .hintAlways { display:block; margin-top:9px; }
   .inline input { flex:1; }
   button { cursor:pointer; font-family:inherit; }
@@ -208,12 +204,7 @@
     <div class="group">
       <label data-i18n="reader"></label>
       <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
-      <div class="addrRow">
-        <span class="addrProto">http://</span>
-        <input type="text" id="readerBase" placeholder="192.168.4" autocomplete="off" inputmode="url">
-        <span class="addrDot">.</span>
-        <input type="text" id="readerTail" placeholder="137" autocomplete="off" inputmode="numeric">
-      </div>
+      <input type="text" id="readerAddr" placeholder="192.168.137.69" autocomplete="off" inputmode="url">
       <span class="hint" data-i18n="readerHint"></span>
     </div>
 
@@ -836,13 +827,10 @@ $("download").onclick = () => {
 
 // ---------- установка на ридер ----------
 function readerAddress(){
-  const base = $("readerBase").value.trim().replace(/\/+$/, "").replace(/\.+$/, "");
-  const tail = $("readerTail").value.trim().replace(/\.+$/, "");
-  let addr = base + (tail ? (base ? "." : "") + tail : "");
-  if (!addr) return "";
-  if (!/^https?:\/\//.test(addr)) addr = "http://" + addr;
-  storeStr("reader", addr);
-  return addr;
+  const a = $("readerAddr").value.trim().replace(/\/+$/, "");
+  if (!a) return "";
+  storeStr("reader", a);
+  return /^https?:\/\//.test(a) ? a : "http://" + a;
 }
 
 // ---------- релей (локальный сервер) ----------
@@ -952,13 +940,7 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   const d = storeRaw("device");
   device = DEVICES[d] ? d : "x4";
   const savedReader = (storeRaw("reader") || "").replace(/^https?:\/\//, "");
-  const dotAt = savedReader.lastIndexOf(".");
-  if (dotAt > 0){
-    $("readerBase").value = savedReader.slice(0, dotAt);
-    $("readerTail").value = savedReader.slice(dotAt + 1);
-  } else if (savedReader){
-    $("readerBase").value = savedReader;
-  }
+  if (savedReader) $("readerAddr").value = savedReader;
   const legacyDays = parseInt(storeRaw("days"), 10);
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   theme = storeRaw("invert") ? "dark" : "light";

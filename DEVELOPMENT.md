@@ -18,7 +18,7 @@ This document is the code map — it tells you where things live so you don't ha
 | `<style>` | All CSS. Colors **only** via CSS variables; dark theme = `@media (prefers-color-scheme: dark)` overriding the variables (soft dark, not black) |
 | `#compatPop` | Top popup (cookie-notice style): firmware compatibility + tested-on note; dismissible via «Понятно» button, stored in `lsx.compatSeen` |
 | header (`.nav`) | Centered brand; right side: lang badges (Русский/English), ♥ Tribute badge, ₮ Crypto badge, GitHub badge |
-| `#controls` | Generator groups: City → Device (X4/X3) → Forecast days → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (`http://` + base + `.` + last octet, saved in `lsx.reader`) + always-visible `localOnly` hint + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat) |
+| `#controls` | Generator groups: City → Device (X4/X3) → Forecast days → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (single field, what the reader shows in File Transfer mode; stored in `lsx.reader`) + always-visible `localOnly` hint + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat) |
 | `#preview` | Canvas `#card` — live card preview |
 | `.foot` | Footer: data credits (Open-Meteo, local moon math), credits line, no-affiliation disclaimer |
 | `<script>` | Everything: `I18N` (ru/en), drawing, BMP writer, network, reader upload, crypto modal, init |
@@ -34,7 +34,7 @@ This document is the code map — it tells you where things live so you don't ha
 | New device size | `DEVICES` map (`x4: [480,800]`, `x3: [480,640]`) + a `data-dev` button in `#deviceSeg` |
 | Donation link | `DONATE_URL` (app) / donate badge (header) |
 | Crypto addresses | `CRYPTO` array |
-| Reader address split/merge | `readerAddress()` (joins `#readerBase` + `#readerTail`, stores full addr in `lsx.reader`); init splits it back |
+| Reader address handling | `readerAddress()` (single `#readerAddr` field, prepends `http://`, stores in `lsx.reader`) |
 | Compat popup texts | `bnFw`, `rmTested`, `okBtn` keys; visibility stored in `lsx.compatSeen` |
 | Install endpoints | `installOnReader()` → `sendOne()` → `relaySend` (local relay, progress) or `directSend` (blind cross-origin POST); then `/api/settings` `{"sleepScreen":3}` |
 | Card theme | `theme` var (`"light"`/`"dark"`) + `#themeSeg` toggle; stored in `lsx.invert` (legacy key) |
