@@ -117,9 +117,7 @@
   #compatPop .ok { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:var(--acc); color:var(--btnText); border:none; border-radius:6px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
   .foot { max-width:1180px; margin:8px auto 0; padding:22px 24px 30px; border-top:1px solid var(--line); }
   .footIn { max-width:720px; margin:0 auto; text-align:center; color:var(--dim); font-size:12.5px; line-height:1.6; }
-  .footT { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--fg); }
-  .footSrc { list-style:none; margin:0 0 14px; padding:0; }
-  .footSrc li { margin-bottom:2px; }
+  .footData { margin:0 0 10px; }
   .footLove { margin:0; font-size:13px; color:var(--fg); }
   .footLove a { color:var(--acc); font-weight:600; text-decoration:none; }
   .footLove a:hover { text-decoration:underline; }
@@ -213,14 +211,7 @@
 
 <footer class="foot">
   <div class="footIn">
-    <p class="footT" data-i18n="src"></p>
-    <ul class="footSrc">
-      <li data-i18n="s1"></li>
-      <li data-i18n="s2"></li>
-      <li data-i18n="s3"></li>
-      <li data-i18n="s4"></li>
-      <li data-i18n="s5"></li>
-    </ul>
+    <p class="footData" data-i18n="footData"></p>
     <p class="footLove"><a href="https://github.com/aktogde1" target="_blank" rel="noopener">aktogde1</a> <span data-i18n="madeFor"></span> <span class="hh">♥</span></p>
   </div>
 </footer>
@@ -276,12 +267,6 @@ ru: {
   reader: "Ридер (inkMOD)",
   readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
   httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
-  src: "Источники данных и обозначения",
-  s1: "Погода, восход и закат — Open-Meteo.com, открытый API без регистрации",
-  s2: "Город — геокодер Open-Meteo",
-  s3: "Фаза Луны — астрорасчёт по дате (цикл 29,5 сут)",
-  s4: "В прогнозе: <b>д</b> — днём, <b>н</b> — ночью, °C",
-  s5: "Карточка обновляется, когда ты генерируешь и закидываешь новый sleep.bmp",
   ideaT: "💡 Идея проекта",
   ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
   roadT: "🛣 Roadmap",
@@ -302,7 +287,9 @@ ru: {
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
   mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
-  home: "На главную", madeFor: "сделал для сообщества, с любовью", langRu: "Русский", langEn: "Английский",
+  home: "На главную",
+  footData: "Погода и геокодинг — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · фаза Луны рассчитывается прямо в браузере · карточка живёт офлайн и обновляется с новой загрузкой sleep.bmp",
+  madeFor: "сделал для сообщества, с любовью", langRu: "Русский", langEn: "Английский",
   bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap",
   crypto: "Крипта",
   okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
@@ -322,12 +309,6 @@ en: {
   reader: "Reader (inkMOD)",
   readerHint: "Use the address the reader shows in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
-  src: "Data sources & legend",
-  s1: "Weather, sunrise & sunset — Open-Meteo.com, open API, no sign-up",
-  s2: "City — Open-Meteo geocoder",
-  s3: "Moon phase — astronomical calculation from the date (29.5-day cycle)",
-  s4: "Forecast: <b>d</b> — daytime, <b>n</b> — night, °C",
-  s5: "The card updates when you generate and upload a new sleep.bmp",
   ideaT: "💡 Project idea",
   ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
   roadT: "🛣 Roadmap",
@@ -348,7 +329,9 @@ en: {
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate",
   mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
-  home: "Home", madeFor: "made for the community with", langRu: "Russian", langEn: "English",
+  home: "Home",
+  footData: "Weather & geocoding by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · moon phase is computed right in your browser · the card lives offline and refreshes with every sleep.bmp upload",
+  madeFor: "made for the community with", langRu: "Russian", langEn: "English",
   bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap",
   crypto: "Crypto",
   okBtn: "Đã hiểu",
