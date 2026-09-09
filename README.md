@@ -7,7 +7,7 @@
 
 Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X4 Pro / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
 
-![Lock screen card](screenshot.png)
+![Lock screen card](screenshot-en.png)
 
 ## What is it
 
