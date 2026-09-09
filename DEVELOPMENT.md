@@ -1,7 +1,7 @@
 # Development Guide (agent / contributor blueprint)
 
 **Xteink Meteo Sleep** is a **single-page single-file web app** (`index.html`): plain JS + canvas, no build step, no dependencies, no server required.
-`app.html` is only a redirect stub kept for old links. `serve.py` is the optional local dev server (site + upload relay to the reader).
+`serve.py` is the optional local dev server (site + upload relay to the reader).
 This document is the code map — it tells you where things live so you don't have to search every time.
 **Rule of the project: whenever you change structure, update this file in the same commit.**
 
@@ -18,28 +18,26 @@ This document is the code map — it tells you where things live so you don't ha
 | `<style>` | All CSS. Colors **only** via CSS variables; dark theme = `@media (prefers-color-scheme: dark)` overriding the variables (soft dark, not black) |
 | `#compatPop` | Top popup (cookie-notice style): firmware compatibility + tested-on note; dismissible via «Понятно» button, stored in `lsx.compatSeen` |
 | header (`.nav`) | Centered brand; right side: lang badges (Русский/English), ♥ Tribute badge, ₮ Crypto badge, GitHub badge |
-| `#controls` | Generator groups: City → Device → Forecast days → **Card widgets** (checkboxes) → buttons (Install to reader / ZIP pack / To reader / Download sleep.bmp / Refresh) → Reader address → collapsible details (install details, manual install, data sources) |
+| `#controls` | Generator groups: City → Device (X4/X3) → Forecast days → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address |
 | `#preview` | Canvas `#card` — live card preview |
-| `#about` | Project idea (why a lock screen is a useful zero-battery tool) |
+| `.foot` | Footer: data credits (Open-Meteo, local moon math), credits line, no-affiliation disclaimer |
 | `<script>` | Everything: `I18N` (ru/en), drawing, BMP writer, network, reader upload, crypto modal, init |
 
 ## “Where do I change …?” cheat table
 
 | Task | Where |
 |---|---|
-| Card layout / widget order | `drawCard(dayOffset)` — blocks gated by `W.*`, flow-based `y` cursor |
-| Which widgets exist / defaults | `W` object + `wMap` (checkbox wiring `#wgDate`…`#wgCity`) + checkboxes in HTML |
+| Card layout / block order | `drawCard(dayOffset)` — fixed block set (`W` is a const), flow-based `y` cursor |
 | Weather icons look | `drawIcon` / `drawSun` / `drawCloud` / `drawMoon` |
 | Weather condition wording | `I18N.<lang>.wmo` + `wmoKey()` (order matters: snow 71–77 before shower `<= 82`!) |
 | Add a UI string | add key to **both** `I18N` blocks (ru, en) + `data-i18n="key"` on the element |
-| New device size | `DEVICES` map (`x4: [480,800]`, `x4pro: [480,800]`, `x3: [480,640]`) |
+| New device size | `DEVICES` map (`x4: [480,800]`, `x3: [480,640]`) + a `data-dev` button in `#deviceSeg` |
 | Donation link | `DONATE_URL` (app) / donate badge (header) |
 | Crypto addresses | `CRYPTO` array |
 | Reader default address | `DEFAULT_READER` (stored per-user in `lsx.reader`) |
-| Reader folder for the pack | `#rfolder` input (default `/Weather`, stored in `lsx.rfolder`) |
-| Multi-day pack (ZIP + upload) | `buildPackFiles()` → `makeZip()`/`crc32()`/`xhrUpload()`; handlers `packZip.onclick` / `packReader.onclick` |
 | Compat popup texts | `bnFw`, `rmTested`, `okBtn` keys; visibility stored in `lsx.compatSeen` |
-| Install endpoints | `installOnReader()` (`/upload?path=/Sleep` + `/api/settings` `{"sleepScreen":3}`) |
+| Install endpoints | `installOnReader()` → `sendOne()` → `relaySend` (local relay, progress) or `directSend` (blind cross-origin POST); then `/api/settings` `{"sleepScreen":3}` |
+| Card theme | `theme` var (`"light"`/`"dark"`) + `#themeSeg` toggle; stored in `lsx.invert` (legacy key) |
 
 ## Languages
 
@@ -73,7 +71,7 @@ python serve.py reader  # fake inkMOD reader on http://127.0.0.1:8766 (writes up
 ## Release flow
 
 1. Edit `index.html` (+ this file if structure changed).
-2. Test on `localhost:8765`: RU/EN search of a cyrillic query, extreme temps (+39/−12) for icon overlap, widgets on/off, BMP size exactly `480*3*800 + 54 = 1152054`, install + pack against the fake reader, mobile viewport.
+2. Test on `localhost:8765`: RU/EN search of a cyrillic query, extreme temps (+39/−12) for icon overlap, BMP size exactly `480*3*800 + 54 = 1152054`, install against the fake reader, both themes, footer in both languages.
 3. Push: `python gh_push.py <repoPath> <localFile> ["message"]` (GitHub contents API; `.gh-token` = fine-grained PAT, Contents RW on this repo, expires ~monthly).
 4. GitHub Pages redeploys automatically from `main` (~1 min).
 
@@ -82,4 +80,4 @@ python serve.py reader  # fake inkMOD reader on http://127.0.0.1:8766 (writes up
 1. `drawCloud` fills with `BG` — restore `ctx.fillStyle = FG` at the end of every draw function, else text turns invisible.
 2. HTML blocks must exist before the `<script>` runs; `let y` in `drawCard` must be declared (strict mode + gating blocks).
 3. Python `\uD83D`-style surrogate escapes in patch scripts crash utf-8 writes and truncate files to 0 bytes — use `chr(0x1F4CC)`/`fromCodePoint`, guard with `html.encode('utf-8')` before writing.
-4. The reader folder for the pack: inkMOD custom lock screens live in `/Sleep`; the pack uses `/Weather` — create it once in the reader's file manager.
+4. History note: `f7611e6` deleted `sendOne`/`relaySend`/`directSend` but kept the call — the install button died silently; restored in `0d673cb`. Don't remove helpers without grepping callers.
