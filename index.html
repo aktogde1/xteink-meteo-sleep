@@ -10,7 +10,7 @@
   :root {
     --bg:#f5f3ef; --panel:#ffffff; --line:#e3dfd7; --fg:#22211e; --dim:#8a857c; --acc:#2f6f3e;
     --btnText:#ffffff; --inputBg:#fbfaf8; --codeBg:#f0ede6; --warnBg:#fdf3d8; --warnBorder:#ecd9a0; --warnText:#7a5200;
-    --badgeBg:#181b20;
+    --badgeBg:#181b20; --acc2:#7cc98b;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -25,22 +25,10 @@
   .navIn { max-width:1080px; margin:0 auto; text-align:center; }
   .brand { display:inline-block; color:#fff; text-decoration:none; font-size:22px; font-weight:800; letter-spacing:.5px; }
   .brand span { color:var(--acc2); }
-  nav.menu { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:6px 18px; flex-wrap:wrap; }
-  nav.menu a { color:#cfd4da; text-decoration:none; font-size:14px; font-weight:600; padding:4px 2px; border-bottom:2px solid transparent; }
-  nav.menu a:hover { color:#fff; border-bottom-color:var(--acc2); }
   .navBadges { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap; }
   .navBadges .badge { background:#0d0f12; border:1px solid #2a2f36; }
   .navBadges .badge.lang.active { background:var(--acc); color:#12210f; border-color:var(--acc); }
-  .navBadges .badge.donate { color:var(--gold); border-color:#4a3f22; }
   .navBadges .badge .cnt { color:#f0c14b; letter-spacing:0; }
-  #about { max-width:760px; margin:0 auto; padding:40px 20px 10px; text-align:center; }
-  #about h2 { font-size:26px; margin:0 0 12px; }
-  #about p { color:var(--dim); font-size:15.5px; margin:0 0 10px; }
-  header.site { padding:14px 26px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
-  .hdrRow { max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  header.site h1 { margin:0; font-size:19px; font-weight:700; letter-spacing:.2px; }
-  header.site p { margin:6px 0 10px; color:var(--dim); font-size:13.5px; max-width:1180px; }
-  .hdrLinks { margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .badge { display:inline-flex; align-items:center; gap:5px; background:var(--badgeBg); color:#fff; border:none; border-radius:4px; padding:7px 11px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
   .badge:hover { filter:brightness(1.3); }
   .badge.lang.active { background:var(--acc); color:var(--btnText); }
@@ -54,11 +42,6 @@
   .accItem:hover { background:#22262d; }
   .accItem small { color:var(--dim); display:block; font-size:11px; font-weight:400; }
   .badge.donate { color:#f0c14b; border:2px solid #4a3f22; }
-  .hh { font-size:1.15em; }
-  .home { color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:7px 12px; }
-  .home:hover { background:var(--codeBg); }
-  .iconLink { display:inline-flex; align-items:center; justify-content:center; width:30px; height:25px; border-radius:4px; color:#ffffff; text-decoration:none; background:var(--badgeBg); }
-  .iconLink:hover { filter:brightness(1.3); }
   main { display:flex; gap:26px; padding:24px; align-items:flex-start; flex-wrap:wrap; max-width:1180px; margin:0 auto; }
   #controls { width:340px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
   .group { margin-bottom:20px; }
@@ -92,6 +75,10 @@
   .status:empty { display:none; }
   .status.ok { color:var(--acc); font-weight:600; }
   .status.err { color:#e07a5f; }
+  .bar { display:none; height:8px; margin:9px 0 7px; background:var(--inputBg); border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--acc); transition:width .2s ease; }
+  .bar.ind i { width:30%; animation:xmsIndet 1.2s linear infinite; }
+  @keyframes xmsIndet { from { margin-left:-30%; } to { margin-left:100%; } }
   #cryptoModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50; align-items:center; justify-content:center; }
   #cryptoModal.open { display:flex; }
   .cmBox { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; width:min(560px, 92vw); position:relative; }
@@ -102,11 +89,6 @@
   .cmAddr { flex:1; font-family:Consolas, monospace; font-size:11.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:6px; padding:6px 8px; word-break:break-all; min-width:200px; }
   .cmBtn { background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; font-weight:600; text-decoration:none; cursor:pointer; }
   #cmClose { position:absolute; top:8px; right:12px; background:none; border:none; font-size:24px; color:var(--dim); }
-  details { margin-top:12px; font-size:13px; color:var(--dim); }
-  details summary { cursor:pointer; color:var(--fg); font-weight:600; }
-  details ol, details ul { margin:8px 0 0; padding-left:20px; }
-  details li { margin-bottom:5px; }
-  code { background:var(--codeBg); padding:1px 5px; border-radius:4px; font-size:12px; }
   @media (max-width: 900px) {
     main { flex-direction: column; align-items: center; }
     #controls { width:100%; max-width:560px; }
@@ -269,17 +251,10 @@ ru: {
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
-  reader: "Ридер",
   instBlock: "Быстрая установка",
   readerHint: "Введите IP-адрес, который отображается у вас в режиме передачи файлов на вашей читалке.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
-  ideaT: "💡 Идея проекта",
   ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
-  roadT: "🛣 Roadmap",
-  rmDone: "✅ Уже работает",
-  rd: "Карточка погоды (сейчас, днём/ночью, прогноз 2–5 дней) · восход/закат · фаза Луны · 6 языков · светлая/тёмная тема · установка на ридер в 1 клик (локальная версия) · донаты",
-  rmNext: "🏗 В планах",
-  rn: "Вероятность осадков · ветер · ощущаемая температура · UV-индекс · качество воздуха · офлайн-режим (дневная температура как главная) · своя строка текста на карточке · автообновление через форк прошивки",
   rmTested: "⚠ Протестировано только на Xteink X4 + inkMOD 1.1.7. Другие устройства и прошивки не проверялись — отчёты приветствуются!",
   stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
   stLoading: "Грузим погоду для {city}…", stReady: "Готово: {w}×{h}. Можно скачивать BMP.",
@@ -287,18 +262,16 @@ ru: {
   stSendErr: "Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети, адрес верный.",
   stApplying: "Картинка загружена. Применяю режим «Своя картинка»…",
   stDone: "Готово: sleep.bmp на ридере, режим «Своя картинка» выставлен. Заблокируй ридер — увидишь карточку.",
-  stApplyFail: "Картинка загружена, но режим применить не удалось — выбери «Своя картинка» на ридере вручную.",
-  stHttps: "Страница по HTTPS — браузер не пустит запросы к ридеру в домашней сети. Скачай файл (жёлтая плашка выше) и открой его на компе.",
+
   stNoAddr: "Впишите адрес ридера — тот, что он показывает в режиме передачи файлов.",
   stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
-  illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
-  mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
-  home: "На главную",
+  updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
+  ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
   footData: "Погода и геокодинг — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · фаза Луны рассчитывается прямо в браузере · карточка живёт офлайн и обновляется с новой загрузкой sleep.bmp",
   madeFor: "сделал для сообщества, с любовью",
   disclaimer: "Проект не аффилирован с Xteink, inkMOD и CrossPoint. Погода — Open-Meteo (некоммерческое использование).", langRu: "Русский", langEn: "Английский",
-  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap",
+  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл",
   crypto: "Крипта",
   okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
   wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
@@ -314,17 +287,10 @@ en: {
   refresh: "Refresh weather",
   install: "Update & install to reader",
   download: "Download sleep.bmp",
-  reader: "Reader",
   instBlock: "Quick install",
   readerHint: "Enter the IP address shown on your e-reader in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
-  ideaT: "💡 Project idea",
   ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
-  roadT: "🛣 Roadmap",
-  rmDone: "✅ Already working",
-  rd: "Weather card (current, day/night, 2–5 day forecast) · sunrise/sunset · moon phase · 6 interface languages · light/dark theme · one-click install to reader (local version) · donations",
-  rmNext: "🏗 On the roadmap",
-  rn: "Precipitation probability · wind · feels-like temperature · UV index · air quality · offline mode (daily temp as the headline) · custom text line on the card · scheduled auto-refresh via a firmware fork",
   rmTested: "⚠ Tested only on Xteink X4 + inkMOD 1.1.7. Other devices and firmware are untested — field reports welcome!",
   stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
   stLoading: "Loading weather for {city}…", stReady: "Done: {w}×{h}. You can download the BMP.",
@@ -332,20 +298,17 @@ en: {
   stSendErr: "Reader is not responding. Check: it\u2019s in File Transfer mode, laptop on the same network, address correct.",
   stApplying: "Image uploaded. Applying the custom sleep screen…",
   stDone: "Done: sleep.bmp is on the reader, sleep screen set to Custom. Lock the reader to see the card.",
-  stApplyFail: "Image uploaded, but couldn\u2019t set the mode — pick “Custom image” on the reader manually.",
-  stHttps: "Page is on HTTPS — the browser won\u2019t let it reach the reader on your network. Download the file (yellow note above) and open it locally.",
+
   stNoAddr: "Enter the reader address — the one it shows in File Transfer mode.",
   stNoWeather: "Load the weather first — press “Refresh weather”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
-  illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate",
-  mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
-  home: "Home",
+  updated: "updated", dS: "d", nS: "n", donate: "Donate",
+  ideaNext: "Planned: make the card stay useful for several days without a sync.",
   footData: "Weather & geocoding by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · moon phase is computed right in your browser · the card lives offline and refreshes with every sleep.bmp upload",
   madeFor: "made for the community with",
   disclaimer: "Not affiliated with Xteink, inkMOD or CrossPoint. Weather data by Open-Meteo (non-commercial use).", langRu: "Russian", langEn: "English",
-  bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap",
+  bnFw: "Works with any reader firmware — it is just a BMP file",
   crypto: "Crypto",
-  okBtn: "Đã hiểu",
   okBtn: "Got it", cmTitle: "Donate in crypto", copied: "Copied ✓",
   wmo: {0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",56:"Drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Rain shower",85:"Snowfall",95:"Thunderstorm",96:"Thunderstorm with hail"},
   moon: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
@@ -716,7 +679,7 @@ async function searchCity(){
 }
 
 async function loadWeather(){
-  window._lw = (window._lw || 0) + 1;
+  const my = (window._lw = (window._lw || 0) + 1); // устаревший ответ игнорируем
   if (!place) return;
   setStatusG(tf("stLoading", { city: place.name }));
   const n = 1 + days;
@@ -727,17 +690,20 @@ async function loadWeather(){
     try {
       const r = await fetch(url);
       if (!r.ok) throw new Error(r.status);
-      weather = await r.json();
+      const j = await r.json();
+      if (my !== window._lw) return;
+      weather = j;
       drawCard();
-    $("download").disabled = false;
-    $("install").disabled = location.protocol === "https:";
+      $("download").disabled = false;
+      $("install").disabled = location.protocol === "https:";
       setStatusG(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
     } catch(e){
+      if (my !== window._lw) return;
       if (attempt === 0){ await new Promise(res => setTimeout(res, 1500)); setStatusG("…повтор"); }
     }
   }
-  setStatusG(t("stWeatherFail") + " [" + (window._lwErr || 0) + "]", "err");
+  setStatusG(t("stWeatherFail"), "err");
 }
 
 // ---------- интерфейс ----------
@@ -844,7 +810,11 @@ function relaySend(blob, addr, folder, filename, onPct){
     const url = "/relay?addr=" + encodeURIComponent(addr + "/upload?path=" + encodeURIComponent(folder)) + "&name=" + encodeURIComponent(filename);
     xhr.open("POST", url);
     if (xhr.upload) xhr.upload.onprogress = e => { if (e.lengthComputable && onPct) onPct(e.loaded / e.total); };
-    xhr.onload = () => resolve();
+    xhr.onload = () => {
+      const resp = xhr.responseText || "";
+      if (resp.indexOf("ERR") === 0) reject(new Error(resp));
+      else resolve();
+    };
     xhr.onerror = () => reject(new Error("relay"));
     xhr.send(blob);
   });
@@ -870,6 +840,10 @@ async function installOnReader(){
   if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
   const addr = readerAddress();
   if (!addr){ setStatus(t("stNoAddr"), "err"); return; }
+  if (!RELAY){
+    try { await fetch(addr, { mode: "no-cors" }); } // достижимость: сеть не путаем с CORS
+    catch(e){ setStatus(t("stSendErr"), "err"); return; }
+  }
   let folder = "/Sleep";
   setStatus(tf("stLoading", { city: addr }));
   drawCard();

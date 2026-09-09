@@ -2,6 +2,12 @@ import http.server, os, sys, urllib.request, uuid
 role = sys.argv[1] if len(sys.argv) > 1 else "site"
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# /relay и /save — не публичный API: отвечаем только своему origin и file:// (Origin "null").
+# Чужой Origin = чужой сайт дёргает локальный сервер как прокси в домашнюю сеть.
+ORIGIN_OK = {"http://localhost:8765", "http://127.0.0.1:8765", "null", ""}
+def origin_ok(handler):
+    return handler.headers.get("Origin", "") in ORIGIN_OK
+
 class NoCache:
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, must-revalidate")
@@ -18,6 +24,8 @@ class Site(NoCache, http.server.SimpleHTTPRequestHandler):
         super().do_GET()
     def do_POST(self):
         if self.path.startswith("/relay"):
+            if not origin_ok(self):
+                self.send_error(403); return
             from urllib.parse import urlparse, parse_qs
             q = parse_qs(urlparse(self.path).query)
             addr = q.get("addr", [""])[0]
@@ -40,6 +48,8 @@ class Site(NoCache, http.server.SimpleHTTPRequestHandler):
             return
         if self.path != "/save":
             self.send_error(404); return
+        if not origin_ok(self):
+            self.send_error(403); return
         data = self.rfile.read(int(self.headers.get("Content-Length", 0)))
         with open("sleep-test.bmp", "wb") as f:
             f.write(data)
