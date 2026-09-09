@@ -32,7 +32,9 @@ Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-
 2. Laptop — on the same Wi-Fi network (or on the reader's `InkMOD-Reader` hotspot, address `http://192.168.4.1`)
 3. The reader address is pre-filled (the one shown on its screen) — press the button → the image flies to the reader and the "Custom image" mode is set automatically
 
-The page also auto-detects a tiny local relay (if you serve it through one, e.g. a `.bat` launcher) and routes the upload through it — same button, same result.
+The page also auto-detects a tiny local relay (if you serve it through one) and routes the upload through it — same button, same result.
+
+**Even simpler:** download [`meteo-server.bat`](meteo-server.bat) (and [`serve.py`](serve.py) next to it) and run the bat — it starts a local server and opens the page where one-click install works without any browser restrictions (Python required).
 
 > **Why doesn't the button work on the online version?** The web app is served over HTTPS while the reader lives on your home network over HTTP. Browsers block those requests (mixed content) — there is no way around it. The local file is fully featured.
 
