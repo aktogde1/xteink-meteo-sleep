@@ -75,8 +75,6 @@
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
-  .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
-  .chk input { width:17px; height:17px; accent-color:var(--acc); }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -181,7 +179,11 @@
 
 
     <div class="group">
-      <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
+      <label data-i18n="theme"></label>
+      <div class="seg" id="themeSeg">
+        <button data-theme="light" data-i18n="themeLight"></button>
+        <button data-theme="dark" data-i18n="themeDark"></button>
+      </div>
       <button class="btn wide" id="install" disabled data-i18n="install"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
@@ -247,6 +249,7 @@ let weather = null;
 let place = null;
 let device = "x4";
 let days = 3;
+let theme = "light";
 const W = { date:true, cur:true, dn:true, sm:true, fc:true, city:true }; // фиксированный набор, луну вырезали
 let LANG = "en";
 function storeGet(key){ try { return JSON.parse(localStorage.getItem("lsx." + key)); } catch(e){ return null; } }
@@ -265,7 +268,7 @@ ru: {
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
   device: "Устройство",
   days: "Дней прогноза (не считая сегодня)",
-  invert: "Тёмная карточка (чёрный фон)",
+  theme: "Тема карточки", themeLight: "Светлая", themeDark: "Тёмная",
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
@@ -319,7 +322,7 @@ en: {
   city: "City", cityPh: "e.g. Berlin", find: "Search",
   device: "Device",
   days: "Forecast days (excluding today)",
-  invert: "Dark card (black background)",
+  theme: "Card theme", themeLight: "Light", themeDark: "Dark",
   refresh: "Refresh weather",
   install: "Update & install to reader",
   download: "Download sleep.bmp",
@@ -549,7 +552,7 @@ function drawMoon(cx, cy, r, phase){
 function drawCard(dayOffset){
   dayOffset = dayOffset || 0;
   const w = canvas.width, h = canvas.height;
-  const inv = $("invert").checked;
+  const inv = theme === "dark";
   BG = inv ? "#000000" : "#ffffff";
   FG = inv ? "#ffffff" : "#000000";
   ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h);
@@ -812,7 +815,17 @@ $("daysSeg").onclick = e => {
   storeStr("days", String(days));
   if (place) loadWeather();
 };
-$("invert").onchange = () => { storeStr("invert", $("invert").checked ? "1" : ""); if (weather) drawCard(); };
+$("themeSeg").onclick = e => {
+  const b = e.target.closest("button[data-theme]");
+  if (!b) return;
+  theme = b.dataset.theme;
+  applyThemeActive();
+  storeStr("invert", theme === "dark" ? "1" : "");
+  if (weather) drawCard();
+};
+function applyThemeActive(){
+  for (const b of $("themeSeg").children) b.classList.toggle("active", b.dataset.theme === theme);
+}
 $("searchCity").onclick = searchCity;
 $("city").addEventListener("keydown", e => { if (e.key === "Enter") searchCity(); });
 $("refresh").onclick = () => place ? loadWeather() : searchCity();
@@ -911,7 +924,8 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? "http://192.168.137.189" : savedReader;
   const legacyDays = parseInt(storeRaw("days"), 10);
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
-  if (storeRaw("invert")) $("invert").checked = true;
+  theme = storeRaw("invert") ? "dark" : "light";
+  applyThemeActive();
   applyI18n();
   applyDevice();
   applyDaysActive();
