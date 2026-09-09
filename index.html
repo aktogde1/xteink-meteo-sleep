@@ -66,7 +66,6 @@
   input[type=text] { width:100%; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:14.5px; }
   input[type=text]:focus { outline:2px solid var(--acc); outline-offset:-1px; }
   .inline { display:flex; gap:8px; }
-  .hintAlways { display:block; margin-top:9px; }
   .inline input { flex:1; }
   button { cursor:pointer; font-family:inherit; }
   .btn { background:var(--acc); color:var(--btnText); border:none; border-radius:8px; padding:10px 16px; font-size:14.5px; font-weight:600; }
@@ -194,16 +193,15 @@
       <div class="seg" id="themeSeg">
         <button data-theme="dark" data-i18n="themeDark"></button>
       </div>
-      <button class="btn wide" id="install" disabled data-i18n="install"></button>
-      <span class="hint hintAlways" data-i18n="localOnly"></span>
-      <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
+      <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
+      <button class="btn wide" id="install" disabled data-i18n="install"></button>
+      <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <div id="status"></div>
     </div>
 
     <div class="group">
       <label data-i18n="reader"></label>
-      <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <input type="text" id="readerAddr" placeholder="192.168.137.69" autocomplete="off" inputmode="url">
       <span class="hint" data-i18n="readerHint"></span>
     </div>
@@ -270,9 +268,7 @@ ru: {
   download: "Скачать sleep.bmp",
   reader: "Ридер",
   readerHint: "Введите адрес, который ридер показывает в режиме передачи файлов. Обычно меняется только последнее число — впишите новое, остальное сохранится.",
-  localOnly: "Установка — из локальной версии (файл или сервер). Онлайн работает генератор и скачивание BMP.",
-  httpsNote: 'Установка в один клик работает только с компьютера. 1) <a href="index.html" download="xteink-meteo-sleep.html">Скачайте index.html</a> и откройте его — кнопка заработает. 2) Если не сработало — <a href="meteo-server.bat" download>скачайте meteo-server.bat</a> (нужен Python), положите рядом serve.py и запустите: сайт откроется локально с сервером-релеем.',
-  httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
+  httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
   ideaT: "💡 Идея проекта",
   ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
   roadT: "🛣 Roadmap",
@@ -316,9 +312,7 @@ en: {
   download: "Download sleep.bmp",
   reader: "Reader",
   readerHint: "Enter the address the reader shows in File Transfer mode. Usually only the last number changes — type the new one, the rest is remembered.",
-  localOnly: "Install works from the local version (file or server). Online — the generator and BMP download are fully functional.",
-  httpsNote: 'One-click install works from your computer only. 1) <a href="index.html" download="xteink-meteo-sleep.html">Download index.html</a> and open it — the button will work. 2) If it doesn’t — <a href="meteo-server.bat" download>download meteo-server.bat</a> (Python required), put serve.py next to it and run: the site opens locally with the upload relay.',
-  httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
+  httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
   ideaT: "💡 Project idea",
   ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
   roadT: "🛣 Roadmap",
