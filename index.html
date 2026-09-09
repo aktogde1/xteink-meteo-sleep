@@ -72,6 +72,7 @@
   .btn:disabled { opacity:.4; cursor:default; }
   .btn.wide { width:100%; margin-bottom:9px; }
   .seg { display:flex; gap:7px; }
+  #themeSeg { margin-bottom:9px; }
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
@@ -560,6 +561,7 @@ function drawCard(dayOffset){
   const pad = Math.round(w * 0.058);
   const now = new Date();
   const cardDate = new Date(now.getTime() + dayOffset * 86400000);
+  const moon = moonPhase(cardDate);
   const d0 = weather ? weather.daily : null;
   const cur = weather ? weather.current : null;
 
@@ -611,6 +613,11 @@ function drawCard(dayOffset){
       text(t("sunset") + " ", col2 + w * 0.075, y, labelPx, false);
       const w2 = ctx.measureText(t("sunset") + " ").width;
       text(hhmm(d0.sunset[dayOffset]), col2 + w * 0.075 + w2, y, timePx, true);
+      y += h * 0.042;
+      drew = true;
+    }
+    {
+      text(moon.name + "  ·  " + moon.illum + "%", pad, y, w * 0.048, false);
       y += h * 0.042;
       drew = true;
     }
