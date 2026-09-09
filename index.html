@@ -75,8 +75,6 @@
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
-  #customSizeRow { display:none; gap:8px; align-items:center; margin-top:8px; color:var(--dim); }
-  #customSizeRow input[type=number] { width:76px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
   .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
   .chk input { width:17px; height:17px; accent-color:var(--acc); }
   .wgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -169,13 +167,7 @@
       <label data-i18n="device"></label>
       <div class="seg" id="deviceSeg">
         <button data-dev="x4">X4</button>
-        <button data-dev="x4pro">X4 Pro</button>
         <button data-dev="x3">X3</button>
-        <button data-dev="custom" data-i18n="custom"></button>
-      </div>
-      <div id="customSizeRow">
-        <input type="number" id="w" min="120" max="2048" value="480"> ×
-        <input type="number" id="h" min="120" max="2048" value="800">
       </div>
     </div>
 
@@ -276,16 +268,16 @@ function storeSet(key, val){ localStorage.setItem("lsx." + key, JSON.stringify(v
 function storeStr(key, val){ localStorage.setItem("lsx." + key, val); }
 function storeRaw(key){ return localStorage.getItem("lsx." + key); }
 
-const DEVICES = { x4:[480,800], x4pro:[480,800], x3:[480,640] };
+const DEVICES = { x4:[480,800], x3:[480,640] };
 const LOCALE = { ru:"ru-RU", en:"en-GB" };
 
 // ---------- переводы ----------
 const I18N = {
 ru: {
   title: "Xteink Meteo Sleep — погода, луна, восход на локскрине",
-  subtitle: "Погода · луна · восход на локскрине Xteink X4 / X4 Pro / X3. Собери по своему городу и скачай как sleep.bmp",
+  subtitle: "Погода · луна · восход на локскрине Xteink X4 / X3. Собери по своему городу и скачай как sleep.bmp",
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
-  device: "Устройство", custom: "Свой…",
+  device: "Устройство",
   days: "Дней прогноза (не считая сегодня)",
   invert: "Тёмная карточка (чёрный фон)",
   refresh: "Обновить погоду",
@@ -337,9 +329,9 @@ ru: {
 },
 en: {
   title: "Xteink Meteo Sleep — weather, moon & sunrise lock screen",
-  subtitle: "Weather · moon · sunrise on the lock screen of your Xteink X4 / X4 Pro / X3. Build a card for your city and download it as sleep.bmp",
+  subtitle: "Weather · moon · sunrise on the lock screen of your Xteink X4 / X3. Build a card for your city and download it as sleep.bmp",
   city: "City", cityPh: "e.g. Berlin", find: "Search",
-  device: "Device", custom: "Custom…",
+  device: "Device",
   days: "Forecast days (excluding today)",
   invert: "Dark card (black background)",
   refresh: "Refresh weather",
@@ -782,12 +774,8 @@ async function loadWeather(){
 }
 
 // ---------- интерфейс ----------
-function currentSize(){
-  if (device === "custom") return [parseInt($("w").value, 10) || 480, parseInt($("h").value, 10) || 800];
-  return DEVICES[device];
-}
+function currentSize(){ return DEVICES[device]; }
 function applyDevice(){
-  $("customSizeRow").style.display = device === "custom" ? "flex" : "none";
   for (const b of $("deviceSeg").children) b.classList.toggle("active", b.dataset.dev === device);
   const size = currentSize();
   canvas.width = size[0]; canvas.height = size[1];
@@ -855,7 +843,6 @@ $("daysSeg").onclick = e => {
   storeStr("days", String(days));
   if (place) loadWeather();
 };
-$("w").onchange = applyDevice; $("h").onchange = applyDevice;
 $("invert").onchange = () => { storeStr("invert", $("invert").checked ? "1" : ""); if (weather) drawCard(); };
 $("searchCity").onclick = searchCity;
 $("city").addEventListener("keydown", e => { if (e.key === "Enter") searchCity(); });
@@ -950,7 +937,7 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   if (savedCity){ place = savedCity; $("city").value = savedCity.name; }
   else if (LANG === "ru"){ place = { name: "Санкт-Петербург", lat: 59.9391, lon: 30.3159 }; $("city").value = "Санкт-Петербург"; }
   const d = storeRaw("device");
-  device = (d === "custom" || DEVICES[d]) ? d : "x4";
+  device = DEVICES[d] ? d : "x4";
   const savedReader = storeRaw("reader");
   $("readerAddr").value = (!savedReader || savedReader === "http://inkmod.local") ? "http://192.168.137.189" : savedReader;
   const legacyDays = parseInt(storeRaw("days"), 10);
