@@ -17,6 +17,8 @@ On the card: weekday and date, current weather + "day / night" temps, 2–5 day 
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
+> **Want live self-hosted dashboards instead?** If flashing custom firmware and running a small home server is your thing, look at [Tesserae](https://github.com/dmellok/tesserae) + [CrossInk](https://github.com/dmellok/CrossInk). This tool is the other route: no firmware, no server — just a `sleep.bmp` from a web page.
+
 ## Quick start
 
 1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
