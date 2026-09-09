@@ -71,6 +71,6 @@ class FakeReader(NoCache, http.server.BaseHTTPRequestHandler):
     def log_message(self, *a): pass
 
 if role == "reader":
-    http.server.HTTPServer(("127.0.0.1", 8766), FakeReader).serve_forever()
+    http.server.ThreadingHTTPServer(("127.0.0.1", 8766), FakeReader).serve_forever()
 else:
-    http.server.HTTPServer(("127.0.0.1", 8765), Site).serve_forever()
+    http.server.ThreadingHTTPServer(("127.0.0.1", 8765), Site).serve_forever()

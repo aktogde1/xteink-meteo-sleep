@@ -77,7 +77,7 @@
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
-  .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
+  .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; margin-bottom:10px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
   #geoResults { border:1px solid var(--line); border-radius:8px; margin-top:7px; overflow:hidden; }
@@ -88,9 +88,10 @@
   #preview { flex:1; min-width:330px; display:flex; justify-content:center; }
   #frame { background:var(--panel); padding:12px; border-radius:16px; border:1px solid var(--line); box-shadow:0 2px 14px rgba(0,0,0,.08); }
   canvas { display:block; image-rendering:pixelated; height:82vh; max-height:840px; border:1px solid var(--line); }
-  #status { font-size:13.5px; color:var(--dim); min-height:20px; margin-top:2px; }
-  #status.ok { color:var(--acc); font-weight:600; }
-  #status.err { color:#e07a5f; }
+  .status { font-size:13.5px; color:var(--dim); margin-top:2px; }
+  .status:empty { display:none; }
+  .status.ok { color:var(--acc); font-weight:600; }
+  .status.err { color:#e07a5f; }
   #cryptoModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50; align-items:center; justify-content:center; }
   #cryptoModal.open { display:flex; }
   .cmBox { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; width:min(560px, 92vw); position:relative; }
@@ -195,15 +196,17 @@
       </div>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
-      <button class="btn wide" id="install" disabled data-i18n="install"></button>
-      <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
-      <div id="status"></div>
+      <div id="genStatus" class="status"></div>
     </div>
 
-    <div class="group">
-      <label data-i18n="reader"></label>
+    <div class="group" id="instBlock">
+      <label data-i18n="instBlock"></label>
+      <div id="httpsNote" class="hint warn" style="display:none" data-i18n="httpsNote"></div>
       <input type="text" id="readerAddr" placeholder="192.168.137.69" autocomplete="off" inputmode="url">
       <span class="hint" data-i18n="readerHint"></span>
+      <button class="btn wide" id="install" disabled data-i18n="install"></button>
+      <div class="bar" id="prog"><i id="pfill"></i></div>
+      <div id="status" class="status"></div>
     </div>
 
       </div>
@@ -267,7 +270,8 @@ ru: {
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
   reader: "Ридер",
-  readerHint: "Введите адрес, который ридер показывает в режиме передачи файлов. Обычно меняется только последнее число — впишите новое, остальное сохранится.",
+  instBlock: "Быстрая установка",
+  readerHint: "Адрес, который ридер показывает в режиме передачи файлов.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
   ideaT: "💡 Идея проекта",
   ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
@@ -311,7 +315,8 @@ en: {
   install: "Update & install to reader",
   download: "Download sleep.bmp",
   reader: "Reader",
-  readerHint: "Enter the address the reader shows in File Transfer mode. Usually only the last number changes — type the new one, the rest is remembered.",
+  instBlock: "Quick install",
+  readerHint: "The address the reader shows in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
   ideaT: "💡 Project idea",
   ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
@@ -591,7 +596,9 @@ function drawCard(dayOffset){
       drew = true;
     }
     {
-      text(moon.name + "  ·  " + moon.illum + "%", pad, y, w * 0.048, false);
+      const mr = w * 0.026;
+      drawMoon(pad + mr, y - w * 0.017, mr, moon.phase);
+      text(moon.name + "  ·  " + moon.illum + "%", pad + mr * 2 + w * 0.022, y, w * 0.048, false);
       y += h * 0.042;
       drew = true;
     }
@@ -655,13 +662,14 @@ function encodeBMP(){
 }
 
 // ---------- сеть ----------
-function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = cls || ""; }
+function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = "status " + (cls || ""); }
+function setStatusG(msg, cls){ const s = $("genStatus"); s.textContent = msg; s.className = "status " + (cls || ""); }
 
 async function searchCity(){
   const q = $("city").value.trim();
   if (!q) return;
   $("geoResults").innerHTML = "";
-  setStatus(t("stSearching"));
+  setStatusG(t("stSearching"));
   let list = null;
   // 1) Open-Meteo geocoder
   try {
@@ -689,8 +697,8 @@ async function searchCity(){
       }
     } catch(e){}
   }
-  if (!list || !list.length){ setStatus(t("stNotFound"), "err"); return; }
-  setStatus(tf("stFound", { n: list.length }));
+  if (!list || !list.length){ setStatusG(t("stNotFound"), "err"); return; }
+  setStatusG(tf("stFound", { n: list.length }));
   for (const res of list){
     const div = document.createElement("div");
     div.className = "geoItem";
@@ -710,7 +718,7 @@ async function searchCity(){
 async function loadWeather(){
   window._lw = (window._lw || 0) + 1;
   if (!place) return;
-  setStatus(tf("stLoading", { city: place.name }));
+  setStatusG(tf("stLoading", { city: place.name }));
   const n = 1 + days;
   const url = "https://api.open-meteo.com/v1/forecast?latitude=" + place.lat + "&longitude=" + place.lon +
     "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
@@ -723,13 +731,13 @@ async function loadWeather(){
       drawCard();
     $("download").disabled = false;
     $("install").disabled = location.protocol === "https:";
-      setStatus(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
+      setStatusG(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
     } catch(e){
-      if (attempt === 0){ await new Promise(res => setTimeout(res, 1500)); setStatus("…повтор"); }
+      if (attempt === 0){ await new Promise(res => setTimeout(res, 1500)); setStatusG("…повтор"); }
     }
   }
-  setStatus(t("stWeatherFail") + " [" + (window._lwErr || 0) + "]", "err");
+  setStatusG(t("stWeatherFail") + " [" + (window._lwErr || 0) + "]", "err");
 }
 
 // ---------- интерфейс ----------
@@ -866,14 +874,21 @@ async function installOnReader(){
   setStatus(tf("stLoading", { city: addr }));
   drawCard();
   const blob = encodeBMP();
+  const bar = $("prog"), fill = $("pfill");
+  bar.style.display = "block";
+  bar.classList.toggle("ind", !RELAY);
+  fill.style.width = RELAY ? "0%" : "";
   try {
-    await sendOne(addr, folder, "sleep.bmp", blob, p => {});
+    await sendOne(addr, folder, "sleep.bmp", blob, p => { if (RELAY) fill.style.width = Math.round(p * 100) + "%"; });
+    if (RELAY) fill.style.width = "100%";
   } catch(e){
+    bar.style.display = "none";
     setStatus(t("stSendErr"), "err");
     return;
   }
   setStatus(t("stApplying"));
   try { await fetch(addr + "/api/settings", { mode: "no-cors", method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ sleepScreen: 3 }) }); } catch(e){}
+  bar.style.display = "none";
   setStatus(t("stDone"), "ok");
 }
 
@@ -939,7 +954,10 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   theme = storeRaw("invert") ? "dark" : "light";
   applyThemeActive();
-  if (location.protocol === "https:") $("httpsNote").style.display = "block";
+  if (location.protocol === "https:"){
+    $("httpsNote").style.display = "block";
+    $("instBlock").classList.add("off");
+  }
   applyI18n();
   applyDevice();
   applyDaysActive();
