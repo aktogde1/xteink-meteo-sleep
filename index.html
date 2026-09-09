@@ -77,8 +77,6 @@
   .seg.small button { padding:8px 4px; }
   .chk { display:flex; align-items:center; gap:9px; font-size:14.5px; cursor:pointer; user-select:none; }
   .chk input { width:17px; height:17px; accent-color:var(--acc); }
-  .wgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .wgrid .chk { font-size:13.5px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -181,18 +179,6 @@
       </div>
     </div>
 
-    <div class="group">
-      <label data-i18n="widgets"></label>
-      <div class="wgrid">
-        <label class="chk"><input type="checkbox" id="wgDate"><span data-i18n="wDate"></span></label>
-        <label class="chk"><input type="checkbox" id="wgCur"><span data-i18n="wCur"></span></label>
-        <label class="chk"><input type="checkbox" id="wgDn"><span data-i18n="wDn"></span></label>
-        <label class="chk"><input type="checkbox" id="wgSm"><span data-i18n="wSm"></span></label>
-        <label class="chk"><input type="checkbox" id="wgMoon"><span data-i18n="wMoon"></span></label>
-        <label class="chk"><input type="checkbox" id="wgFc"><span data-i18n="wFc"></span></label>
-        <label class="chk"><input type="checkbox" id="wgCity"><span data-i18n="wCity"></span></label>
-      </div>
-    </div>
 
     <div class="group">
       <label class="chk"><input type="checkbox" id="invert"><span data-i18n="invert"></span></label>
@@ -261,7 +247,7 @@ let weather = null;
 let place = null;
 let device = "x4";
 let days = 3;
-let W = Object.assign({ date:true, cur:true, dn:true, sm:true, moon:true, fc:true, city:true }, storeGet("widgets") || {});
+const W = { date:true, cur:true, dn:true, sm:true, fc:true, city:true }; // фиксированный набор, луну вырезали
 let LANG = "en";
 function storeGet(key){ try { return JSON.parse(localStorage.getItem("lsx." + key)); } catch(e){ return null; } }
 function storeSet(key, val){ localStorage.setItem("lsx." + key, JSON.stringify(val)); }
@@ -320,8 +306,8 @@ ru: {
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
   mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
-  home: "На главную", widgets: "Виджеты карточки",
-  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap", wDate: "Дата", wCur: "Погода сейчас", wDn: "Днём / ночью", wSm: "Восход и закат", wMoon: "Фаза Луны", wFc: "Прогноз", wCity: "Город и время",
+  home: "На главную",
+  bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap",
   crypto: "Крипта",
   okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
   wmo: {0:"Ясно",1:"Преимущ. ясно",2:"Перем. облачность",3:"Пасмурно",45:"Туман",56:"Морось",61:"Небольшой дождь",63:"Дождь",65:"Сильный дождь",66:"Ледяной дождь",71:"Небольшой снег",73:"Снег",75:"Сильный снег",77:"Снежные зёрна",80:"Ливень",85:"Снегопад",95:"Гроза",96:"Гроза с градом"},
@@ -374,8 +360,8 @@ en: {
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate",
   mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
-  home: "Home", widgets: "Card widgets",
-  bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap", wDate: "Date", wCur: "Weather now", wDn: "Day / night", wSm: "Sunrise & sunset", wMoon: "Moon phase", wFc: "Forecast", wCity: "City & time",
+  home: "Home",
+  bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap",
   crypto: "Crypto",
   okBtn: "Đã hiểu",
   okBtn: "Got it", cmTitle: "Donate in crypto", copied: "Copied ✓",
@@ -572,7 +558,6 @@ function drawCard(dayOffset){
   const pad = Math.round(w * 0.058);
   const now = new Date();
   const cardDate = new Date(now.getTime() + dayOffset * 86400000);
-  const moon = moonPhase(cardDate);
   const d0 = weather ? weather.daily : null;
   const cur = weather ? weather.current : null;
 
@@ -625,15 +610,6 @@ function drawCard(dayOffset){
       const w2 = ctx.measureText(t("sunset") + " ").width;
       text(hhmm(d0.sunset[dayOffset]), col2 + w * 0.075 + w2, y, timePx, true);
       y += h * 0.042;
-      drew = true;
-    }
-    if (W.moon){
-      const mr = Math.round(w * 0.085);
-      drawMoon(pad + mr + w * 0.02, y + mr, mr, moon.phase);
-      const mx = pad + mr * 2 + w * 0.075;
-      text(moon.name, mx, y + mr * 0.72, w * 0.06, true);
-      text(t("illum").replace("{v}", moon.illum), mx, y + mr * 1.38, w * 0.046, false);
-      y += mr * 2 + h * 0.028;
       drew = true;
     }
     if (W.fc){
@@ -782,13 +758,6 @@ function applyDevice(){
   if (weather) drawCard();
   else { ctx.fillStyle = BG; ctx.fillRect(0, 0, canvas.width, canvas.height); }
   storeStr("device", device);
-}
-function applyWidgets(){
-  for (const id in wMap){ $(id).checked = W[wMap[id]]; }
-}
-const wMap = { wgDate:"date", wgCur:"cur", wgDn:"dn", wgSm:"sm", wgMoon:"moon", wgFc:"fc", wgCity:"city" };
-for (const id in wMap){
-  $(id).onchange = () => { W[wMap[id]] = $(id).checked; storeSet("widgets", W); if (weather) drawCard(); };
 }
 function applyDaysActive(){
   for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
@@ -943,12 +912,9 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   const legacyDays = parseInt(storeRaw("days"), 10);
   if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   if (storeRaw("invert")) $("invert").checked = true;
-  const savedW = storeGet("widgets");
-  if (savedW) { for (const k in W) if (k in savedW) W[k] = !!savedW[k]; }
   applyI18n();
   applyDevice();
   applyDaysActive();
-  applyWidgets();
   if (place) loadWeather();
   if (!localStorage.getItem("lsx.compatSeen")){
     const cp = document.getElementById("compatPop");
