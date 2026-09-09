@@ -181,7 +181,6 @@
     <div class="group">
       <label data-i18n="theme"></label>
       <div class="seg" id="themeSeg">
-        <button data-theme="light" data-i18n="themeLight"></button>
         <button data-theme="dark" data-i18n="themeDark"></button>
       </div>
       <button class="btn wide" id="install" disabled data-i18n="install"></button>
@@ -268,7 +267,7 @@ ru: {
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
   device: "Устройство",
   days: "Дней прогноза (не считая сегодня)",
-  theme: "Тема карточки", themeLight: "Светлая", themeDark: "Тёмная",
+  theme: "Тема карточки", themeDark: "Тёмная карточка",
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
   download: "Скачать sleep.bmp",
@@ -322,7 +321,7 @@ en: {
   city: "City", cityPh: "e.g. Berlin", find: "Search",
   device: "Device",
   days: "Forecast days (excluding today)",
-  theme: "Card theme", themeLight: "Light", themeDark: "Dark",
+  theme: "Card theme", themeDark: "Dark card",
   refresh: "Refresh weather",
   install: "Update & install to reader",
   download: "Download sleep.bmp",
@@ -818,13 +817,13 @@ $("daysSeg").onclick = e => {
 $("themeSeg").onclick = e => {
   const b = e.target.closest("button[data-theme]");
   if (!b) return;
-  theme = b.dataset.theme;
+  theme = theme === "dark" ? "light" : "dark";
   applyThemeActive();
   storeStr("invert", theme === "dark" ? "1" : "");
   if (weather) drawCard();
 };
 function applyThemeActive(){
-  for (const b of $("themeSeg").children) b.classList.toggle("active", b.dataset.theme === theme);
+  $("themeSeg").querySelector("button[data-theme=dark]").classList.toggle("active", theme === "dark");
 }
 $("searchCity").onclick = searchCity;
 $("city").addEventListener("keydown", e => { if (e.key === "Enter") searchCity(); });
