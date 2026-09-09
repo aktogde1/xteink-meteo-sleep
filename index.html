@@ -115,6 +115,15 @@
   #compatPop { position:fixed; top:-140px; left:0; right:0; z-index:60; background:var(--warnBg); color:var(--warnText); border-bottom:1px solid var(--warnBorder); padding:14px 52px 14px 20px; font-size:13.5px; line-height:1.55; text-align:center; transition:top .4s ease; }
   #compatPop.show { top:0; }
   #compatPop .ok { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:var(--acc); color:var(--btnText); border:none; border-radius:6px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .foot { max-width:1180px; margin:8px auto 0; padding:22px 24px 30px; border-top:1px solid var(--line); }
+  .footIn { max-width:720px; margin:0 auto; text-align:center; color:var(--dim); font-size:12.5px; line-height:1.6; }
+  .footT { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--fg); }
+  .footSrc { list-style:none; margin:0 0 14px; padding:0; }
+  .footSrc li { margin-bottom:2px; }
+  .footLove { margin:0; font-size:13px; color:var(--fg); }
+  .footLove a { color:var(--acc); font-weight:600; text-decoration:none; }
+  .footLove a:hover { text-decoration:underline; }
+  .footLove .hh { color:#d05353; }
   .ideatop { max-width:720px; margin:12px auto 0; text-align:center; color:var(--dim); font-size:13.5px; line-height:1.55; }
   .ideatop p { margin:0 0 3px; }
 </style>
@@ -198,35 +207,23 @@
       <span class="hint" data-i18n="readerHint"></span>
     </div>
 
-    <details>
-      <summary data-i18n="det"></summary>
-      <ol>
-        <li data-i18n="df1"></li>
-        <li data-i18n="df2"></li>
-        <li data-i18n="df3"></li>
-      </ol>
-    </details>
-    <details id="instSec">
-      <summary data-i18n="howto"></summary>
-      <ol>
-        <li data-i18n="howto1"></li>
-        <li data-i18n="howto2"></li>
-        <li data-i18n="howto3"></li>
-      </ol>
-    </details>
-    <details>
-      <summary data-i18n="src"></summary>
-      <ul>
-        <li data-i18n="s1"></li>
-        <li data-i18n="s2"></li>
-        <li data-i18n="s3"></li>
-        <li data-i18n="s4"></li>
-        <li data-i18n="s5"></li>
-      </ul>
-    </details>
       </div>
   <div id="preview"><div id="frame"><canvas id="card" width="480" height="800"></canvas></div></div>
 </main>
+
+<footer class="foot">
+  <div class="footIn">
+    <p class="footT" data-i18n="src"></p>
+    <ul class="footSrc">
+      <li data-i18n="s1"></li>
+      <li data-i18n="s2"></li>
+      <li data-i18n="s3"></li>
+      <li data-i18n="s4"></li>
+      <li data-i18n="s5"></li>
+    </ul>
+    <p class="footLove"><a href="https://github.com/aktogde1" target="_blank" rel="noopener">aktogde1</a> <span data-i18n="madeFor"></span> <span class="hh">♥</span></p>
+  </div>
+</footer>
 
 <div id="cryptoModal">
   <div class="cmBox">
@@ -279,14 +276,6 @@ ru: {
   reader: "Ридер (inkMOD)",
   readerHint: "Адрес — тот, что ридер показывает в режиме передачи файлов.",
   httpsNote: 'Сайт открыт по HTTPS — браузер не пускает запросы из него к ридеру в домашней сети. Генератор и скачивание BMP работают полностью. Для установки одной кнопкой <a href="index.html" download="Локскрин X4.html">скачай этот файл</a> и открой на компьютере.',
-  det: "Установка на ридер: подробности",
-  df1: 'Нажми «Обновить и установить на ридер»: ридер — в режиме передачи файлов (в inkMOD — удержание кнопки питания, сервер встаёт за ~20 сек), ноут — в ту же Wi-Fi сеть.',
-  df2: 'Адрес ридера — тот, что он показывает на экране; в режиме точки доступа InkMOD-Reader — http://192.168.4.1. Картинка ложится в папку Sleep на microSD, режим «Своя картинка» включается сам — заблокируй ридер и любуйся.',
-  df3: 'Нет кнопки под рукой (открыл сайт онлайн) — скачай sleep.bmp и закинь в папку Sleep на microSD вручную, режим выбери на ридере.',
-  howto: "Как поставить вручную (картридер)",
-  howto1: 'Скачай <code>sleep.bmp</code> кнопкой выше.',
-  howto2: 'Закинь файл в папку <b>Sleep</b> на microSD — перезапиши тот, что там лежит.',
-  howto3: 'Режим экрана сна — <b>«Своя картинка»</b>. Заблокировал ридер — карточка на экране.',
   src: "Источники данных и обозначения",
   s1: "Погода, восход и закат — Open-Meteo.com, открытый API без регистрации",
   s2: "Город — геокодер Open-Meteo",
@@ -313,7 +302,7 @@ ru: {
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   illum: "освещено {v}%", updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
   mGen: "Конструктор", mAbout: "О проекте", mInst: "Установка", bnPlace: "Куда класть файл — зависит от прошивки: в inkMOD это папка Sleep.", ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
-  home: "На главную", langRu: "Русский", langEn: "Английский",
+  home: "На главную", madeFor: "сделал для сообщества, с любовью", langRu: "Русский", langEn: "Английский",
   bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл", navIdea2: "Идея", navRoad2: "Roadmap",
   crypto: "Крипта",
   okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
@@ -333,14 +322,6 @@ en: {
   reader: "Reader (inkMOD)",
   readerHint: "Use the address the reader shows in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks requests from it to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
-  det: "Installing to the reader: details",
-  df1: 'Press “Update & install to reader”: the reader must be in File Transfer mode (on inkMOD — hold the power button, the server is up in ~20 s), laptop on the same Wi-Fi.',
-  df2: 'The reader address is what it shows on its screen; on the InkMOD-Reader hotspot it\u2019s http://192.168.4.1. The image lands in the Sleep folder on the microSD and the “Custom image” mode is set automatically — lock the reader and enjoy.',
-  df3: 'No button available (you\u2019re on the online version)? Download sleep.bmp and put it into the Sleep folder on the microSD manually, then pick the mode on the reader.',
-  howto: "Manual install (card reader)",
-  howto1: 'Download <code>sleep.bmp</code> with the button above.',
-  howto2: 'Put the file into the <b>Sleep</b> folder on the microSD — overwrite the one already there.',
-  howto3: 'Sleep screen mode — <b>“Custom image”</b>. Lock the reader — the card is on screen.',
   src: "Data sources & legend",
   s1: "Weather, sunrise & sunset — Open-Meteo.com, open API, no sign-up",
   s2: "City — Open-Meteo geocoder",
@@ -367,7 +348,7 @@ en: {
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   illum: "{v}% illuminated", updated: "updated", dS: "d", nS: "n", donate: "Donate",
   mGen: "Generator", mAbout: "About", mInst: "Install", bnPlace: "Where to put the file depends on the firmware: on inkMOD it is the Sleep folder.", ideaNext: "Planned: make the card stay useful for several days without a sync.",
-  home: "Home", langRu: "Russian", langEn: "English",
+  home: "Home", madeFor: "made for the community with", langRu: "Russian", langEn: "English",
   bnFw: "Works with any reader firmware — it is just a BMP file", navIdea2: "Idea", navRoad2: "Roadmap",
   crypto: "Crypto",
   okBtn: "Đã hiểu",
