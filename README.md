@@ -5,22 +5,22 @@
 
 **[👉 Open the web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)**
 
-Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X4 Pro / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
+Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
 
 ![Lock screen card](screenshot-en.png)
 
 ## What is it
 
-A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen, from widgets → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
+A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
 
-On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase with illumination %, city and update time. Exactly 2 colors — perfect for e-ink.
+On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase as a text line (name + illumination %), city and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
 ## Quick start
 
 1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
-2. Enter your city → pick your device (X4 / X4 Pro / X3)
+2. Enter your city → pick your device (X4 / X3)
 3. **"Download sleep.bmp"** → put the file into the `Sleep` folder on the microSD, overwriting the one already there
 4. Set the sleep screen mode to "Custom image". Lock the reader — the card is on screen ✅
 
@@ -32,15 +32,16 @@ Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-
 2. Laptop — on the same Wi-Fi network (or on the reader's `InkMOD-Reader` hotspot, address `http://192.168.4.1`)
 3. The reader address is pre-filled (the one shown on its screen) — press the button → the image flies to the reader and the "Custom image" mode is set automatically
 
+The page also auto-detects a tiny local relay (if you serve it through one, e.g. a `.bat` launcher) and routes the upload through it — same button, same result.
+
 > **Why doesn't the button work on the online version?** The web app is served over HTTPS while the reader lives on your home network over HTTP. Browsers block those requests (mixed content) — there is no way around it. The local file is fully featured.
 
 ## Devices
 
 | Button | Resolution |
 |---|---|
-| X4 / X4 Pro | 480×800 |
+| X4 | 480×800 |
 | X3 | 480×640 |
-| Custom… | any |
 
 ## Under the hood
 
@@ -48,7 +49,7 @@ Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-
 - Weather, forecast, sunrise/sunset — [Open-Meteo](https://open-meteo.com/) (open API, no sign-up); city — their geocoder
 - Moon phase — synodic cycle math (29.53 days from the reference new moon on 2000-01-06)
 - The BMP is hand-written in JS: 24-bit, bottom-up, luminance threshold 140 → exactly 2 colors
-- Install to reader: `POST /upload?path=/Sleep` (multipart, field `file`) + `POST /api/settings` `{"sleepScreen":3}` — index 3 = "Custom image" on inkMOD 1.1.x
+- Install to reader: `POST /upload?path=/Sleep` (multipart, field `file`) + `POST /api/settings` `{"sleepScreen":3}` — index 3 = "Custom image" on inkMOD 1.1.x. Served through a local relay? The page detects it via `/relay-check` and sends through it; otherwise the upload goes directly to the reader
 
 ## Compatibility
 
