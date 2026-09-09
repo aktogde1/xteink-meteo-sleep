@@ -821,6 +821,37 @@ function readerAddress(){
   return addr;
 }
 
+// ---------- релей (локальный сервер) ----------
+let RELAY = false;
+fetch("/relay-check").then(r => { RELAY = r.ok; }).catch(() => {});
+function relaySend(blob, addr, folder, filename, onPct){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const url = "/relay?addr=" + encodeURIComponent(addr + "/upload?path=" + encodeURIComponent(folder)) + "&name=" + encodeURIComponent(filename);
+    xhr.open("POST", url);
+    if (xhr.upload) xhr.upload.onprogress = e => { if (e.lengthComputable && onPct) onPct(e.loaded / e.total); };
+    xhr.onload = () => resolve();
+    xhr.onerror = () => reject(new Error("relay"));
+    xhr.send(blob);
+  });
+}
+// слепая отправка напрямую (когда релея нет)
+function directSend(blob, addr, folder, filename){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", addr + "/upload?path=" + encodeURIComponent(folder));
+    xhr.onload = () => resolve();
+    xhr.onerror = () => resolve(); // ответ скрыт CORS, но запрос уходит
+    const fd = new FormData();
+    fd.append("file", new File([blob], filename, { type: "image/bmp" }));
+    xhr.send(fd);
+  });
+}
+async function sendOne(addr, folder, filename, blob, onPct){
+  if (RELAY) return relaySend(blob, addr, folder, filename, onPct);
+  return directSend(blob, addr, folder, filename);
+}
+
 async function installOnReader(){
   if (!weather){ setStatus(t("stNoWeather"), "err"); return; }
   const addr = readerAddress();
@@ -834,6 +865,7 @@ async function installOnReader(){
     setStatus(t("stSendErr"), "err");
     return;
   }
+  setStatus(t("stApplying"));
   try { await fetch(addr + "/api/settings", { mode: "no-cors", method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ sleepScreen: 3 }) }); } catch(e){}
   setStatus(t("stDone"), "ok");
 }
