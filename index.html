@@ -59,7 +59,6 @@
   #themeSeg { margin-bottom:9px; }
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
-  .seg.small button { padding:8px 4px; }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; margin-bottom:10px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -161,17 +160,6 @@
     </div>
 
     <div class="group">
-      <label data-i18n="days"></label>
-      <div class="seg small" id="daysSeg">
-        <button data-days="2">2</button>
-        <button data-days="3">3</button>
-        <button data-days="4">4</button>
-        <button data-days="5">5</button>
-      </div>
-    </div>
-
-
-    <div class="group">
       <label data-i18n="theme"></label>
       <div class="seg" id="themeSeg">
         <button data-theme="dark" data-i18n="themeDark"></button>
@@ -227,7 +215,6 @@ const DONATE_URL = "https://web.tribute.tg/d/Q5J";
 let weather = null;
 let place = null;
 let device = "x4";
-let days = 3;
 let theme = "light";
 const W = { date:true, cur:true, dn:true, sm:true, fc:true, city:true }; // фиксированный набор, луну вырезали
 let LANG = "en";
@@ -246,7 +233,6 @@ ru: {
   subtitle: "Погода · луна · восход на локскрине Xteink X4 / X3. Собери по своему городу и скачай как sleep.bmp",
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
   device: "Устройство",
-  days: "Дней прогноза (не считая сегодня)",
   theme: "Тема карточки", themeDark: "Тёмная карточка",
   refresh: "Обновить погоду",
   install: "Обновить и установить на ридер",
@@ -266,7 +252,7 @@ ru: {
   stNoAddr: "Впишите адрес ридера — тот, что он показывает в режиме передачи файлов.",
   stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
-  updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
+  updated: "обновлено", donate: "Поддержать",
   ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации.",
   footData: "Погода и геокодинг — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · фаза Луны рассчитывается прямо в браузере · карточка живёт офлайн и обновляется с новой загрузкой sleep.bmp",
   madeFor: "сделал для сообщества, с любовью",
@@ -282,7 +268,6 @@ en: {
   subtitle: "Weather · moon · sunrise on the lock screen of your Xteink X4 / X3. Build a card for your city and download it as sleep.bmp",
   city: "City", cityPh: "e.g. Berlin", find: "Search",
   device: "Device",
-  days: "Forecast days (excluding today)",
   theme: "Card theme", themeDark: "Dark card",
   refresh: "Refresh weather",
   install: "Update & install to reader",
@@ -302,7 +287,7 @@ en: {
   stNoAddr: "Enter the reader address — the one it shows in File Transfer mode.",
   stNoWeather: "Load the weather first — press “Refresh weather”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
-  updated: "updated", dS: "d", nS: "n", donate: "Donate",
+  updated: "updated", donate: "Donate",
   ideaNext: "Planned: make the card stay useful for several days without a sync.",
   footData: "Weather & geocoding by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · moon phase is computed right in your browser · the card lives offline and refreshes with every sleep.bmp upload",
   madeFor: "made for the community with",
@@ -327,7 +312,6 @@ const fmtTemp = t => (t > 0 ? "+" : "") + Math.round(t) + "°";
 const hhmm = iso => iso.slice(11, 16);
 const two = x => String(x).padStart(2, "0");
 function dateLong(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "long", day: "numeric", month: "long" }).format(d); }
-function dayShort(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "short" }).format(d) + " " + d.getDate(); }
 
 // ---------- фаза луны ----------
 const SYNODIC = 29.530588853;
@@ -521,23 +505,12 @@ function drawCard(dayOffset){
 
     if (W.cur){
       drew = true;
-      const iconS = w * 0.32;
-      let tempSize = w * 0.28;
-      const tempStr = fmtTemp(cur.temperature_2m);
-      const maxTempW = w - pad * 2 - iconS - w * 0.06;
-      setFont(tempSize, true);
-      while (tempSize > w * 0.12 && ctx.measureText(tempStr).width > maxTempW){
-        tempSize -= 2;
-        setFont(tempSize, true);
-      }
-      ctx.textAlign = "left";
-      ctx.fillStyle = FG;
-      ctx.fillText(tempStr, pad, y + tempSize * 0.8);
-      drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + iconS * 0.48, iconS);
-      y += Math.max(tempSize * 0.8, iconS * 0.96) + w * 0.085;
-
-      text(wmoText(cur.weather_code), pad, y, w * 0.072, true);
-      y += w * 0.072 + h * 0.014;
+      // компактная строка «иконка + Пасмурно»: температура теперь в каждой почасовой строке
+      const iconS = w * 0.14;
+      const rowH = Math.max(iconS, w * 0.085);
+      drawIcon(wmoKind(cur.weather_code), pad + iconS / 2, y + iconS / 2, iconS);
+      text(wmoText(cur.weather_code), pad + iconS + w * 0.05, y + rowH / 2 + w * 0.026, w * 0.075, true);
+      y += rowH + w * 0.045;
     }
     if (W.dn){
       text(t("dayLbl") + " " + fmtTemp(d0.temperature_2m_max[dayOffset]) + "   ·   " + t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[dayOffset]), pad, y, w * 0.056, false);
@@ -566,24 +539,43 @@ function drawCard(dayOffset){
       drew = true;
     }
     if (W.fc){
-      if (drew){
-        ctx.strokeStyle = FG;
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
-        y += h * 0.026;
+      // почасовой прогноз: остаток сегодняшнего дня («что будет завтра — узнаем завтра»)
+      const hr = weather.hourly;
+      const nowT = cur.time || "";
+      const today = nowT.slice(0, 10) || (hr && hr.time ? hr.time[0].slice(0, 10) : "");
+      const left = [];
+      if (hr && hr.time){
+        for (let i = 0; i < hr.time.length; i++)
+          if (hr.time[i] > nowT && hr.time[i].slice(0, 10) === today) left.push(i);
       }
-      const n = Math.min(days, weather.daily.time.length - 1 - dayOffset);
-      const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / Math.max(1, n)));
-      const txtPx = Math.min(w * 0.054, rowH * 0.52);
-      for (let i = dayOffset + 1; i <= dayOffset + n; i++){
-        const d = new Date(weather.daily.time[i] + "T12:00:00");
-        const cy2 = y + rowH / 2;
-        text(dayShort(d), pad, cy2 + txtPx * 0.36, txtPx, true);
-        drawIcon(wmoKind(weather.daily.weather_code[i]), w * 0.40, cy2, rowH * 0.62);
-        text(t("dS") + " " + fmtTemp(weather.daily.temperature_2m_max[i]) + " · " + t("nS") + " " + fmtTemp(weather.daily.temperature_2m_min[i]), w - pad, cy2 + txtPx * 0.36, txtPx, false, "right");
-        y += rowH;
+      if (left.length){
+        if (drew){
+          ctx.strokeStyle = FG;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+          y += h * 0.026;
+        }
+        // шаг между строками подбираем так, чтобы остаток дня уместился по высоте
+        const avail = h - footH - y;
+        const minRowH = Math.max(28, w * 0.06);
+        const maxRows = Math.max(1, Math.floor(avail / minRowH));
+        const step = Math.ceil(left.length / maxRows);
+        const rows = [];
+        for (let i = 0; i < left.length; i += step) rows.push(left[i]);
+        const rowH = Math.min(w * 0.14, avail / rows.length);
+        const txtPx = Math.min(w * 0.054, rowH * 0.55);
+        for (const i of rows){
+          const cy2 = y + rowH / 2;
+          text(hhmm(hr.time[i]), pad, cy2 + txtPx * 0.36, txtPx, true);
+          drawIcon(wmoKind(hr.weather_code[i]), w * 0.40, cy2, rowH * 0.62);
+          let right = fmtTemp(hr.temperature_2m[i]);
+          const pp = hr.precipitation_probability ? hr.precipitation_probability[i] : null;
+          if (pp != null && pp >= 5) right += "  " + pp + "%";
+          text(right, w - pad, cy2 + txtPx * 0.36, txtPx, false, "right");
+          y += rowH;
+        }
+        drew = true;
       }
-      drew = true;
     }
     if (W.city){
       const fpx = w * 0.04;
@@ -682,10 +674,10 @@ async function loadWeather(){
   const my = (window._lw = (window._lw || 0) + 1); // устаревший ответ игнорируем
   if (!place) return;
   setStatusG(tf("stLoading", { city: place.name }));
-  const n = 1 + days;
   const url = "https://api.open-meteo.com/v1/forecast?latitude=" + place.lat + "&longitude=" + place.lon +
     "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
-    "&timezone=auto&forecast_days=" + Math.max(n, 6);
+    "&hourly=temperature_2m,weather_code,precipitation_probability" +
+    "&timezone=auto&forecast_days=2";
   for (let attempt = 0; attempt < 2; attempt++){
     try {
       const r = await fetch(url);
@@ -715,9 +707,6 @@ function applyDevice(){
   if (weather) drawCard();
   else { ctx.fillStyle = BG; ctx.fillRect(0, 0, canvas.width, canvas.height); }
   storeStr("device", device);
-}
-function applyDaysActive(){
-  for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
 }
 function applyLangActive(){
   for (const b of document.querySelectorAll(".badge.lang")) b.classList.toggle("active", b.dataset.lang === LANG);
@@ -759,14 +748,6 @@ $("deviceSeg").onclick = e => {
   if (!b) return;
   device = b.dataset.dev;
   applyDevice();
-  if (place) loadWeather();
-};
-$("daysSeg").onclick = e => {
-  const b = e.target.closest("button[data-days]");
-  if (!b) return;
-  days = parseInt(b.dataset.days, 10);
-  applyDaysActive();
-  storeStr("days", String(days));
   if (place) loadWeather();
 };
 $("themeSeg").onclick = e => {
@@ -924,8 +905,6 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   device = DEVICES[d] ? d : "x4";
   const savedReader = (storeRaw("reader") || "").replace(/^https?:\/\//, "");
   if (savedReader) $("readerAddr").value = savedReader;
-  const legacyDays = parseInt(storeRaw("days"), 10);
-  if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
   theme = storeRaw("invert") ? "dark" : "light";
   applyThemeActive();
   if (location.protocol === "https:"){
@@ -934,7 +913,6 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   }
   applyI18n();
   applyDevice();
-  applyDaysActive();
   if (place) loadWeather();
   if (!localStorage.getItem("lsx.compatSeen")){
     const cp = document.getElementById("compatPop");

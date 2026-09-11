@@ -13,7 +13,7 @@ Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X3**
 
 A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
 
-On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase as a text line (name + illumination %), city and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
+On the card: weekday and date, current conditions (icon + wording), an hourly forecast for the rest of today (temperature, weather icon and precipitation chance — what tomorrow brings, you'll learn tomorrow), "day / night" temps, sunrise and sunset, moon phase as a text line (name + illumination %), city and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 

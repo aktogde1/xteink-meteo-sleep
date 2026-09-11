@@ -18,7 +18,7 @@ This document is the code map — it tells you where things live so you don't ha
 | `<style>` | All CSS. Colors **only** via CSS variables; dark theme = `@media (prefers-color-scheme: dark)` overriding the variables (soft dark, not black) |
 | `#compatPop` | Top popup (cookie-notice style): firmware compatibility + tested-on note; dismissible via «Понятно» button, stored in `lsx.compatSeen` |
 | header (`.nav`) | Centered brand; right side: lang badges (Русский/English), ♥ Tribute badge, ₮ Crypto badge, GitHub badge |
-| `#controls` | Generator groups: City → Device (X4/X3) → Forecast days → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (single field; stored in `lsx.reader`) + hint («Enter the IP address shown on your e-reader in File Transfer mode») + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat) |
+| `#controls` | Generator groups: City → Device (X4/X3) → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (single field; stored in `lsx.reader`) + hint («Enter the IP address shown on your e-reader in File Transfer mode») + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat). No forecast-days selector anymore: the card always shows an hourly forecast for the rest of today |
 | `#preview` | Canvas `#card` — live card preview |
 | `.foot` | Footer: data credits (Open-Meteo, local moon math), credits line, no-affiliation disclaimer |
 | `<script>` | Everything: `I18N` (ru/en), drawing, BMP writer, network, reader upload, crypto modal, init |
@@ -27,7 +27,7 @@ This document is the code map — it tells you where things live so you don't ha
 
 | Task | Where |
 |---|---|
-| Card layout / block order | `drawCard(dayOffset)` — fixed block set (`W` is a const), flow-based `y` cursor |
+| Card layout / block order | `drawCard(dayOffset)` — fixed block set (`W` is a const), flow-based `y` cursor. Last block (`W.fc`) is the **hourly forecast for the rest of today**: rows are auto-fitted (step between hours grows until the remaining day fits above the footer) |
 | Weather icons look | `drawIcon` / `drawSun` / `drawCloud` / `drawMoon` |
 | Weather condition wording | `I18N.<lang>.wmo` + `wmoKey()` (order matters: snow 71–77 before shower `<= 82`!) |
 | Add a UI string | add key to **both** `I18N` blocks (ru, en) + `data-i18n="key"` on the element |
@@ -45,7 +45,7 @@ This document is the code map — it tells you where things live so you don't ha
 
 ## External APIs (free, no keys)
 
-- Forecast, sunrise/sunset, precipitation probability, wind: `api.open-meteo.com/v1/forecast`
+- Forecast, sunrise/sunset, precipitation probability, wind: `api.open-meteo.com/v1/forecast` (`daily` for the «днём/ночью», sunrise/sunset block + `hourly=temperature_2m,weather_code,precipitation_probability` for the hourly block, `forecast_days=2` — the hourly block filters to the rest of the local day at the *place*, using `current.time` for comparison, never tomorrow)
 - City search: `geocoding-api.open-meteo.com/v1/search` — **flaky, sometimes down** → fallback: Nominatim `search`
 - Localized city name on language switch: Nominatim `reverse` (`zoom=10`, `accept-language`)
 - WMO codes → `wmoKey()` (order matters: snow 71–77 **before** shower `<= 82`)
@@ -71,7 +71,7 @@ python serve.py reader  # fake inkMOD reader on http://127.0.0.1:8766 (writes up
 ## Release flow
 
 1. Edit `index.html` (+ this file if structure changed).
-2. Test on `localhost:8765`: RU/EN search of a cyrillic query, extreme temps (+39/−12) for icon overlap, BMP size exactly `480*3*800 + 54 = 1152054`, install against the fake reader, both themes, footer in both languages.
+2. Test on `localhost:8765`: RU/EN search of a cyrillic query, hourly rows for early-morning (many hours left → 2 h step) and late-evening (few hours left → 1 h step) syncs, BMP size exactly `480*3*800 + 54 = 1152054`, install against the fake reader, both themes, footer in both languages.
 3. Commit and push to `main` with git.
 4. GitHub Pages redeploys automatically from `main` (~1 min).
 
