@@ -1,6 +1,6 @@
 # Development Guide (agent / contributor blueprint)
 
-**Xteink Meteo Sleep** is a **single-page single-file web app** (`index.html`): plain JS + canvas, no build step, no dependencies, no server required.
+**Xteink Meteo Sleep** is a **single-page single-file web app** (`index.html`): plain JS + canvas, no build step, no server required; the only embedded dependency is `qrcode-generator` (MIT, minified) inlined into its own `<script>` tag for offline QR generation.
 `serve.py` is the local dev server (site + upload relay to the reader); **`meteo-server.bat`** launches it and opens the page — the novice route to one-click install.
 This document is the code map — it tells you where things live so you don't have to search every time.
 **Rule of the project: whenever you change structure, update this file in the same commit.**
@@ -18,16 +18,19 @@ This document is the code map — it tells you where things live so you don't ha
 | `<style>` | All CSS. Colors **only** via CSS variables; dark theme = `@media (prefers-color-scheme: dark)` overriding the variables (soft dark, not black) |
 | `#compatPop` | Top popup (cookie-notice style): firmware compatibility + tested-on note; dismissible via «Понятно» button, stored in `lsx.compatSeen` |
 | header (`.nav`) | Centered brand; right side: lang badges (Русский/English), ♥ Tribute badge, ₮ Crypto badge, GitHub badge |
-| `#controls` | Generator groups: City → Device (X4/X3) → Forecast days → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (single field; stored in `lsx.reader`) + hint («Enter the IP address shown on your e-reader in File Transfer mode») + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat) |
+| `#controls` | **Mode segment** (`#modeSeg`: Weather / Business card) → weather groups (`#meteoCtl`: City → Forecast days) and business-card group (`#cardCtl`: link field `#cardUrl`, stored in `lsx.visitCard`) → Device (X4/X3) → **Card theme** (single dark-card toggle) → buttons (Install to reader / Download sleep.bmp / Refresh) → Reader address (single field; stored in `lsx.reader`) + hint («Enter the IP address shown on your e-reader in File Transfer mode») + `#httpsNote` (shown on HTTPS, links to index.html & meteo-server.bat) |
 | `#preview` | Canvas `#card` — live card preview |
 | `.foot` | Footer: data credits (Open-Meteo, local moon math), credits line, no-affiliation disclaimer |
-| `<script>` | Everything: `I18N` (ru/en), drawing, BMP writer, network, reader upload, crypto modal, init |
+| `<script>` №1 | Inlined `qrcode-generator` (MIT, minified) — no CDN, the file stays fully offline |
+| `<script>` №2 | Everything: `I18N` (ru/en), `QR.make()` wrapper, drawing, BMP writer, network, reader upload, crypto modal, init |
 
 ## “Where do I change …?” cheat table
 
 | Task | Where |
 |---|---|
 | Card layout / block order | `drawCard(dayOffset)` — fixed block set (`W` is a const), flow-based `y` cursor |
+| Business card | `drawVisit()` — one big classic QR centered (`drawQr`); `QR.make(text)` = wrapper over the inlined `qrcode-generator` (level H, UTF-8, auto version). The QR is always drawn black-on-white even on the dark card (inverted codes don't scan) |
+| Mode switch | `mode` var (`"meteo"`/`"card"`) + `#modeSeg` + `applyMode()`; everything redraws through `redraw()` — never call `drawCard()`/`drawVisit()` directly from handlers |
 | Weather icons look | `drawIcon` / `drawSun` / `drawCloud` / `drawMoon` |
 | Weather condition wording | `I18N.<lang>.wmo` + `wmoKey()` (order matters: snow 71–77 before shower `<= 82`!) |
 | Add a UI string | add key to **both** `I18N` blocks (ru, en) + `data-i18n="key"` on the element |
@@ -71,7 +74,7 @@ python serve.py reader  # fake inkMOD reader on http://127.0.0.1:8766 (writes up
 ## Release flow
 
 1. Edit `index.html` (+ this file if structure changed).
-2. Test on `localhost:8765`: RU/EN search of a cyrillic query, extreme temps (+39/−12) for icon overlap, BMP size exactly `480*3*800 + 54 = 1152054`, install against the fake reader, both themes, footer in both languages.
+2. Test on `localhost:8765`: RU/EN search of a cyrillic query, extreme temps (+39/−12) for icon overlap, BMP size exactly `480*3*800 + 54 = 1152054`, install against the fake reader, both themes, footer in both languages. Business card: paste a link, check the QR decodes from the canvas and from the uploaded `upload-test.bin` (extract the BMP out of the multipart body first), both themes and both devices.
 3. Commit and push to `main` with git.
 4. GitHub Pages redeploys automatically from `main` (~1 min).
 
@@ -82,3 +85,4 @@ python serve.py reader  # fake inkMOD reader on http://127.0.0.1:8766 (writes up
 3. Python `\uD83D`-style surrogate escapes in patch scripts crash utf-8 writes and truncate files to 0 bytes — use `chr(0x1F4CC)`/`fromCodePoint`, guard with `html.encode('utf-8')` before writing.
 4. History note: `f7611e6` deleted `sendOne`/`relaySend`/`directSend` but kept the call — the install button died silently; restored in `0d673cb`. Don't remove helpers without grepping callers.
 5. Same lesson on the CSS side: that cleanup also dropped the `.bar`/`#pfill` styles (progress bar silently invisible) and left rules for removed blocks (`nav.menu`, `#about`, `header.site`, `.home`, `.iconLink`, `details`, `code`) plus the undefined `--acc2`/`--gold` references. When removing a feature, grep the HTML for its classes/ids and the CSS for the vars those rules used.
+6. Canvas redraws must go through `redraw()` (mode-aware). `loadWeather` used to call `drawCard()` directly — with the business card mode on screen, a finished weather fetch silently overwrote the QR card. Any new async path that touches the canvas: `redraw()` only.

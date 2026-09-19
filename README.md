@@ -5,7 +5,7 @@
 
 **[👉 Open the web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)**
 
-Weather, moon phase, and sunrise/sunset on the lock screen of **Xteink X4 / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
+Weather, moon phase, and sunrise/sunset — or a QR business card — on the lock screen of **Xteink X4 / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
 
 ![Lock screen card](screenshot-en.png)
 
@@ -16,6 +16,8 @@ A web generator: pick your city → it assembles a black-and-white card, sized e
 On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase as a text line (name + illumination %), city and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
+
+**Business card mode:** a big QR code centered on the screen, pointing to any link — your GitHub, Telegram channel, site. Pick «Mode → Business card», paste the link, download `sleep.bmp` — any phone scans it right off the e-ink lock screen. The QR is generated inside the file itself (embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT, ~20 KB), fully offline. On the dark card the code sits on a white plate so scanners read it reliably.
 
 > **Want live self-hosted dashboards instead?** If flashing custom firmware and running a small home server is your thing, look at [Tesserae](https://github.com/dmellok/tesserae) + [CrossInk](https://github.com/dmellok/CrossInk). This tool is the other route: no firmware, no server — just a `sleep.bmp` from a web page.
 
@@ -49,7 +51,7 @@ The page also auto-detects a tiny local relay (if you serve it through one) and 
 
 ## Under the hood
 
-- One `index.html` file, plain JS + canvas, no libraries, no build step
+- One `index.html` file, plain JS + canvas, no build step; the single embedded library is `qrcode-generator` (MIT, ~20 KB minified) for offline QR generation in the business card mode
 - Weather, forecast, sunrise/sunset — [Open-Meteo](https://open-meteo.com/) (open API, no sign-up); city — their geocoder
 - Moon phase — synodic cycle math (29.53 days from the reference new moon on 2000-01-06)
 - The BMP is hand-written in JS: 24-bit, bottom-up, luminance threshold 140 → exactly 2 colors
