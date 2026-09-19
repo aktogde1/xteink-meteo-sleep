@@ -17,7 +17,7 @@ On the card: weekday and date, current weather + "day / night" temps, 2–5 day 
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
-**Business card mode:** a big QR code centered on the screen, pointing to any link — your GitHub, Telegram channel, site. Pick «Mode → Business card», paste the link, download `sleep.bmp` — any phone scans it right off the e-ink lock screen. The QR is generated inside the file itself (embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT, ~20 KB), fully offline. On the dark card the code sits on a white plate so scanners read it reliably.
+**Business card mode:** a big QR code centered on the screen, pointing to any link — your GitHub, Telegram channel, site. Pick «Mode → Business card», paste the link, download `sleep.bmp` — any phone scans it right off the e-ink lock screen. The QR is generated inside the file itself (embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT, ~20 KB), fully offline. On the dark card the code is inverted — white on black — and modern phone scanners read that fine.
 
 > **Want live self-hosted dashboards instead?** If flashing custom firmware and running a small home server is your thing, look at [Tesserae](https://github.com/dmellok/tesserae) + [CrossInk](https://github.com/dmellok/CrossInk). This tool is the other route: no firmware, no server — just a `sleep.bmp` from a web page.
 

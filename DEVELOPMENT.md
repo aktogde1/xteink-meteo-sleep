@@ -29,7 +29,7 @@ This document is the code map — it tells you where things live so you don't ha
 | Task | Where |
 |---|---|
 | Card layout / block order | `drawCard(dayOffset)` — fixed block set (`W` is a const), flow-based `y` cursor |
-| Business card | `drawVisit()` — one big classic QR centered (`drawQr`); `QR.make(text)` = wrapper over the inlined `qrcode-generator` (level H, UTF-8, auto version). The QR is always drawn black-on-white even on the dark card (inverted codes don't scan) |
+| Business card | `drawVisit()` — one big classic QR centered (`drawQr`); `QR.make(text)` = wrapper over the inlined `qrcode-generator` (level H, UTF-8, auto version). The QR follows the card colors: on the dark card it's white-on-black (inverted) — phone scanners handle inversion natively, jsQR needs `inversionAttempts: "attemptBoth"` |
 | Mode switch | `mode` var (`"meteo"`/`"card"`) + `#modeSeg` + `applyMode()`; everything redraws through `redraw()` — never call `drawCard()`/`drawVisit()` directly from handlers |
 | Weather icons look | `drawIcon` / `drawSun` / `drawCloud` / `drawMoon` |
 | Weather condition wording | `I18N.<lang>.wmo` + `wmoKey()` (order matters: snow 71–77 before shower `<= 82`!) |
