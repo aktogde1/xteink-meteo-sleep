@@ -5,7 +5,7 @@
 
 **[👉 Open the web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)**
 
-Weather, moon phase, and sunrise/sunset — or a QR business card — on the lock screen of **Xteink X4 / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
+Weather, daily tasks, moon phase, and sunrise/sunset — or a QR business card — on the lock screen of **Xteink X4 / X4C / X4 Pro / X3** e-readers (**inkMOD** / **CrossPoint** firmware).
 
 ![Lock screen card](screenshot-en.png)
 
@@ -13,7 +13,7 @@ Weather, moon phase, and sunrise/sunset — or a QR business card — on the loc
 
 A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
 
-On the card: weekday and date, current weather + "day / night" temps, 2–5 day forecast (`d` — day, `n` — night), sunrise and sunset, moon phase as a text line (name + illumination %), city and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
+On the card: weekday and date, daytime maximum, nighttime temperature, weather summary, sunrise and sunset, moon phase, daily tasks, city, and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
@@ -24,7 +24,7 @@ Interface languages: **English · Русский** — auto-detected from your b
 ## Quick start
 
 1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
-2. Enter your city → pick your device (X4 / X3)
+2. Enter your city → pick your device (X4 / X4C / X4 Pro / X3)
 3. **"Download sleep.bmp"** → put the file into the `Sleep` folder on the microSD, overwriting the one already there
 4. Set the sleep screen mode to "Custom image". Lock the reader — the card is on screen ✅
 
@@ -47,6 +47,8 @@ The page also auto-detects a tiny local relay (if you serve it through one) and 
 | Button | Resolution |
 |---|---|
 | X4 | 480×800 |
+| X4C | 480×800 |
+| X4 Pro | 480×800 |
 | X3 | 480×640 |
 
 ## Under the hood
@@ -59,7 +61,7 @@ The page also auto-detects a tiny local relay (if you serve it through one) and 
 
 ## Compatibility
 
-Tested on Xteink X4 + inkMOD 1.1.7. CrossPoint and X3 are supported via sizes and the manual route; feedback welcome.
+Tested on Xteink X4 + inkMOD 1.1.7. X4C, X4 Pro, CrossPoint, and X3 are supported via matching card sizes and the manual route; feedback welcome.
 
 ## Support the project ♥
 

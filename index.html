@@ -55,6 +55,7 @@
   .btn:disabled { opacity:.4; cursor:default; }
   .btn.wide { width:100%; margin-bottom:9px; }
   .seg { display:flex; gap:7px; }
+  .seg.deviceGrid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }
   #themeSeg { margin-bottom:9px; }
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
@@ -200,8 +201,10 @@
 
     <div class="group">
       <label data-i18n="device"></label>
-      <div class="seg" id="deviceSeg">
+      <div class="seg deviceGrid" id="deviceSeg">
         <button data-dev="x4">X4</button>
+        <button data-dev="x4c">X4C</button>
+        <button data-dev="x4pro">X4 Pro</button>
         <button data-dev="x3">X3</button>
       </div>
     </div>
@@ -284,15 +287,15 @@ function storeSet(key, val){ localStorage.setItem("lsx." + key, JSON.stringify(v
 function storeStr(key, val){ localStorage.setItem("lsx." + key, val); }
 function storeRaw(key){ return localStorage.getItem("lsx." + key); }
 
-const DEVICES = { x4:[480,800], x3:[480,640] };
-const TASK_LIMITS = { x4:5, x3:3 };
+const DEVICES = { x4:[480,800], x4c:[480,800], x4pro:[480,800], x3:[480,640] };
+const TASK_LIMITS = { x4:5, x4c:5, x4pro:5, x3:3 };
 const LOCALE = { ru:"ru-RU", en:"en-GB" };
 
 // ---------- переводы ----------
 const I18N = {
 ru: {
   title: "Xteink Meteo Sleep — погода и задачи на экране блокировки",
-  subtitle: "Погода и задачи на экране блокировки Xteink X4 / X3",
+  subtitle: "Погода и задачи на экране блокировки Xteink X4 / X4C / X4 Pro / X3",
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
   mode: "Тип карточки", modeMeteo: "Погода и задачи", modeCard: "QR-визитка",
   cardUrl: "Ссылка для QR-кода", cardUrlPh: "вставьте ссылку",
@@ -338,7 +341,7 @@ ru: {
 },
 en: {
   title: "Xteink Meteo Sleep — weather and tasks on your lock screen",
-  subtitle: "Weather and daily tasks on the Xteink X4 / X3 lock screen",
+  subtitle: "Weather and daily tasks on the Xteink X4 / X4C / X4 Pro / X3 lock screen",
   city: "City", cityPh: "e.g. Berlin", find: "Search",
   mode: "Card type", modeMeteo: "Weather & tasks", modeCard: "QR card",
   cardUrl: "Link for the QR code", cardUrlPh: "paste your link",
