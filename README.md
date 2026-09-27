@@ -17,6 +17,8 @@ On the card: weekday and date, daytime maximum, nighttime temperature, weather s
 
 Tasks are stored only in the current browser. The X4 layout shows up to 5 tasks; X3 shows up to 3. Drag tasks to reorder them, mark them complete, or delete them. The first tasks in the list are the ones placed on the card.
 
+Use the day arrows to plan cards up to 6 days ahead. Every date has its own task list. The reader cannot rotate these cards automatically: select a day, download its `sleep.bmp`, and install that file when needed.
+
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
 **QR card mode:** a large QR code centered on the screen, pointing to a profile, channel, or website. Pick “Card type → QR card”, paste the link, and download `sleep.bmp`. The QR is generated locally by the embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) library (MIT, ~20 KB).
@@ -27,7 +29,7 @@ Interface languages: **English · Русский** — auto-detected from your b
 
 1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
 2. Enter your city and press **Search**
-3. Add and reorder today's tasks
+3. Choose the card day, then add and reorder its tasks
 4. Select X4 or X3 and press **Refresh forecast**. Use X4 for X4C and X4 Pro too
 5. Press **Download sleep.bmp**, then copy it to the `Sleep` folder on the microSD, replacing the existing file
 6. Set the sleep screen to **Custom image** and lock the reader

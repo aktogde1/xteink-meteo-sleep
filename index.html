@@ -75,6 +75,10 @@
   .taskHandle:active { cursor:grabbing; }
   .taskDelete { width:28px; height:28px; padding:0; border:0; border-radius:6px; background:transparent; color:var(--dim); font-size:20px; line-height:1; }
   .taskDelete:hover { background:var(--line); color:var(--fg); }
+  .dayPicker { display:grid; grid-template-columns:44px minmax(0,1fr) 44px; gap:8px; align-items:stretch; }
+  .dayPicker button { min-height:42px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:8px; font-size:20px; font-weight:700; }
+  .dayPicker button:disabled { opacity:.32; cursor:default; }
+  .dayValue { display:flex; align-items:center; justify-content:center; min-height:42px; padding:7px 10px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; text-align:center; font-size:14px; font-weight:700; }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; margin-bottom:10px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -179,7 +183,17 @@
     </div>
 
     <div class="group">
-      <label data-i18n="tasks"></label>
+      <label data-i18n="cardDay"></label>
+      <div class="dayPicker">
+        <button type="button" id="dayPrev" aria-label="Previous day">‹</button>
+        <div class="dayValue" id="dayValue"></div>
+        <button type="button" id="dayNext" aria-label="Next day">›</button>
+      </div>
+      <span class="hint" data-i18n="cardDayHint"></span>
+    </div>
+
+    <div class="group">
+      <label data-i18n="tasksCtl"></label>
       <div class="taskAdd">
         <input type="text" id="taskInput" data-i18n-ph="taskPh" maxlength="80" autocomplete="off">
         <button class="btn secondary" id="addTask" data-i18n="taskAdd"></button>
@@ -275,6 +289,8 @@ let weather = null;
 let place = null;
 let device = "x4";
 let tasks = [];
+let tasksByDate = {};
+let dayOffset = 0;
 let draggedTaskIndex = null;
 let theme = "light";
 let mode = "meteo";
@@ -301,8 +317,9 @@ ru: {
   stQrLong: "Ссылка слишком длинная для QR-кода.",
   stNoUrl: "Добавь ссылку — и на карточке появится QR-код.",
   device: "Модель ридера", deviceX4: "X4", deviceHint: "X4 — для всех версий: X4, X4C и X4 Pro.",
-  tasks: "Задачи на сегодня", taskPh: "Например: позвонить маме", taskAdd: "Добавить",
-  taskHint: "Задачи сохраняются в этом браузере и попадут на карточку вместо прогноза.",
+  cardDay: "День карточки", today: "Сегодня", tomorrow: "Завтра", cardDayHint: "Можно подготовить карточки на 6 дней вперёд. На ридере нужный sleep.bmp устанавливается вручную.",
+  tasks: "Задачи", tasksCtl: "Задачи на выбранный день", taskPh: "Например: позвонить маме", taskAdd: "Добавить",
+  taskHint: "Для каждого дня сохраняется свой список задач в этом браузере.",
   taskLimit: "{device}: максимум {n} задач ({used}/{n}).",
   taskOverflow: "На карточку {device} попадут первые {n}. Перетащи нужные задачи выше.",
   taskMove: "Перетащить задачу",
@@ -314,7 +331,7 @@ ru: {
   instBlock: "Установка на ридер",
   readerHint: "IP-адрес отображается на ридере в режиме передачи файлов.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
-  ideaP: "Выбери город, добавь дела на сегодня и получи готовую e-ink-карточку. Она показывает дневной прогноз, восход, закат, фазу Луны и список задач.",
+  ideaP: "Выбери город и день, добавь задачи и получи готовую e-ink-карточку. Она показывает прогноз, восход, закат, фазу Луны и дела на выбранную дату.",
   rmTested: "⚠ Протестировано только на Xteink X4 + inkMOD 1.1.7. Другие устройства и прошивки не проверялись — отчёты приветствуются!",
   stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
   stLoading: "Загружаем прогноз для {city}…", stReady: "Карточка готова: {w}×{h}. Можно скачать BMP или установить её на ридер.",
@@ -347,8 +364,9 @@ en: {
   stQrLong: "The link is too long for a QR code.",
   stNoUrl: "Add a link — and the card gets a QR code.",
   device: "Reader model", deviceX4: "X4", deviceHint: "X4 supports every version: X4, X4C, and X4 Pro.",
-  tasks: "Today's tasks", taskPh: "e.g. Call Mom", taskAdd: "Add",
-  taskHint: "Tasks are saved in this browser and shown on the card instead of the forecast.",
+  cardDay: "Card day", today: "Today", tomorrow: "Tomorrow", cardDayHint: "Plan cards up to 6 days ahead. Install the chosen sleep.bmp on the reader manually.",
+  tasks: "Tasks", tasksCtl: "Tasks for the selected day", taskPh: "e.g. Call Mom", taskAdd: "Add",
+  taskHint: "Each day has its own task list saved in this browser.",
   taskLimit: "{device}: up to {n} tasks ({used}/{n}).",
   taskOverflow: "The {device} card will show the first {n}. Drag the tasks you need higher.",
   taskMove: "Drag task",
@@ -360,7 +378,7 @@ en: {
   instBlock: "Install on reader",
   readerHint: "The IP address is shown on the reader in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
-  ideaP: "Choose a city, add today's tasks, and create an e-ink card with the daily forecast, sunrise, sunset, moon phase, and your task list.",
+  ideaP: "Choose a city and date, add tasks, and create an e-ink card with the forecast, sunrise, sunset, moon phase, and tasks for that day.",
   rmTested: "⚠ Tested only on Xteink X4 + inkMOD 1.1.7. Other devices and firmware are untested — field reports welcome!",
   stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
   stLoading: "Loading the forecast for {city}…", stReady: "Card ready: {w}×{h}. Download the BMP or install it on your reader.",
@@ -398,6 +416,15 @@ const hhmm = iso => iso.slice(11, 16);
 const two = x => String(x).padStart(2, "0");
 function dateLong(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "long", day: "numeric", month: "long" }).format(d); }
 function dayShort(d){ return new Intl.DateTimeFormat(LOCALE[LANG], { weekday: "short" }).format(d) + " " + d.getDate(); }
+function selectedDate(){ const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + dayOffset); return d; }
+function dateKey(d){ return d.getFullYear() + "-" + two(d.getMonth() + 1) + "-" + two(d.getDate()); }
+function dayChoiceText(){
+  const d = selectedDate();
+  const date = new Intl.DateTimeFormat(LOCALE[LANG], { day:"numeric", month:"long" }).format(d);
+  if (dayOffset === 0) return t("today") + ", " + date;
+  if (dayOffset === 1) return t("tomorrow") + ", " + date;
+  return dateLong(d);
+}
 
 // ---------- фаза луны ----------
 const SYNODIC = 29.530588853;
@@ -868,7 +895,7 @@ async function loadWeather(){
 function currentSize(){ return DEVICES[device]; }
 function redraw(){
   if (mode === "card") drawVisit();
-  else if (weather) drawCard();
+  else if (weather) drawCard(dayOffset);
   else { ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 }
 function applyMode(){
@@ -889,7 +916,30 @@ function applyDevice(){
   redraw();
   storeStr("device", device);
 }
-function saveTasks(){ storeSet("tasks", tasks); }
+function saveTasks(){
+  tasksByDate[dateKey(selectedDate())] = tasks;
+  storeSet("tasksByDate", tasksByDate);
+}
+function loadTasksForDay(){
+  const saved = tasksByDate[dateKey(selectedDate())];
+  tasks = Array.isArray(saved) ? saved : [];
+  renderTasks();
+}
+function updateDayControls(){
+  $("dayValue").textContent = dayChoiceText();
+  $("dayPrev").disabled = dayOffset <= 0;
+  $("dayNext").disabled = dayOffset >= 5;
+  $("dayPrev").setAttribute("aria-label", LANG === "ru" ? "Предыдущий день" : "Previous day");
+  $("dayNext").setAttribute("aria-label", LANG === "ru" ? "Следующий день" : "Next day");
+}
+function changeDay(step){
+  const next = Math.max(0, Math.min(5, dayOffset + step));
+  if (next === dayOffset) return;
+  dayOffset = next;
+  loadTasksForDay();
+  updateDayControls();
+  redraw();
+}
 function updateTaskLimit(){
   const limit = TASK_LIMITS[device];
   const full = tasks.length >= limit;
@@ -979,6 +1029,7 @@ function applyI18n(){
   $("donateWrap").style.display = (DONATE_URL || CRYPTO.length) ? "" : "none";
   applyLangActive();
   renderTasks();
+  updateDayControls();
 }
 async function refreshPlaceName(){
   if (!place) return;
@@ -1012,6 +1063,8 @@ $("deviceSeg").onclick = e => {
 };
 $("addTask").onclick = addTask;
 $("taskInput").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
+$("dayPrev").onclick = () => changeDay(-1);
+$("dayNext").onclick = () => changeDay(1);
 $("modeSeg").onclick = e => {
   const b = e.target.closest("button[data-mode]");
   if (!b) return;
@@ -1185,8 +1238,15 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   device = DEVICES[d] ? d : "x4";
   const savedReader = (storeRaw("reader") || "").replace(/^https?:\/\//, "");
   if (savedReader) $("readerAddr").value = savedReader;
-  const savedTasks = storeGet("tasks");
-  if (Array.isArray(savedTasks)) tasks = savedTasks.filter(x => x && typeof x.text === "string" && x.text.trim()).map(x => ({ text:x.text.trim().slice(0, 80), done:!!x.done }));
+  const cleanTasks = list => Array.isArray(list) ? list.filter(x => x && typeof x.text === "string" && x.text.trim()).map(x => ({ text:x.text.trim().slice(0, 80), done:!!x.done })) : [];
+  const savedTasksByDate = storeGet("tasksByDate");
+  if (savedTasksByDate && typeof savedTasksByDate === "object" && !Array.isArray(savedTasksByDate)){
+    for (const key of Object.keys(savedTasksByDate)) tasksByDate[key] = cleanTasks(savedTasksByDate[key]);
+  }
+  const todayKey = dateKey(selectedDate());
+  const legacyTasks = cleanTasks(storeGet("tasks"));
+  if (!tasksByDate[todayKey] && legacyTasks.length) tasksByDate[todayKey] = legacyTasks;
+  tasks = tasksByDate[todayKey] || [];
   theme = storeRaw("invert") ? "dark" : "light";
   mode = storeRaw("mode") === "card" ? "card" : "meteo";
   const savedCard = storeGet("visitCard");
