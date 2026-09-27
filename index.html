@@ -23,7 +23,7 @@
   body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 "Segoe UI", Arial, sans-serif; }
   .nav { position:sticky; top:0; z-index:20; background:#181b20; padding:14px 20px 12px; }
   .navIn { max-width:1080px; margin:0 auto; text-align:center; }
-  .brand { display:inline-block; color:#fff; text-decoration:none; font-size:22px; font-weight:800; letter-spacing:.5px; }
+  .brand { display:inline-block; color:#fff; text-decoration:none; font:700 23px/1.1 "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; letter-spacing:.25px; }
   .brand span { color:var(--acc2); }
   .navBadges { margin-top:10px; display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap; }
   .navBadges .badge { background:#0d0f12; border:1px solid #2a2f36; }
@@ -32,12 +32,11 @@
   .badge { display:inline-flex; align-items:center; gap:5px; background:var(--badgeBg); color:#fff; border:none; border-radius:4px; padding:7px 11px; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; text-decoration:none; cursor:pointer; font-family:inherit; line-height:1; }
   .badge:hover { filter:brightness(1.3); }
   .badge.lang.active { background:var(--acc); color:var(--btnText); }
-  .dd { position:relative; display:inline-flex; flex-direction:column; background:var(--badgeBg); border:2px solid #4a3f22; border-radius:10px; overflow:hidden; vertical-align:top; }
+  .dd { position:relative; display:inline-flex; background:var(--badgeBg); border:2px solid #4a3f22; border-radius:10px; vertical-align:top; }
   .accHead { display:flex; align-items:center; gap:5px; background:none; border:none; color:#f0c14b; font-family:inherit; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:8px 11px; cursor:pointer; line-height:1; transition:font-size .15s, padding .15s; }
-  .dd.open .accHead { font-size:10px; padding:6px 9px; }
   .hh { font-size:1.15em; }
-  .accBody { max-height:0; overflow:hidden; transition:max-height .25s ease; }
-  .dd.open .accBody { max-height:120px; }
+  .accBody { position:absolute; top:calc(100% + 8px); left:50%; z-index:30; width:190px; overflow:hidden; background:var(--badgeBg); border:1px solid #4a3f22; border-radius:10px; box-shadow:0 10px 28px rgba(0,0,0,.35); opacity:0; visibility:hidden; pointer-events:none; transform:translate(-50%, -6px); transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s; }
+  .dd.open .accBody { opacity:1; visibility:visible; pointer-events:auto; transform:translate(-50%, 0); transition-delay:0s; }
   .accItem { display:flex; gap:8px; width:100%; text-align:left; padding:8px 10px; background:none; border:none; border-top:1px solid #2a2f36; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; font-family:inherit; text-decoration:none; }
   .accItem:hover { background:#22262d; }
   .accItem small { color:var(--dim); display:block; font-size:11px; font-weight:400; }
@@ -60,6 +59,22 @@
   .seg button { flex:1; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; padding:10px 4px; font-size:13.5px; font-weight:600; color:var(--fg); white-space:nowrap; }
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
+  .taskAdd { display:flex; gap:8px; }
+  .taskAdd input { flex:1; min-width:0; }
+  .taskAdd .btn { flex:0 0 auto; padding-inline:14px; }
+  .taskList { display:flex; flex-direction:column; gap:6px; margin-top:9px; }
+  .taskList:empty { display:none; }
+  .taskItem { display:grid; grid-template-columns:18px 22px minmax(0,1fr) 30px; align-items:center; gap:7px; min-height:38px; padding:6px 4px 6px 7px; background:var(--inputBg); border:1px solid var(--line); border-radius:8px; transition:opacity .15s, border-color .15s, transform .15s; }
+  .taskItem.offCard { opacity:.52; }
+  .taskItem.dragging { opacity:.35; }
+  .taskItem.dragOver { border-color:var(--acc); transform:translateY(2px); }
+  .taskItem input { width:17px; height:17px; accent-color:var(--acc); }
+  .taskItem span { min-width:0; overflow-wrap:anywhere; font-size:14px; line-height:1.3; }
+  .taskItem.done span { color:var(--dim); text-decoration:line-through; }
+  .taskHandle { border:0; padding:4px 0; background:transparent; color:var(--dim); font-size:16px; line-height:1; cursor:grab; touch-action:none; }
+  .taskHandle:active { cursor:grabbing; }
+  .taskDelete { width:28px; height:28px; padding:0; border:0; border-radius:6px; background:transparent; color:var(--dim); font-size:20px; line-height:1; }
+  .taskDelete:hover { background:var(--line); color:var(--fg); }
   .hint { font-size:12px; color:var(--dim); display:block; margin-top:7px; margin-bottom:10px; line-height:1.5; }
   .warn { color:var(--warnText); background:var(--warnBg); border:1px solid var(--warnBorder); border-radius:8px; padding:9px 11px; }
   .warn a { color:var(--acc); font-weight:600; }
@@ -99,14 +114,16 @@
   #compatPop.show { top:0; }
   #compatPop .ok { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:var(--acc); color:var(--btnText); border:none; border-radius:6px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
   .foot { max-width:1180px; margin:8px auto 0; padding:22px 24px 30px; border-top:1px solid var(--line); }
-  .footIn { max-width:720px; margin:0 auto; text-align:center; color:var(--dim); font-size:12.5px; line-height:1.6; }
-  .footData { margin:0 0 10px; }
-  .footLove { margin:0 0 8px; font-size:13px; color:var(--fg); }
-  .footDisc { margin:0; font-size:11.5px; opacity:.75; }
+  .footIn { max-width:780px; margin:0 auto; text-align:center; color:var(--dim); font-size:14px; line-height:1.65; }
+  .footData { margin:0 0 12px; }
+  .footData a { color:var(--acc); font-weight:600; text-decoration:none; }
+  .footData a:hover { text-decoration:underline; }
+  .footLove { margin:0 0 10px; font-size:14px; color:var(--fg); }
+  .footDisc { margin:0; color:var(--dim); font-size:13px; opacity:1; }
   .footLove a { color:var(--acc); font-weight:600; text-decoration:none; }
   .footLove a:hover { text-decoration:underline; }
   .footLove .hh { color:#d05353; }
-  .ideatop { max-width:720px; margin:12px auto 0; text-align:center; color:var(--dim); font-size:13.5px; line-height:1.55; }
+  .ideatop { max-width:760px; margin:12px auto 0; text-align:center; color:var(--dim); font-size:14px; line-height:1.6; }
   .ideatop p { margin:0 0 3px; }
 </style>
 </head>
@@ -162,13 +179,14 @@
     </div>
 
     <div class="group">
-      <label data-i18n="days"></label>
-      <div class="seg small" id="daysSeg">
-        <button data-days="2">2</button>
-        <button data-days="3">3</button>
-        <button data-days="4">4</button>
-        <button data-days="5">5</button>
+      <label data-i18n="tasks"></label>
+      <div class="taskAdd">
+        <input type="text" id="taskInput" data-i18n-ph="taskPh" maxlength="80" autocomplete="off">
+        <button class="btn secondary" id="addTask" data-i18n="taskAdd"></button>
       </div>
+      <span class="hint" data-i18n="taskHint"></span>
+      <span class="hint" id="taskLimit"></span>
+      <div class="taskList" id="taskList"></div>
     </div>
     </div>
 
@@ -255,7 +273,8 @@ const DONATE_URL = "https://web.tribute.tg/d/Q5J";
 let weather = null;
 let place = null;
 let device = "x4";
-let days = 3;
+let tasks = [];
+let draggedTaskIndex = null;
 let theme = "light";
 let mode = "meteo";
 const W = { date:true, cur:true, dn:true, sm:true, fc:true, city:true }; // фиксированный набор, луну вырезали
@@ -266,45 +285,51 @@ function storeStr(key, val){ localStorage.setItem("lsx." + key, val); }
 function storeRaw(key){ return localStorage.getItem("lsx." + key); }
 
 const DEVICES = { x4:[480,800], x3:[480,640] };
+const TASK_LIMITS = { x4:5, x3:3 };
 const LOCALE = { ru:"ru-RU", en:"en-GB" };
 
 // ---------- переводы ----------
 const I18N = {
 ru: {
-  title: "Xteink Meteo Sleep — погода, луна, восход на локскрине",
-  subtitle: "Погода · луна · восход или QR-визитка на локскрине Xteink X4 / X3. Собери карточку и скачай как sleep.bmp",
+  title: "Xteink Meteo Sleep — погода и задачи на экране блокировки",
+  subtitle: "Погода и задачи на экране блокировки Xteink X4 / X3",
   city: "Город", cityPh: "Например: Санкт-Петербург", find: "Найти",
-  mode: "Режим", modeMeteo: "Погода", modeCard: "Визитка",
+  mode: "Тип карточки", modeMeteo: "Погода и задачи", modeCard: "QR-визитка",
   cardUrl: "Ссылка для QR-кода", cardUrlPh: "вставьте ссылку",
   cardUrlHint: "QR на карточке ведёт на эту ссылку — профиль, канал или сайт. Работает офлайн, прямо из файла.",
   stQrLong: "Ссылка слишком длинная для QR-кода.",
   stNoUrl: "Добавь ссылку — и на карточке появится QR-код.",
-  device: "Устройство",
-  days: "Дней прогноза (не считая сегодня)",
-  theme: "Тема карточки", themeDark: "Тёмная карточка",
-  refresh: "Обновить погоду",
-  install: "Обновить и установить на ридер",
+  device: "Модель ридера",
+  tasks: "Задачи на сегодня", taskPh: "Например: позвонить маме", taskAdd: "Добавить",
+  taskHint: "Задачи сохраняются в этом браузере и попадут на карточку вместо прогноза.",
+  taskLimit: "{device}: максимум {n} задач ({used}/{n}).",
+  taskOverflow: "На карточку {device} попадут первые {n}. Перетащи нужные задачи выше.",
+  taskMove: "Перетащить задачу",
+  taskMore: "ещё",
+  theme: "Оформление", themeDark: "Тёмная карточка",
+  refresh: "Обновить прогноз",
+  install: "Обновить карточку и установить",
   download: "Скачать sleep.bmp",
-  instBlock: "Быстрая установка",
-  readerHint: "Введите IP-адрес, который отображается у вас в режиме передачи файлов на вашей читалке.",
+  instBlock: "Установка на ридер",
+  readerHint: "IP-адрес отображается на ридере в режиме передачи файлов.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
-  ideaP: "Экран блокировки ридера — это e-ink: он не тратит батарею, просто показывая картинку. Пусть вместо бесполезной заставки там будет полезный инструмент: сводка погоды, закат, фаза Луны. Синхронизировался утром — и весь день (даже офлайн, на природе) перед глазами живая сводка, а не мёртвый пейзаж.",
+  ideaP: "Выбери город, добавь дела на сегодня и получи готовую e-ink-карточку. Она показывает дневной прогноз, восход, закат, фазу Луны и список задач.",
   rmTested: "⚠ Протестировано только на Xteink X4 + inkMOD 1.1.7. Другие устройства и прошивки не проверялись — отчёты приветствуются!",
   stSearching: "Ищем город…", stFound: "Найдено: {n}. Выбери из списка.", stNotFound: "Город не найден", stSearchErr: "Ошибка сети при поиске города",
-  stLoading: "Грузим погоду для {city}…", stReady: "Готово: {w}×{h}. Можно скачивать BMP.",
-  stWeatherFail: "Не удалось получить погоду. Проверь интернет и нажми «Обновить погоду».",
+  stLoading: "Загружаем прогноз для {city}…", stReady: "Карточка готова: {w}×{h}. Можно скачать BMP или установить её на ридер.",
+  stWeatherFail: "Не удалось загрузить прогноз. Проверь интернет и попробуй ещё раз.",
   stSendErr: "Ридер не отвечает. Проверь: он в режиме File Transfer, ноут в его сети, адрес верный.",
   stApplying: "Картинка загружена. Применяю режим «Своя картинка»…",
   stDone: "Готово: sleep.bmp на ридере, режим «Своя картинка» выставлен. Заблокируй ридер — увидишь карточку.",
 
   stNoAddr: "Впишите адрес ридера — тот, что он показывает в режиме передачи файлов.",
-  stNoWeather: "Сначала загрузи погоду — нажми «Обновить погоду».",
+  stNoWeather: "Сначала загрузи прогноз — нажми «Обновить прогноз».",
   noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
-  ideaNext: "В планах — сделать так, чтобы карточка оставалась полезной несколько дней без синхронизации. А ещё карточка бывает не только про погоду: режим «Визитка» — это QR со ссылкой на твои соцсети прямо с экрана ридера.",
-  footData: "Погода и геокодинг — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · фаза Луны рассчитывается прямо в браузере · карточка живёт офлайн и обновляется с новой загрузкой sleep.bmp",
-  madeFor: "сделал для сообщества, с любовью",
-  disclaimer: "Проект не аффилирован с Xteink, inkMOD и CrossPoint. Погода — Open-Meteo (некоммерческое использование).", langRu: "Русский", langEn: "Английский",
+  ideaNext: "Карточка сохраняется как sleep.bmp и работает офлайн. Отдельный режим создаёт QR-визитку со ссылкой на профиль, канал или сайт.",
+  footData: "Прогноз и поиск города — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo</a>. Задачи хранятся только в этом браузере. Фаза Луны рассчитывается локально.",
+  madeFor: "независимый проект для сообщества",
+  disclaimer: "Неофициальный проект. Не связан с Xteink, inkMOD или CrossPoint.", langRu: "Русский", langEn: "Английский",
   bnFw: "Подходит к любой прошивке ридера — это обычный BMP-файл",
   crypto: "Крипта",
   okBtn: "Понятно", cmTitle: "Поддержать криптой", copied: "Скопировано ✓",
@@ -312,40 +337,45 @@ ru: {
   moon: ["Новолуние","Растущий серп","Первая четверть","Растущая луна","Полнолуние","Убывающая луна","Последняя четверть","Убывающий серп"]
 },
 en: {
-  title: "Xteink Meteo Sleep — weather, moon & sunrise lock screen",
-  subtitle: "Weather · moon · sunrise — or a QR business card — on the lock screen of your Xteink X4 / X3. Build a card and download it as sleep.bmp",
+  title: "Xteink Meteo Sleep — weather and tasks on your lock screen",
+  subtitle: "Weather and daily tasks on the Xteink X4 / X3 lock screen",
   city: "City", cityPh: "e.g. Berlin", find: "Search",
-  mode: "Mode", modeMeteo: "Weather", modeCard: "Business card",
+  mode: "Card type", modeMeteo: "Weather & tasks", modeCard: "QR card",
   cardUrl: "Link for the QR code", cardUrlPh: "paste your link",
   cardUrlHint: "The QR on the card points to this link — profile, channel or site. Works offline, right from the file.",
   stQrLong: "The link is too long for a QR code.",
   stNoUrl: "Add a link — and the card gets a QR code.",
-  device: "Device",
-  days: "Forecast days (excluding today)",
-  theme: "Card theme", themeDark: "Dark card",
-  refresh: "Refresh weather",
-  install: "Update & install to reader",
+  device: "Reader model",
+  tasks: "Today's tasks", taskPh: "e.g. Call Mom", taskAdd: "Add",
+  taskHint: "Tasks are saved in this browser and shown on the card instead of the forecast.",
+  taskLimit: "{device}: up to {n} tasks ({used}/{n}).",
+  taskOverflow: "The {device} card will show the first {n}. Drag the tasks you need higher.",
+  taskMove: "Drag task",
+  taskMore: "more",
+  theme: "Appearance", themeDark: "Dark card",
+  refresh: "Refresh forecast",
+  install: "Refresh card & install",
   download: "Download sleep.bmp",
-  instBlock: "Quick install",
-  readerHint: "Enter the IP address shown on your e-reader in File Transfer mode.",
+  instBlock: "Install on reader",
+  readerHint: "The IP address is shown on the reader in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
-  ideaP: "An e-reader lock screen is e-ink: showing a picture costs zero battery. So instead of a useless wallpaper, let it be a useful tool: weather summary, sunset time, moon phase. Sync in the morning — and all day (even offline, out in nature) you have a live briefing instead of a dead landscape.",
+  ideaP: "Choose a city, add today's tasks, and create an e-ink card with the daily forecast, sunrise, sunset, moon phase, and your task list.",
   rmTested: "⚠ Tested only on Xteink X4 + inkMOD 1.1.7. Other devices and firmware are untested — field reports welcome!",
   stSearching: "Searching…", stFound: "{n} found — pick one", stNotFound: "City not found", stSearchErr: "Network error while searching",
-  stLoading: "Loading weather for {city}…", stReady: "Done: {w}×{h}. You can download the BMP.",
-  stWeatherFail: "Couldn\u2019t load the weather. Check the internet and press \u201cRefresh weather\u201d.",
+  stLoading: "Loading the forecast for {city}…", stReady: "Card ready: {w}×{h}. Download the BMP or install it on your reader.",
+  stWeatherFail: "Couldn\u2019t load the forecast. Check your connection and try again.",
   stSendErr: "Reader is not responding. Check: it\u2019s in File Transfer mode, laptop on the same network, address correct.",
   stApplying: "Image uploaded. Applying the custom sleep screen…",
   stDone: "Done: sleep.bmp is on the reader, sleep screen set to Custom. Lock the reader to see the card.",
 
   stNoAddr: "Enter the reader address — the one it shows in File Transfer mode.",
-  stNoWeather: "Load the weather first — press “Refresh weather”.",
+  stNoWeather: "Load the forecast first — press “Refresh forecast”.",
   noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   updated: "updated", dS: "d", nS: "n", donate: "Donate",
-  ideaNext: "Planned: make the card stay useful for several days without a sync. And the card is not only about weather: the Business card mode puts a QR with your socials right on the reader screen.",
-  footData: "Weather & geocoding by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo.com</a> · moon phase is computed right in your browser · the card lives offline and refreshes with every sleep.bmp upload",
-  madeFor: "made for the community with",
-  disclaimer: "Not affiliated with Xteink, inkMOD or CrossPoint. Weather data by Open-Meteo (non-commercial use).", langRu: "Russian", langEn: "English",
+  ideaNext: "Save the card as sleep.bmp and use it offline. A separate mode creates a QR card linking to a profile, channel, or website.",
+  footData: "Forecast and city search by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo</a>. Tasks stay in this browser. Moon phase is calculated locally.",
+  madeFor: "an independent community project",
+  disclaimer: "Unofficial project. Not affiliated with Xteink, inkMOD, or CrossPoint.", langRu: "Russian", langEn: "English",
   bnFw: "Works with any reader firmware — it is just a BMP file",
   crypto: "Crypto",
   okBtn: "Got it", cmTitle: "Donate in crypto", copied: "Copied ✓",
@@ -579,7 +609,8 @@ function drawCard(dayOffset){
       drew = true;
       const iconS = w * 0.32;
       let tempSize = w * 0.28;
-      const tempStr = fmtTemp(cur.temperature_2m);
+      const dayCode = d0.weather_code[dayOffset];
+      const tempStr = fmtTemp(d0.temperature_2m_max[dayOffset]);
       const maxTempW = w - pad * 2 - iconS - w * 0.06;
       setFont(tempSize, true);
       while (tempSize > w * 0.12 && ctx.measureText(tempStr).width > maxTempW){
@@ -589,21 +620,20 @@ function drawCard(dayOffset){
       ctx.textAlign = "left";
       ctx.fillStyle = FG;
       ctx.fillText(tempStr, pad, y + tempSize * 0.8);
-      drawIcon(wmoKind(cur.weather_code), w - pad - iconS / 2, y + iconS * 0.48, iconS);
+      drawIcon(wmoKind(dayCode), w - pad - iconS / 2, y + iconS * 0.48, iconS);
       y += Math.max(tempSize * 0.8, iconS * 0.96) + w * 0.085;
 
-      text(wmoText(cur.weather_code), pad, y, w * 0.072, true);
-      y += w * 0.072 + h * 0.014;
+      text(wmoText(dayCode), pad, y, w * 0.072, true);
+      text(t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[dayOffset]), w - pad, y, w * 0.052, false, "right");
+      y += h * 0.048;
     }
     if (W.dn){
-      text(t("dayLbl") + " " + fmtTemp(d0.temperature_2m_max[dayOffset]) + "   ·   " + t("nightLbl") + " " + fmtTemp(d0.temperature_2m_min[dayOffset]), pad, y, w * 0.056, false);
-      y += h * 0.045;
       drew = true;
     }
     if (W.sm){
       const labelPx = w * 0.048, timePx = w * 0.06;
       const col2 = w * 0.55;
-      drawIcon("sun", pad + w * 0.032, y - timePx * 0.28, w * 0.064);
+      drawIcon("sun", pad + w * 0.026, y - timePx * 0.28, w * 0.064);
       text(t("sunrise") + " ", pad + w * 0.075, y, labelPx, false);
       const w1 = ctx.measureText(t("sunrise") + " ").width;
       text(hhmm(d0.sunrise[dayOffset]), pad + w * 0.075 + w1, y, timePx, true);
@@ -616,9 +646,10 @@ function drawCard(dayOffset){
     }
     {
       const mr = w * 0.026;
-      drawMoon(pad + mr, y - w * 0.017, mr, moon.phase);
-      text(moon.name + "  ·  " + moon.illum + "%", pad + mr * 2 + w * 0.022, y, w * 0.048, false);
-      y += h * 0.042;
+      const moonY = y + h * 0.006;
+      drawMoon(pad + mr, moonY - w * 0.017, mr, moon.phase);
+      text(moon.name + "  ·  " + moon.illum + "%", pad + mr * 2 + w * 0.022, moonY, w * 0.048, false);
+      y = moonY + h * 0.042;
       drew = true;
     }
     if (W.fc){
@@ -628,16 +659,45 @@ function drawCard(dayOffset){
         ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
         y += h * 0.026;
       }
-      const n = Math.min(days, weather.daily.time.length - 1 - dayOffset);
-      const rowH = Math.max(34, Math.min(w * 0.14, (h - footH - y) / Math.max(1, n)));
-      const txtPx = Math.min(w * 0.054, rowH * 0.52);
-      for (let i = dayOffset + 1; i <= dayOffset + n; i++){
-        const d = new Date(weather.daily.time[i] + "T12:00:00");
-        const cy2 = y + rowH / 2;
-        text(dayShort(d), pad, cy2 + txtPx * 0.36, txtPx, true);
-        drawIcon(wmoKind(weather.daily.weather_code[i]), w * 0.40, cy2, rowH * 0.62);
-        text(t("dS") + " " + fmtTemp(weather.daily.temperature_2m_max[i]) + " · " + t("nS") + " " + fmtTemp(weather.daily.temperature_2m_min[i]), w - pad, cy2 + txtPx * 0.36, txtPx, false, "right");
+      text(t("tasks"), pad, y + w * 0.052, w * 0.052, true);
+      y += w * 0.078;
+      const available = h - footH - y;
+      const rowH = Math.max(34, Math.min(w * 0.105, available / Math.max(1, Math.min(tasks.length, 6))));
+      const txtPx = Math.min(w * 0.048, rowH * 0.48);
+      const maxRows = Math.max(1, Math.floor(available / rowH));
+      const cardTasks = tasks.slice(0, TASK_LIMITS[device]);
+      const shown = cardTasks.slice(0, maxRows);
+      if (!shown.length){
+        text("—", pad, y + txtPx, txtPx, false);
+      }
+      for (const task of shown){
+        const box = Math.round(txtPx * 0.72);
+        const bx = pad, by = Math.round(y + (rowH - box) / 2);
+        ctx.strokeStyle = FG; ctx.lineWidth = 2; ctx.strokeRect(bx, by, box, box);
+        if (task.done){
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(bx + box * 0.18, by + box * 0.52);
+          ctx.lineTo(bx + box * 0.42, by + box * 0.76);
+          ctx.lineTo(bx + box * 0.84, by + box * 0.22);
+          ctx.stroke();
+        }
+        const tx = bx + box + w * 0.025;
+        const maxTextW = w - pad - tx;
+        setFont(txtPx, !task.done);
+        let label = task.text;
+        while (label.length > 1 && ctx.measureText(label).width > maxTextW) label = label.slice(0, -1);
+        if (label !== task.text) label = label.replace(/[\s.,;:!?-]+$/, "") + "…";
+        text(label, tx, y + rowH * 0.66, txtPx, !task.done);
+        if (task.done){
+          ctx.lineWidth = 2;
+          const tw = Math.min(ctx.measureText(label).width, maxTextW);
+          ctx.beginPath(); ctx.moveTo(tx, y + rowH * 0.48); ctx.lineTo(tx + tw, y + rowH * 0.48); ctx.stroke();
+        }
         y += rowH;
+      }
+      if (cardTasks.length > shown.length){
+        text("+" + (cardTasks.length - shown.length) + " " + t("taskMore"), w - pad, Math.min(h - footH * 0.55, y + txtPx), txtPx * 0.85, false, "right");
       }
       drew = true;
     }
@@ -779,7 +839,7 @@ async function loadWeather(){
   const my = (window._lw = (window._lw || 0) + 1); // устаревший ответ игнорируем
   if (!place) return;
   setStatusG(tf("stLoading", { city: place.name }));
-  const n = 1 + days;
+  const n = 6;
   const url = "https://api.open-meteo.com/v1/forecast?latitude=" + place.lat + "&longitude=" + place.lon +
     "&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
     "&timezone=auto&forecast_days=" + Math.max(n, 6);
@@ -824,11 +884,88 @@ function applyDevice(){
   for (const b of $("deviceSeg").children) b.classList.toggle("active", b.dataset.dev === device);
   const size = currentSize();
   canvas.width = size[0]; canvas.height = size[1];
+  renderTasks();
   redraw();
   storeStr("device", device);
 }
-function applyDaysActive(){
-  for (const b of $("daysSeg").children) b.classList.toggle("active", parseInt(b.dataset.days, 10) === days);
+function saveTasks(){ storeSet("tasks", tasks); }
+function updateTaskLimit(){
+  const limit = TASK_LIMITS[device];
+  const full = tasks.length >= limit;
+  $("taskInput").disabled = full;
+  $("addTask").disabled = full;
+  $("taskLimit").textContent = tasks.length > limit
+    ? tf("taskOverflow", { device:device.toUpperCase(), n:limit })
+    : tf("taskLimit", { device:device.toUpperCase(), n:limit, used:tasks.length });
+}
+function moveTask(from, to){
+  if (from === to || from < 0 || to < 0 || from >= tasks.length || to >= tasks.length) return;
+  const item = tasks.splice(from, 1)[0];
+  tasks.splice(to, 0, item);
+  saveTasks(); renderTasks(); redraw();
+}
+function renderTasks(){
+  const list = $("taskList");
+  list.innerHTML = "";
+  const limit = TASK_LIMITS[device];
+  tasks.forEach((task, index) => {
+    const row = document.createElement("div");
+    row.className = "taskItem" + (task.done ? " done" : "") + (index >= limit ? " offCard" : "");
+    const handle = document.createElement("button");
+    handle.type = "button";
+    handle.className = "taskHandle";
+    handle.textContent = "⋮⋮";
+    handle.draggable = true;
+    handle.title = t("taskMove");
+    handle.setAttribute("aria-label", t("taskMove"));
+    handle.ondragstart = e => {
+      draggedTaskIndex = index;
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(index));
+      row.classList.add("dragging");
+    };
+    handle.ondragend = () => {
+      draggedTaskIndex = null;
+      document.querySelectorAll(".taskItem").forEach(el => el.classList.remove("dragging", "dragOver"));
+    };
+    row.ondragover = e => {
+      if (draggedTaskIndex == null || draggedTaskIndex === index) return;
+      e.preventDefault();
+      row.classList.add("dragOver");
+    };
+    row.ondragleave = () => row.classList.remove("dragOver");
+    row.ondrop = e => {
+      e.preventDefault();
+      const from = Number(e.dataTransfer.getData("text/plain"));
+      draggedTaskIndex = null;
+      moveTask(from, index);
+    };
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = !!task.done;
+    check.setAttribute("aria-label", task.text);
+    check.onchange = () => { tasks[index].done = check.checked; saveTasks(); renderTasks(); redraw(); };
+    const label = document.createElement("span");
+    label.textContent = task.text;
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "taskDelete";
+    del.textContent = "×";
+    del.setAttribute("aria-label", LANG === "ru" ? "Удалить задачу" : "Delete task");
+    del.onclick = () => { tasks.splice(index, 1); saveTasks(); renderTasks(); redraw(); };
+    row.append(handle, check, label, del);
+    list.appendChild(row);
+  });
+  updateTaskLimit();
+}
+function addTask(){
+  const input = $("taskInput");
+  const value = input.value.trim();
+  if (!value || tasks.length >= TASK_LIMITS[device]) return;
+  tasks.push({ text:value, done:false });
+  input.value = "";
+  saveTasks(); renderTasks(); redraw();
+  input.focus();
 }
 function applyLangActive(){
   for (const b of document.querySelectorAll(".badge.lang")) b.classList.toggle("active", b.dataset.lang === LANG);
@@ -840,6 +977,7 @@ function applyI18n(){
   document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   $("donateWrap").style.display = (DONATE_URL || CRYPTO.length) ? "" : "none";
   applyLangActive();
+  renderTasks();
 }
 async function refreshPlaceName(){
   if (!place) return;
@@ -871,14 +1009,8 @@ $("deviceSeg").onclick = e => {
   applyDevice();
   if (place) loadWeather();
 };
-$("daysSeg").onclick = e => {
-  const b = e.target.closest("button[data-days]");
-  if (!b) return;
-  days = parseInt(b.dataset.days, 10);
-  applyDaysActive();
-  storeStr("days", String(days));
-  if (place) loadWeather();
-};
+$("addTask").onclick = addTask;
+$("taskInput").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
 $("modeSeg").onclick = e => {
   const b = e.target.closest("button[data-mode]");
   if (!b) return;
@@ -1052,8 +1184,8 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   device = DEVICES[d] ? d : "x4";
   const savedReader = (storeRaw("reader") || "").replace(/^https?:\/\//, "");
   if (savedReader) $("readerAddr").value = savedReader;
-  const legacyDays = parseInt(storeRaw("days"), 10);
-  if (legacyDays >= 2 && legacyDays <= 5) days = legacyDays;
+  const savedTasks = storeGet("tasks");
+  if (Array.isArray(savedTasks)) tasks = savedTasks.filter(x => x && typeof x.text === "string" && x.text.trim()).map(x => ({ text:x.text.trim().slice(0, 80), done:!!x.done }));
   theme = storeRaw("invert") ? "dark" : "light";
   mode = storeRaw("mode") === "card" ? "card" : "meteo";
   const savedCard = storeGet("visitCard");
@@ -1065,7 +1197,6 @@ $("cryptoModal").onclick = e => { if (e.target.id === "cryptoModal") $("cryptoMo
   }
   applyI18n();
   applyDevice();
-  applyDaysActive();
   applyMode();
   if (place) loadWeather();
   if (!localStorage.getItem("lsx.compatSeen")){
