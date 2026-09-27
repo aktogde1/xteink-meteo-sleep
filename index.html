@@ -60,6 +60,9 @@
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
   .taskAdd { display:flex; gap:8px; }
+  .taskTitleRow { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:7px; }
+  .taskTitleRow > label { color:var(--dim); text-transform:uppercase; letter-spacing:.5px; font-size:12px; font-weight:600; }
+  .copyDay { width:auto; max-width:155px; min-width:0; padding:5px 24px 5px 8px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:7px; font:600 11.5px/1.2 inherit; cursor:pointer; }
   .taskAdd input { flex:1; min-width:0; }
   .taskAdd .btn { flex:0 0 auto; padding-inline:14px; }
   .taskList { display:flex; flex-direction:column; gap:6px; margin-top:9px; }
@@ -73,6 +76,7 @@
   .taskItem.done span { color:var(--dim); text-decoration:line-through; }
   .taskHandle { border:0; padding:4px 0; background:transparent; color:var(--dim); font-size:16px; line-height:1; cursor:grab; touch-action:none; }
   .taskHandle:active { cursor:grabbing; }
+  .taskItem.touchDragging { opacity:.72; border-color:var(--acc); box-shadow:0 5px 18px rgba(0,0,0,.2); }
   .taskDelete { width:28px; height:28px; padding:0; border:0; border-radius:6px; background:transparent; color:var(--dim); font-size:20px; line-height:1; }
   .taskDelete:hover { background:var(--line); color:var(--fg); }
   .dayPicker { display:grid; grid-template-columns:44px minmax(0,1fr) 44px; gap:8px; align-items:stretch; }
@@ -109,10 +113,15 @@
   .cmBtn { background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; font-weight:600; text-decoration:none; cursor:pointer; }
   #cmClose { position:absolute; top:8px; right:12px; background:none; border:none; font-size:24px; color:var(--dim); }
   @media (max-width: 900px) {
-    main { flex-direction: column; align-items: center; }
+    main { flex-direction:column; align-items:center; padding:16px 12px; gap:18px; }
     #controls { width:100%; max-width:560px; }
     #preview { width:100%; }
     canvas { height:auto; max-height:none; width:100%; }
+    .taskItem { min-height:46px; grid-template-columns:24px 24px minmax(0,1fr) 38px; }
+    .taskHandle { min-width:24px; min-height:34px; font-size:20px; }
+    .taskDelete { width:36px; height:36px; }
+    .dayPicker button { min-height:48px; }
+    .copyDay { max-width:145px; min-height:34px; }
   }
   #compatPop { position:fixed; top:-140px; left:0; right:0; z-index:60; background:var(--warnBg); color:var(--warnText); border-bottom:1px solid var(--warnBorder); padding:14px 52px 14px 20px; font-size:13.5px; line-height:1.55; text-align:center; transition:top .4s ease; }
   #compatPop.show { top:0; }
@@ -193,7 +202,10 @@
     </div>
 
     <div class="group">
-      <label data-i18n="tasksCtl"></label>
+      <div class="taskTitleRow">
+        <label data-i18n="tasksCtl"></label>
+        <select class="copyDay" id="copyDay" aria-label="Copy tasks to another day"></select>
+      </div>
       <div class="taskAdd">
         <input type="text" id="taskInput" data-i18n-ph="taskPh" maxlength="80" autocomplete="off">
         <button class="btn secondary" id="addTask" data-i18n="taskAdd"></button>
@@ -229,6 +241,7 @@
       </div>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
+      <button class="btn wide secondary" id="downloadAll" disabled data-i18n="downloadAll"></button>
       <div id="genStatus" class="status"></div>
     </div>
 
@@ -323,11 +336,17 @@ ru: {
   taskLimit: "{device}: максимум {n} задач ({used}/{n}).",
   taskOverflow: "На карточку {device} попадут первые {n}. Перетащи нужные задачи выше.",
   taskMove: "Перетащить задачу",
+  copyTasks: "Копировать в…",
+  copiedTasks: "Скопировано задач: {n}. День: {day}.",
+  nothingToCopy: "На выбранный день пока нечего копировать.",
   taskMore: "ещё",
   theme: "Оформление", themeDark: "Тёмная карточка",
   refresh: "Обновить прогноз",
   install: "Обновить карточку и установить",
   download: "Скачать sleep.bmp",
+  downloadAll: "Скачать все 6 дней (.zip)",
+  stPacking: "Собираем карточки на 6 дней…",
+  stPacked: "Архив готов: 6 карточек с датами в названиях файлов.",
   instBlock: "Установка на ридер",
   readerHint: "IP-адрес отображается на ридере в режиме передачи файлов.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
@@ -370,11 +389,17 @@ en: {
   taskLimit: "{device}: up to {n} tasks ({used}/{n}).",
   taskOverflow: "The {device} card will show the first {n}. Drag the tasks you need higher.",
   taskMove: "Drag task",
+  copyTasks: "Copy to…",
+  copiedTasks: "Tasks copied: {n}. Day: {day}.",
+  nothingToCopy: "There are no tasks to copy yet.",
   taskMore: "more",
   theme: "Appearance", themeDark: "Dark card",
   refresh: "Refresh forecast",
   install: "Refresh card & install",
   download: "Download sleep.bmp",
+  downloadAll: "Download all 6 days (.zip)",
+  stPacking: "Building six daily cards…",
+  stPacked: "Archive ready: six cards with dated filenames.",
   instBlock: "Install on reader",
   readerHint: "The IP address is shown on the reader in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
@@ -809,6 +834,58 @@ function encodeBMP(){
   return new Blob([buf], { type: "image/bmp" });
 }
 
+// ---------- ZIP без внешних библиотек ----------
+const CRC_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++){
+    let c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+function crc32(bytes){
+  let c = 0xffffffff;
+  for (const b of bytes) c = CRC_TABLE[(c ^ b) & 255] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+function zipDateTime(date){
+  const year = Math.max(1980, date.getFullYear());
+  return {
+    time: (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1),
+    date: ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()
+  };
+}
+function joinBytes(parts){
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let off = 0;
+  for (const p of parts){ out.set(p, off); off += p.length; }
+  return out;
+}
+function makeZip(files){
+  const enc = new TextEncoder(), local = [], central = [];
+  let offset = 0;
+  const stamp = zipDateTime(new Date());
+  for (const file of files){
+    const name = enc.encode(file.name), data = file.data, crc = crc32(data);
+    const lh = new Uint8Array(30), lv = new DataView(lh.buffer);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true);
+    lv.setUint16(10, stamp.time, true); lv.setUint16(12, stamp.date, true); lv.setUint32(14, crc, true);
+    lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true); lv.setUint16(26, name.length, true);
+    local.push(lh, name, data);
+    const ch = new Uint8Array(46), cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true); cv.setUint16(8, 0x0800, true);
+    cv.setUint16(12, stamp.time, true); cv.setUint16(14, stamp.date, true); cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true); cv.setUint16(28, name.length, true);
+    cv.setUint32(42, offset, true); central.push(ch, name);
+    offset += lh.length + name.length + data.length;
+  }
+  const centralBytes = joinBytes(central), end = new Uint8Array(22), ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, files.length, true); ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralBytes.length, true); ev.setUint32(16, offset, true);
+  return new Blob([...local, centralBytes, end], { type:"application/zip" });
+}
+
 // ---------- сеть ----------
 function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = "status " + (cls || ""); }
 function setStatusG(msg, cls){ const s = $("genStatus"); s.textContent = msg; s.className = "status " + (cls || ""); }
@@ -880,6 +957,7 @@ async function loadWeather(){
       weather = j;
       redraw();
       $("download").disabled = false;
+      $("downloadAll").disabled = false;
       $("install").disabled = false;
       setStatusG(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
@@ -904,6 +982,8 @@ function applyMode(){
   $("cardCtl").style.display = mode === "card" ? "" : "none";
   $("refresh").style.display = mode === "meteo" ? "" : "none";
   $("download").disabled = mode === "meteo" && !weather;
+  $("downloadAll").style.display = mode === "meteo" ? "" : "none";
+  $("downloadAll").disabled = !weather;
   $("install").disabled = location.protocol === "https:" || (mode === "meteo" && !weather);
   storeStr("mode", mode === "card" ? "card" : "");
   redraw();
@@ -931,6 +1011,40 @@ function updateDayControls(){
   $("dayNext").disabled = dayOffset >= 5;
   $("dayPrev").setAttribute("aria-label", LANG === "ru" ? "Предыдущий день" : "Previous day");
   $("dayNext").setAttribute("aria-label", LANG === "ru" ? "Следующий день" : "Next day");
+  updateCopyDayOptions();
+}
+function updateCopyDayOptions(){
+  const select = $("copyDay");
+  select.innerHTML = "";
+  const first = document.createElement("option");
+  first.value = ""; first.textContent = t("copyTasks"); first.selected = true;
+  select.appendChild(first);
+  for (let offset = 0; offset < 6; offset++){
+    if (offset === dayOffset) continue;
+    const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + offset);
+    const option = document.createElement("option");
+    option.value = String(offset);
+    option.textContent = offset === 0 ? t("today") : offset === 1 ? t("tomorrow") : dayShort(d);
+    select.appendChild(option);
+  }
+  select.disabled = tasks.length === 0;
+  select.setAttribute("aria-label", t("copyTasks"));
+}
+function copyTasksToDay(targetOffset){
+  if (!tasks.length){ setStatusG(t("nothingToCopy"), "err"); return; }
+  const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + targetOffset);
+  const key = dateKey(d), target = Array.isArray(tasksByDate[key]) ? tasksByDate[key].slice() : [];
+  const known = new Set(target.map(task => task.text.trim().toLocaleLowerCase()));
+  let added = 0;
+  for (const task of tasks){
+    const normalized = task.text.trim().toLocaleLowerCase();
+    if (known.has(normalized)) continue;
+    target.push({ text:task.text, done:false }); known.add(normalized); added++;
+  }
+  tasksByDate[key] = target;
+  storeSet("tasksByDate", tasksByDate);
+  const label = targetOffset === 0 ? t("today") : targetOffset === 1 ? t("tomorrow") : dayShort(d);
+  setStatusG(tf("copiedTasks", { n:added, day:label }), "ok");
 }
 function changeDay(step){
   const next = Math.max(0, Math.min(5, dayOffset + step));
@@ -962,6 +1076,7 @@ function renderTasks(){
   tasks.forEach((task, index) => {
     const row = document.createElement("div");
     row.className = "taskItem" + (task.done ? " done" : "") + (index >= limit ? " offCard" : "");
+    row.dataset.index = index;
     const handle = document.createElement("button");
     handle.type = "button";
     handle.className = "taskHandle";
@@ -978,6 +1093,29 @@ function renderTasks(){
     handle.ondragend = () => {
       draggedTaskIndex = null;
       document.querySelectorAll(".taskItem").forEach(el => el.classList.remove("dragging", "dragOver"));
+    };
+    let touchTarget = index;
+    handle.onpointerdown = e => {
+      if (e.pointerType === "mouse") return;
+      draggedTaskIndex = index;
+      touchTarget = index;
+      handle.setPointerCapture(e.pointerId);
+      row.classList.add("touchDragging");
+      e.preventDefault();
+    };
+    handle.onpointermove = e => {
+      if (draggedTaskIndex !== index || e.pointerType === "mouse") return;
+      const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest(".taskItem");
+      if (!hit || !list.contains(hit)) return;
+      touchTarget = Number(hit.dataset.index);
+      list.querySelectorAll(".taskItem").forEach(el => el.classList.toggle("dragOver", el === hit && el !== row));
+    };
+    handle.onpointerup = handle.onpointercancel = e => {
+      if (draggedTaskIndex !== index || e.pointerType === "mouse") return;
+      row.classList.remove("touchDragging");
+      list.querySelectorAll(".taskItem").forEach(el => el.classList.remove("dragOver"));
+      draggedTaskIndex = null;
+      if (touchTarget !== index) moveTask(index, touchTarget);
     };
     row.ondragover = e => {
       if (draggedTaskIndex == null || draggedTaskIndex === index) return;
@@ -1008,6 +1146,7 @@ function renderTasks(){
     list.appendChild(row);
   });
   updateTaskLimit();
+  updateCopyDayOptions();
 }
 function addTask(){
   const input = $("taskInput");
@@ -1065,6 +1204,10 @@ $("addTask").onclick = addTask;
 $("taskInput").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
 $("dayPrev").onclick = () => changeDay(-1);
 $("dayNext").onclick = () => changeDay(1);
+$("copyDay").onchange = e => {
+  if (e.target.value !== "") copyTasksToDay(Number(e.target.value));
+  e.target.value = "";
+};
 $("modeSeg").onclick = e => {
   const b = e.target.closest("button[data-mode]");
   if (!b) return;
@@ -1105,6 +1248,37 @@ $("download").onclick = () => {
   a.download = "sleep.bmp";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+$("downloadAll").onclick = async () => {
+  if (!weather || mode !== "meteo") return;
+  const keepOffset = dayOffset, keepTasks = tasks;
+  $("downloadAll").disabled = true;
+  setStatusG(t("stPacking"));
+  const files = [];
+  try {
+    for (let offset = 0; offset < 6; offset++){
+      dayOffset = offset;
+      tasks = tasksByDate[dateKey(selectedDate())] || [];
+      drawCard(offset);
+      files.push({
+        name: "sleep-" + dateKey(selectedDate()) + ".bmp",
+        data: new Uint8Array(await encodeBMP().arrayBuffer())
+      });
+      await new Promise(requestAnimationFrame);
+    }
+    const zip = makeZip(files);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(zip);
+    a.download = "xteink-cards-" + files[0].name.slice(6, 16) + ".zip";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    setStatusG(t("stPacked"), "ok");
+  } finally {
+    dayOffset = keepOffset; tasks = keepTasks;
+    updateDayControls(); renderTasks(); redraw();
+    $("downloadAll").disabled = false;
+  }
 };
 
 // ---------- установка на ридер ----------
