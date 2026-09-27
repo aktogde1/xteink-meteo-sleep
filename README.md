@@ -11,15 +11,13 @@ Weather, daily tasks, moon phase, and sunrise/sunset — or a QR business card �
 
 ## What is it
 
-A browser-based generator: choose a city, add today's tasks, select your reader, and download a ready-to-use `sleep.bmp`. It is a single HTML file with no build step, account, or hosted backend.
+A browser-based generator: choose a city and date, add tasks for that day, select your reader, and download a ready-to-use `sleep.bmp`. It is a single HTML file with no build step, account, or hosted backend.
 
 On the card: weekday and date, daytime maximum, nighttime temperature, weather summary, sunrise and sunset, moon phase, daily tasks, city, and update time. The card uses exactly two colors for crisp e-ink output.
 
 Tasks are stored only in the current browser. The X4 layout shows up to 5 tasks; X3 shows up to 3. Drag tasks to reorder them, mark them complete, or delete them. The first tasks in the list are the ones placed on the card.
 
-Use the day arrows to plan cards up to 6 days ahead. Every date has its own task list. A separate button downloads a ZIP containing all six dated cards. The reader cannot rotate them automatically: install the BMP you need when the day comes.
-
-For repeating plans, use **Copy to…** beside the task heading. It copies the current list to any other available day, keeps tasks already saved there, and skips duplicates.
+Use the day arrows to choose a date up to 6 days ahead. Every date has its own task list: select the day, prepare its card, and download that `sleep.bmp` separately. The reader cannot rotate cards automatically, so install the required file when the day comes.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
@@ -35,7 +33,6 @@ Interface languages: **English · Русский** — auto-detected from your b
 4. Select X4 or X3 and press **Refresh forecast**. Use X4 for X4C and X4 Pro too
 5. Press **Download sleep.bmp**, then copy it to the `Sleep` folder on the microSD, replacing the existing file
 
-For several planned days, press **Download all 6 days (.zip)**. The archive contains files such as `sleep-2026-09-28.bmp`; rename the chosen file to `sleep.bmp` before installing it.
 6. Set the sleep screen to **Custom image** and lock the reader
 
 ## One-click install (from a computer)

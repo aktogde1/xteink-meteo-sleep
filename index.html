@@ -60,9 +60,6 @@
   .seg button.active { background:var(--fg); color:var(--panel); border-color:var(--fg); }
   .seg.small button { padding:8px 4px; }
   .taskAdd { display:flex; gap:8px; }
-  .taskTitleRow { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:7px; }
-  .taskTitleRow > label { color:var(--dim); text-transform:uppercase; letter-spacing:.5px; font-size:12px; font-weight:600; }
-  .copyDay { width:auto; max-width:155px; min-width:0; padding:5px 24px 5px 8px; background:var(--inputBg); color:var(--fg); border:1px solid var(--line); border-radius:7px; font:600 11.5px/1.2 inherit; cursor:pointer; }
   .taskAdd input { flex:1; min-width:0; }
   .taskAdd .btn { flex:0 0 auto; padding-inline:14px; }
   .taskList { display:flex; flex-direction:column; gap:6px; margin-top:9px; }
@@ -121,7 +118,6 @@
     .taskHandle { min-width:24px; min-height:34px; font-size:20px; }
     .taskDelete { width:36px; height:36px; }
     .dayPicker button { min-height:48px; }
-    .copyDay { max-width:145px; min-height:34px; }
   }
   #compatPop { position:fixed; top:-140px; left:0; right:0; z-index:60; background:var(--warnBg); color:var(--warnText); border-bottom:1px solid var(--warnBorder); padding:14px 52px 14px 20px; font-size:13.5px; line-height:1.55; text-align:center; transition:top .4s ease; }
   #compatPop.show { top:0; }
@@ -202,10 +198,7 @@
     </div>
 
     <div class="group">
-      <div class="taskTitleRow">
-        <label data-i18n="tasksCtl"></label>
-        <select class="copyDay" id="copyDay" aria-label="Copy tasks to another day"></select>
-      </div>
+      <label data-i18n="tasksCtl"></label>
       <div class="taskAdd">
         <input type="text" id="taskInput" data-i18n-ph="taskPh" maxlength="80" autocomplete="off">
         <button class="btn secondary" id="addTask" data-i18n="taskAdd"></button>
@@ -241,7 +234,6 @@
       </div>
       <button class="btn wide secondary" id="refresh" data-i18n="refresh"></button>
       <button class="btn wide secondary" id="download" disabled data-i18n="download"></button>
-      <button class="btn wide secondary" id="downloadAll" disabled data-i18n="downloadAll"></button>
       <div id="genStatus" class="status"></div>
     </div>
 
@@ -330,23 +322,17 @@ ru: {
   stQrLong: "Ссылка слишком длинная для QR-кода.",
   stNoUrl: "Добавь ссылку — и на карточке появится QR-код.",
   device: "Модель ридера", deviceX4: "X4", deviceHint: "X4 — для всех версий: X4, X4C и X4 Pro.",
-  cardDay: "День карточки", today: "Сегодня", tomorrow: "Завтра", cardDayHint: "Можно подготовить карточки на 6 дней вперёд. На ридере нужный sleep.bmp устанавливается вручную.",
+  cardDay: "День карточки", today: "Сегодня", tomorrow: "Завтра", cardDayHint: "Выбери один день, подготовь карточку и скачай его sleep.bmp. Доступен прогноз на 6 дней.",
   tasks: "Задачи", tasksCtl: "Задачи на выбранный день", taskPh: "Например: позвонить маме", taskAdd: "Добавить",
   taskHint: "Для каждого дня сохраняется свой список задач в этом браузере.",
   taskLimit: "{device}: максимум {n} задач ({used}/{n}).",
   taskOverflow: "На карточку {device} попадут первые {n}. Перетащи нужные задачи выше.",
   taskMove: "Перетащить задачу",
-  copyTasks: "Копировать в…",
-  copiedTasks: "Скопировано задач: {n}. День: {day}.",
-  nothingToCopy: "На выбранный день пока нечего копировать.",
   taskMore: "ещё",
   theme: "Оформление", themeDark: "Тёмная карточка",
   refresh: "Обновить прогноз",
   install: "Обновить карточку и установить",
   download: "Скачать sleep.bmp",
-  downloadAll: "Скачать все 6 дней (.zip)",
-  stPacking: "Собираем карточки на 6 дней…",
-  stPacked: "Архив готов: 6 карточек с датами в названиях файлов.",
   instBlock: "Установка на ридер",
   readerHint: "IP-адрес отображается на ридере в режиме передачи файлов.",
   httpsNote: 'Эта страница загружается по протоколу HTTPS — браузер блокирует запросы от неё к ридеру в вашей домашней сети. Генератор и загрузка BMP работают полностью. Для установки в один клик <a href="index.html" download="xteink-meteo-sleep.html">скачайте этот файл</a> и откройте его на своём компьютере.',
@@ -361,7 +347,7 @@ ru: {
 
   stNoAddr: "Впишите адрес ридера — тот, что он показывает в режиме передачи файлов.",
   stNoWeather: "Сначала загрузи прогноз — нажми «Обновить прогноз».",
-  noData: "Нет данных о погоде", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
+  noData: "Нет данных о погоде", dayHigh: "макс. днём", dayLbl: "днём", nightLbl: "ночью", sunrise: "восход", sunset: "закат",
   updated: "обновлено", dS: "д", nS: "н", donate: "Поддержать",
   ideaNext: "Карточка сохраняется как sleep.bmp и работает офлайн. Отдельный режим создаёт QR-визитку со ссылкой на профиль, канал или сайт.",
   footData: "Прогноз и поиск города — <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo</a>. Задачи хранятся только в этом браузере. Фаза Луны рассчитывается локально.",
@@ -383,23 +369,17 @@ en: {
   stQrLong: "The link is too long for a QR code.",
   stNoUrl: "Add a link — and the card gets a QR code.",
   device: "Reader model", deviceX4: "X4", deviceHint: "X4 supports every version: X4, X4C, and X4 Pro.",
-  cardDay: "Card day", today: "Today", tomorrow: "Tomorrow", cardDayHint: "Plan cards up to 6 days ahead. Install the chosen sleep.bmp on the reader manually.",
+  cardDay: "Card day", today: "Today", tomorrow: "Tomorrow", cardDayHint: "Choose one day, prepare its card, and download that sleep.bmp. A 6-day forecast is available.",
   tasks: "Tasks", tasksCtl: "Tasks for the selected day", taskPh: "e.g. Call Mom", taskAdd: "Add",
   taskHint: "Each day has its own task list saved in this browser.",
   taskLimit: "{device}: up to {n} tasks ({used}/{n}).",
   taskOverflow: "The {device} card will show the first {n}. Drag the tasks you need higher.",
   taskMove: "Drag task",
-  copyTasks: "Copy to…",
-  copiedTasks: "Tasks copied: {n}. Day: {day}.",
-  nothingToCopy: "There are no tasks to copy yet.",
   taskMore: "more",
   theme: "Appearance", themeDark: "Dark card",
   refresh: "Refresh forecast",
   install: "Refresh card & install",
   download: "Download sleep.bmp",
-  downloadAll: "Download all 6 days (.zip)",
-  stPacking: "Building six daily cards…",
-  stPacked: "Archive ready: six cards with dated filenames.",
   instBlock: "Install on reader",
   readerHint: "The IP address is shown on the reader in File Transfer mode.",
   httpsNote: 'This page is served over HTTPS — the browser blocks its requests to the reader on your home network. The generator and BMP download work fully. For one-click install, <a href="index.html" download="xteink-meteo-sleep.html">download this file</a> and open it on your computer.',
@@ -414,7 +394,7 @@ en: {
 
   stNoAddr: "Enter the reader address — the one it shows in File Transfer mode.",
   stNoWeather: "Load the forecast first — press “Refresh forecast”.",
-  noData: "No weather data", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
+  noData: "No weather data", dayHigh: "daytime high", dayLbl: "day", nightLbl: "night", sunrise: "sunrise", sunset: "sunset",
   updated: "updated", dS: "d", nS: "n", donate: "Donate",
   ideaNext: "Save the card as sleep.bmp and use it offline. A separate mode creates a QR card linking to a profile, channel, or website.",
   footData: "Forecast and city search by <a href=\"https://open-meteo.com\" target=\"_blank\" rel=\"noopener\">Open-Meteo</a>. Tasks stay in this browser. Moon phase is calculated locally.",
@@ -665,6 +645,7 @@ function drawCard(dayOffset){
       const dayCode = d0.weather_code[dayOffset];
       const tempStr = fmtTemp(d0.temperature_2m_max[dayOffset]);
       const maxTempW = w - pad * 2 - iconS - w * 0.06;
+      text(t("dayHigh"), pad, y + w * 0.027, w * 0.032, true);
       setFont(tempSize, true);
       while (tempSize > w * 0.12 && ctx.measureText(tempStr).width > maxTempW){
         tempSize -= 2;
@@ -834,58 +815,6 @@ function encodeBMP(){
   return new Blob([buf], { type: "image/bmp" });
 }
 
-// ---------- ZIP без внешних библиотек ----------
-const CRC_TABLE = (() => {
-  const table = new Uint32Array(256);
-  for (let n = 0; n < 256; n++){
-    let c = n;
-    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
-    table[n] = c >>> 0;
-  }
-  return table;
-})();
-function crc32(bytes){
-  let c = 0xffffffff;
-  for (const b of bytes) c = CRC_TABLE[(c ^ b) & 255] ^ (c >>> 8);
-  return (c ^ 0xffffffff) >>> 0;
-}
-function zipDateTime(date){
-  const year = Math.max(1980, date.getFullYear());
-  return {
-    time: (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1),
-    date: ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()
-  };
-}
-function joinBytes(parts){
-  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
-  let off = 0;
-  for (const p of parts){ out.set(p, off); off += p.length; }
-  return out;
-}
-function makeZip(files){
-  const enc = new TextEncoder(), local = [], central = [];
-  let offset = 0;
-  const stamp = zipDateTime(new Date());
-  for (const file of files){
-    const name = enc.encode(file.name), data = file.data, crc = crc32(data);
-    const lh = new Uint8Array(30), lv = new DataView(lh.buffer);
-    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true);
-    lv.setUint16(10, stamp.time, true); lv.setUint16(12, stamp.date, true); lv.setUint32(14, crc, true);
-    lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true); lv.setUint16(26, name.length, true);
-    local.push(lh, name, data);
-    const ch = new Uint8Array(46), cv = new DataView(ch.buffer);
-    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true); cv.setUint16(8, 0x0800, true);
-    cv.setUint16(12, stamp.time, true); cv.setUint16(14, stamp.date, true); cv.setUint32(16, crc, true);
-    cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true); cv.setUint16(28, name.length, true);
-    cv.setUint32(42, offset, true); central.push(ch, name);
-    offset += lh.length + name.length + data.length;
-  }
-  const centralBytes = joinBytes(central), end = new Uint8Array(22), ev = new DataView(end.buffer);
-  ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, files.length, true); ev.setUint16(10, files.length, true);
-  ev.setUint32(12, centralBytes.length, true); ev.setUint32(16, offset, true);
-  return new Blob([...local, centralBytes, end], { type:"application/zip" });
-}
-
 // ---------- сеть ----------
 function setStatus(msg, cls){ const s = $("status"); s.textContent = msg; s.className = "status " + (cls || ""); }
 function setStatusG(msg, cls){ const s = $("genStatus"); s.textContent = msg; s.className = "status " + (cls || ""); }
@@ -957,7 +886,6 @@ async function loadWeather(){
       weather = j;
       redraw();
       $("download").disabled = false;
-      $("downloadAll").disabled = false;
       $("install").disabled = false;
       setStatusG(tf("stReady", { w: canvas.width, h: canvas.height }), "ok");
       return;
@@ -982,8 +910,6 @@ function applyMode(){
   $("cardCtl").style.display = mode === "card" ? "" : "none";
   $("refresh").style.display = mode === "meteo" ? "" : "none";
   $("download").disabled = mode === "meteo" && !weather;
-  $("downloadAll").style.display = mode === "meteo" ? "" : "none";
-  $("downloadAll").disabled = !weather;
   $("install").disabled = location.protocol === "https:" || (mode === "meteo" && !weather);
   storeStr("mode", mode === "card" ? "card" : "");
   redraw();
@@ -1011,40 +937,6 @@ function updateDayControls(){
   $("dayNext").disabled = dayOffset >= 5;
   $("dayPrev").setAttribute("aria-label", LANG === "ru" ? "Предыдущий день" : "Previous day");
   $("dayNext").setAttribute("aria-label", LANG === "ru" ? "Следующий день" : "Next day");
-  updateCopyDayOptions();
-}
-function updateCopyDayOptions(){
-  const select = $("copyDay");
-  select.innerHTML = "";
-  const first = document.createElement("option");
-  first.value = ""; first.textContent = t("copyTasks"); first.selected = true;
-  select.appendChild(first);
-  for (let offset = 0; offset < 6; offset++){
-    if (offset === dayOffset) continue;
-    const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + offset);
-    const option = document.createElement("option");
-    option.value = String(offset);
-    option.textContent = offset === 0 ? t("today") : offset === 1 ? t("tomorrow") : dayShort(d);
-    select.appendChild(option);
-  }
-  select.disabled = tasks.length === 0;
-  select.setAttribute("aria-label", t("copyTasks"));
-}
-function copyTasksToDay(targetOffset){
-  if (!tasks.length){ setStatusG(t("nothingToCopy"), "err"); return; }
-  const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + targetOffset);
-  const key = dateKey(d), target = Array.isArray(tasksByDate[key]) ? tasksByDate[key].slice() : [];
-  const known = new Set(target.map(task => task.text.trim().toLocaleLowerCase()));
-  let added = 0;
-  for (const task of tasks){
-    const normalized = task.text.trim().toLocaleLowerCase();
-    if (known.has(normalized)) continue;
-    target.push({ text:task.text, done:false }); known.add(normalized); added++;
-  }
-  tasksByDate[key] = target;
-  storeSet("tasksByDate", tasksByDate);
-  const label = targetOffset === 0 ? t("today") : targetOffset === 1 ? t("tomorrow") : dayShort(d);
-  setStatusG(tf("copiedTasks", { n:added, day:label }), "ok");
 }
 function changeDay(step){
   const next = Math.max(0, Math.min(5, dayOffset + step));
@@ -1146,7 +1038,6 @@ function renderTasks(){
     list.appendChild(row);
   });
   updateTaskLimit();
-  updateCopyDayOptions();
 }
 function addTask(){
   const input = $("taskInput");
@@ -1204,10 +1095,6 @@ $("addTask").onclick = addTask;
 $("taskInput").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
 $("dayPrev").onclick = () => changeDay(-1);
 $("dayNext").onclick = () => changeDay(1);
-$("copyDay").onchange = e => {
-  if (e.target.value !== "") copyTasksToDay(Number(e.target.value));
-  e.target.value = "";
-};
 $("modeSeg").onclick = e => {
   const b = e.target.closest("button[data-mode]");
   if (!b) return;
@@ -1248,37 +1135,6 @@ $("download").onclick = () => {
   a.download = "sleep.bmp";
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-};
-
-$("downloadAll").onclick = async () => {
-  if (!weather || mode !== "meteo") return;
-  const keepOffset = dayOffset, keepTasks = tasks;
-  $("downloadAll").disabled = true;
-  setStatusG(t("stPacking"));
-  const files = [];
-  try {
-    for (let offset = 0; offset < 6; offset++){
-      dayOffset = offset;
-      tasks = tasksByDate[dateKey(selectedDate())] || [];
-      drawCard(offset);
-      files.push({
-        name: "sleep-" + dateKey(selectedDate()) + ".bmp",
-        data: new Uint8Array(await encodeBMP().arrayBuffer())
-      });
-      await new Promise(requestAnimationFrame);
-    }
-    const zip = makeZip(files);
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(zip);
-    a.download = "xteink-cards-" + files[0].name.slice(6, 16) + ".zip";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-    setStatusG(t("stPacked"), "ok");
-  } finally {
-    dayOffset = keepOffset; tasks = keepTasks;
-    updateDayControls(); renderTasks(); redraw();
-    $("downloadAll").disabled = false;
-  }
 };
 
 // ---------- установка на ридер ----------
