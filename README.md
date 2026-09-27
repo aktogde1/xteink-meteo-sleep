@@ -11,26 +11,30 @@ Weather, daily tasks, moon phase, and sunrise/sunset — or a QR business card �
 
 ## What is it
 
-A web generator: pick your city → it assembles a black-and-white card, sized exactly for your e-reader's screen → you download `sleep.bmp`. A single HTML file, no libraries, no servers.
+A browser-based generator: choose a city, add today's tasks, select your reader, and download a ready-to-use `sleep.bmp`. It is a single HTML file with no build step, account, or hosted backend.
 
-On the card: weekday and date, daytime maximum, nighttime temperature, weather summary, sunrise and sunset, moon phase, daily tasks, city, and update time. Light / dark card switch included. Exactly 2 colors — perfect for e-ink.
+On the card: weekday and date, daytime maximum, nighttime temperature, weather summary, sunrise and sunset, moon phase, daily tasks, city, and update time. The card uses exactly two colors for crisp e-ink output.
+
+Tasks are stored only in the current browser. X4, X4C, and X4 Pro show up to 5 tasks; X3 shows up to 3. Drag tasks to reorder them, mark them complete, or delete them. The first tasks in the list are the ones placed on the card.
 
 Interface languages: **English · Русский** — auto-detected from your browser (switcher in the header).
 
-**Business card mode:** a big QR code centered on the screen, pointing to any link — your GitHub, Telegram channel, site. Pick «Mode → Business card», paste the link, download `sleep.bmp` — any phone scans it right off the e-ink lock screen. The QR is generated inside the file itself (embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT, ~20 KB), fully offline. On the dark card the code is inverted — white on black — and modern phone scanners read that fine.
+**QR card mode:** a large QR code centered on the screen, pointing to a profile, channel, or website. Pick “Card type → QR card”, paste the link, and download `sleep.bmp`. The QR is generated locally by the embedded [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) library (MIT, ~20 KB).
 
 > **Want live self-hosted dashboards instead?** If flashing custom firmware and running a small home server is your thing, look at [Tesserae](https://github.com/dmellok/tesserae) + [CrossInk](https://github.com/dmellok/CrossInk). This tool is the other route: no firmware, no server — just a `sleep.bmp` from a web page.
 
 ## Quick start
 
 1. Open the [web app](https://aktogde1.github.io/xteink-meteo-sleep/?lang=en)
-2. Enter your city → pick your device (X4 / X4C / X4 Pro / X3)
-3. **"Download sleep.bmp"** → put the file into the `Sleep` folder on the microSD, overwriting the one already there
-4. Set the sleep screen mode to "Custom image". Lock the reader — the card is on screen ✅
+2. Enter your city and press **Search**
+3. Add and reorder today's tasks
+4. Select X4, X4C, X4 Pro, or X3 and press **Refresh forecast**
+5. Press **Download sleep.bmp**, then copy it to the `Sleep` folder on the microSD, replacing the existing file
+6. Set the sleep screen to **Custom image** and lock the reader
 
 ## One-click install (from a computer)
 
-Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) and open it on your laptop — a **"Update & install to reader"** button appears:
+Download [`index.html`](https://raw.githubusercontent.com/aktogde1/xteink-meteo-sleep/main/index.html) and open it on your laptop. Use the **"Refresh card & install"** button:
 
 1. Reader — in File Transfer mode (on inkMOD: hold the power button, the server is up in ~20 s)
 2. Laptop — on the same Wi-Fi network (or on the reader's `InkMOD-Reader` hotspot, address `http://192.168.4.1`)
@@ -54,7 +58,8 @@ The page also auto-detects a tiny local relay (if you serve it through one) and 
 ## Under the hood
 
 - One `index.html` file, plain JS + canvas, no build step; the single embedded library is `qrcode-generator` (MIT, ~20 KB minified) for offline QR generation in the business card mode
-- Weather, forecast, sunrise/sunset — [Open-Meteo](https://open-meteo.com/) (open API, no sign-up); city — their geocoder
+- Weather, daytime/nighttime temperatures, and sunrise/sunset — [Open-Meteo](https://open-meteo.com/) (open API, no sign-up); city — their geocoder
+- Tasks — browser `localStorage`; no account and no cloud sync
 - Moon phase — synodic cycle math (29.53 days from the reference new moon on 2000-01-06)
 - The BMP is hand-written in JS: 24-bit, bottom-up, luminance threshold 140 → exactly 2 colors
 - Install to reader: `POST /upload?path=/Sleep` (multipart, field `file`) + `POST /api/settings` `{"sleepScreen":3}` — index 3 = "Custom image" on inkMOD 1.1.x. Served through a local relay? The page detects it via `/relay-check` and sends through it; otherwise the upload goes directly to the reader
